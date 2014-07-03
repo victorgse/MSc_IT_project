@@ -1,5 +1,7 @@
 import java.awt.*;
+
 import javax.swing.*;
+import javax.swing.border.*;
 
 public class View extends JFrame {
 	
@@ -9,8 +11,8 @@ public class View extends JFrame {
 	public View() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1140, 585);
-		//setLocation(100, 100);
-		//setResizable(false); // disables resizing of the JFrame window
+		setResizable(false); // disables resizing of the JFrame window
+		setLocation(40, 40);
 		setTitle("Machine Learning the Premier League");
 		
 		layoutTop();
@@ -19,34 +21,59 @@ public class View extends JFrame {
 	}
 	
 	private void layoutTop() {
-		JPanel top = new JPanel();
-		top.setPreferredSize(new Dimension(1140, 150));
-		top.setBackground(Color.lightGray);
+		JPanel topPanel = new JPanel();
+		topPanel.setBorder(new TitledBorder(new EtchedBorder(), "Menu"));
+		//topPanel.setPreferredSize(new Dimension(1140, 150));
+		//top.setBackground(Color.lightGray);
 		
-		this.add(top, BorderLayout.NORTH);
+		this.add(topPanel, BorderLayout.NORTH);
 	}
 	
 	private void layoutMiddle() {
-		JLabel instructions_and_info = new JLabel();
-		instructions_and_info.setHorizontalAlignment(SwingConstants.CENTER);
-		//instructions_and_info.setVerticalAlignment(SwingConstants.TOP);
-		instructions_and_info.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 48));
-		instructions_and_info.setText("Which dataset do you wish to analyse?");
-		this.add(instructions_and_info, BorderLayout.CENTER);
+		JLabel infoLabel = new JLabel();
+		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoLabel.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 48));
+		infoLabel.setText("Which dataset do you wish to use?");
+		this.add(infoLabel, BorderLayout.CENTER);
 	}
 	
 	private void layoutBottom() {
-		JPanel bottom = new JPanel();
-		bottom.setPreferredSize(new Dimension(1140, 150));
-		bottom.setBackground(Color.lightGray);
+		JPanel bottomPanel = new JPanel(new BorderLayout());
+		bottomPanel.setBorder(new TitledBorder(new EtchedBorder(), "User Selection Area"));
+		bottomPanel.setPreferredSize(new Dimension(1140, 100));
+		//bottom.setBackground(Color.lightGray);
 		
-		JComboBox datasets = new JComboBox();
-		datasets.setPreferredSize(new Dimension(300, 40));
-		datasets.addItem("");
-		datasets.addItem("MCFC Analytics Full Dataset");
-		datasets.addItem("Option 2");
-		bottom.add(datasets);
+		JPanel bottomCenterPanel = new JPanel();
 		
-		this.add(bottom, BorderLayout.SOUTH);
+		JRadioButton mcfcAnalyticsFullButton = new JRadioButton("MCFC Analytics Full Dataset");
+		mcfcAnalyticsFullButton.setSelected(true);
+		JRadioButton otherButton = new JRadioButton("Other");
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(mcfcAnalyticsFullButton);
+		group.add(otherButton);
+		
+		bottomCenterPanel.add(mcfcAnalyticsFullButton);
+		bottomCenterPanel.add(otherButton);
+		
+		bottomPanel.add(bottomCenterPanel, BorderLayout.CENTER);
+		
+		JPanel bottomSouthPanel = new JPanel();
+		bottomSouthPanel.setLayout(new BoxLayout(bottomSouthPanel, BoxLayout.LINE_AXIS));
+		bottomSouthPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		
+		JButton startOverButton = new JButton("Start Over"); startOverButton.setEnabled(false);
+		JButton backButton = new JButton("Back"); backButton.setEnabled(false);
+		JButton nextButton = new JButton("Next");
+		
+		bottomSouthPanel.add(startOverButton);
+		bottomSouthPanel.add(Box.createHorizontalGlue());
+		bottomSouthPanel.add(backButton);
+		bottomSouthPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		bottomSouthPanel.add(nextButton);
+		
+		bottomPanel.add(bottomSouthPanel, BorderLayout.SOUTH);
+		
+		this.add(bottomPanel, BorderLayout.SOUTH);
 	}
 }
