@@ -20,7 +20,9 @@ public class View extends JFrame {
 	
 	private void layoutTop() {
 		JPanel top = new JPanel();
+		top.setPreferredSize(new Dimension(1140, 150));
 		top.setBackground(Color.lightGray);
+		
 		this.add(top, BorderLayout.NORTH);
 	}
 	
@@ -35,12 +37,16 @@ public class View extends JFrame {
 	
 	private void layoutBottom() {
 		JPanel bottom = new JPanel();
-		bottom.setPreferredSize(new Dimension(500, 100));
+		bottom.setPreferredSize(new Dimension(1140, 150));
 		bottom.setBackground(Color.lightGray);
+		
 		JComboBox datasets = new JComboBox();
-		datasets.setPreferredSize(new Dimension(300, 50));
+		datasets.setPreferredSize(new Dimension(300, 40));
+		datasets.addItem("");
 		datasets.addItem("MCFC Analytics Full Dataset");
+		datasets.addItem("Option 2");
 		bottom.add(datasets);
+		
 		this.add(bottom, BorderLayout.SOUTH);
 	}
 }
