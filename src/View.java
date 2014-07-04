@@ -6,9 +6,13 @@ import javax.swing.border.*;
 public class View extends JFrame {
 	
 	// instance variables
+	private Controller controllerObject;
+	public JButton startOverButton, backButton, nextButton;
 	
 	// constructor
-	public View() {
+	public View(Controller controller) {
+		controllerObject = controller;
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1140, 585);
 		setResizable(false); // disables resizing of the JFrame window
@@ -62,9 +66,12 @@ public class View extends JFrame {
 		bottomSouthPanel.setLayout(new BoxLayout(bottomSouthPanel, BoxLayout.LINE_AXIS));
 		bottomSouthPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		
-		JButton startOverButton = new JButton("Start Over"); startOverButton.setEnabled(false);
-		JButton backButton = new JButton("Back"); backButton.setEnabled(false);
-		JButton nextButton = new JButton("Next");
+		startOverButton = new JButton("Start Over"); startOverButton.setEnabled(false);
+		startOverButton.addActionListener(controllerObject);
+		backButton = new JButton("Back"); backButton.setEnabled(false);
+		backButton.addActionListener(controllerObject);
+		nextButton = new JButton("Next");
+		nextButton.addActionListener(controllerObject);
 		
 		bottomSouthPanel.add(startOverButton);
 		bottomSouthPanel.add(Box.createHorizontalGlue());
