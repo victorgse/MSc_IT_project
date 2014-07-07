@@ -13,6 +13,8 @@ public class View extends JFrame {
 	JButton startOverButton, backButton, nextButton;
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton;
 	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton;
+	JRadioButton splitDatasetAutomaticallyButton, splitDatasetManuallyButton;
+	JRadioButton autoModelSelectionButton, manualModelSelectionButton;
 	
 	// constructor
 	public View(Controller controller) {
@@ -20,7 +22,7 @@ public class View extends JFrame {
 		topInitiated = middleInitiated = bottomInitiated = false;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1140, 585);
+		setSize(1120, 630);
 		setResizable(false); // disables resizing of the JFrame window
 		setLocation(40, 40);
 		setTitle("Machine Learning the Premier League");
@@ -50,7 +52,7 @@ public class View extends JFrame {
 				if (!topInitiated) {
 					topPanel = new JPanel();
 					topPanel.setLayout(new GridBagLayout());
-					topPanel.setPreferredSize(new Dimension(1140, 270));
+					topPanel.setPreferredSize(new Dimension(1140, 290));
 					topPanel.setBackground(Color.CYAN);
 					//topPanel.setBorder(new TitledBorder(new EtchedBorder(), "Top"));
 					
@@ -78,6 +80,31 @@ public class View extends JFrame {
 				break;
 			case "clustering_step4":
 				infoLabel.setText("Results of the K-Means clustering algorithm");
+				break;
+			case "classification_step1":
+				infoLabel.setText("<html> Please indicate how the dataset should be split into<br/>"
+						+ "training, validation, and test sets.</html>");
+				break;
+			case "classification_step2":
+				infoLabel.setText("What features do you wish to use to make predictions?");
+				break;
+			case "classification_step3":
+				infoLabel.setText("What feature would you like to predict?");
+				break;
+			case "classification_step4":
+				infoLabel.setText("How do you wish to optimise the algorithm parameters?");
+				break;
+			case "classification_step5":
+				infoLabel.setText("Please specify parameters for the SVM algorithm.");
+				break;
+			case "classification_step6":
+				infoLabel.setText("Validation results of the current SVM hypothesis model");
+				break;
+			case "classification_step7":
+				infoLabel.setText("Do you wish to classify test set examples now?");
+				break;
+			case "classification_step8":
+				infoLabel.setText("Results of the SVM classification algorithm");
 				break;
 		}
 	}
@@ -123,6 +150,133 @@ public class View extends JFrame {
 				middlePanel.add(clusteringButton, c);
 				middlePanel.add(classificationButton, c);
 				middlePanel.add(anomalyDetectionButton, c);
+				break;
+			case "clustering_step1":
+				JComboBox itemsToClusterCombo = new JComboBox();
+				itemsToClusterCombo.addItem("Option 1");
+				itemsToClusterCombo.addItem("Option 2");
+				middlePanel.add(itemsToClusterCombo);
+				break;
+			case "clustering_step2":
+			case "classification_step2":
+				JScrollPane featuresPane = new JScrollPane();
+				featuresPane.setPreferredSize(new Dimension(400, 200));
+				JCheckBox[] features = new JCheckBox[50];
+				JPanel featuresPanel = new JPanel();
+				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
+				for (int i = 0; i < 50; i++) {
+					features[i] = new JCheckBox("Feature " + i);
+					featuresPanel.add(features[i]);
+				}
+				featuresPane.getViewport().add(featuresPanel);
+				middlePanel.add(featuresPane);
+				break;
+			case "clustering_step3":
+				c.gridx = 0;
+				c.gridy = 0;
+				JLabel numberOfClustersLabel = new JLabel("Number of Clusters (K):");
+				middlePanel.add(numberOfClustersLabel, c);
+				c.gridx = 1;
+				c.gridy = 0;
+				SpinnerModel numberOfClustersSpinnerModel =
+				         new SpinnerNumberModel(3, //initial value
+				            2, //min
+				            10, //max
+				            1);//step
+				JSpinner numberOfClustersSpinner = new JSpinner(numberOfClustersSpinnerModel);
+				middlePanel.add(numberOfClustersSpinner, c);
+				c.gridx = 0;
+				c.gridy = 1;
+				JLabel numberOfIterationsLabel = new JLabel("Number of K-Means Iterations:");
+				middlePanel.add(numberOfIterationsLabel, c);
+				c.gridx = 1;
+				c.gridy = 1;
+				SpinnerModel numberOfIterationsSpinnerModel =
+				         new SpinnerNumberModel(50, //initial value
+				            50, //min
+				            150, //max
+				            50);//step
+				JSpinner numberOfIterationsSpinner = new JSpinner(numberOfIterationsSpinnerModel);
+				middlePanel.add(numberOfIterationsSpinner, c);
+				break;
+			case "classification_step1":
+				splitDatasetAutomaticallyButton = new JRadioButton("60% training / "
+						+ "20% validation / 20% test");
+				splitDatasetAutomaticallyButton.setSelected(true);
+				splitDatasetManuallyButton = new JRadioButton("Indicate Manually");;
+				
+				ButtonGroup group3 = new ButtonGroup();
+				group3.add(splitDatasetAutomaticallyButton);
+				group3.add(splitDatasetManuallyButton);
+				
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 0;
+				c.gridy = 0;
+				middlePanel.add(splitDatasetAutomaticallyButton, c);
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 0;
+				c.gridy = 1;
+				middlePanel.add(splitDatasetManuallyButton, c);
+				break;
+			case "classification_step3":
+				JComboBox targetLabelCombo = new JComboBox();
+				targetLabelCombo.addItem("Option 1");
+				targetLabelCombo.addItem("Option 2");
+				middlePanel.add(targetLabelCombo);
+				break;
+			case "classification_step4":
+				autoModelSelectionButton = new JRadioButton("Automatic Model Selection");
+				autoModelSelectionButton.setSelected(true);
+				manualModelSelectionButton = new JRadioButton("Set Parameters Manually");
+				
+				ButtonGroup group4 = new ButtonGroup();
+				group4.add(autoModelSelectionButton);
+				group4.add(manualModelSelectionButton);
+				
+				middlePanel.add(autoModelSelectionButton, c);
+				middlePanel.add(manualModelSelectionButton, c);
+				break;
+			case "classification_step5":
+				c.gridx = 0;
+				c.gridy = 0;
+				JLabel kernelTypeLabel = new JLabel("Kernel Type:");
+				middlePanel.add(kernelTypeLabel, c);
+				c.gridx = 1;
+				c.gridy = 0;
+				JComboBox kernelTypeCombo = new JComboBox();
+				kernelTypeCombo.addItem("Gaussian Kernel");
+				kernelTypeCombo.addItem("Linear Kernel");
+				middlePanel.add(kernelTypeCombo, c);
+				c.gridx = 0;
+				c.gridy = 1;
+				JLabel regularisationLabel = new JLabel("Regularisation Parameter (C):");
+				middlePanel.add(regularisationLabel, c);
+				c.gridx = 1;
+				c.gridy = 1;
+				SpinnerModel regularisationSpinnerModel =
+				         new SpinnerNumberModel(5, //initial value
+				            1, //min
+				            100, //max
+				            1);//step
+				JSpinner regularisationSpinner = new JSpinner(regularisationSpinnerModel);
+				middlePanel.add(regularisationSpinner, c);
+				c.gridx = 0;
+				c.gridy = 2;
+				JLabel gammaLabel = new JLabel("Parameter of the Gaussian Kernel (gamma):");
+				middlePanel.add(gammaLabel, c);
+				c.gridx = 1;
+				c.gridy = 2;
+				SpinnerModel gammaSpinnerModel =
+				         new SpinnerNumberModel(1, //initial value
+				            0.5, //min
+				            10, //max
+				            0.05);//step
+				JSpinner gammaSpinner = new JSpinner(gammaSpinnerModel);
+				middlePanel.add(gammaSpinner, c);
+				break;
+			case "classification_step7":
+				middlePanel.add(new JLabel("The SVM algorithm is fully trained now. "
+						+ "Proceed to classify examples from the test set."));
 				break;
 		}
 	}
