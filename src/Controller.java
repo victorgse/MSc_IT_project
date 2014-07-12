@@ -1,4 +1,8 @@
 import java.awt.event.*;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Controller implements ActionListener {
 	
@@ -19,6 +23,19 @@ public class Controller implements ActionListener {
 	 */
 	public String getState() {
 		return state;
+	}
+	
+	public File getFile() {
+		JFileChooser chooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	        "Excel .xls files", "xls");
+	    chooser.setFileFilter(filter);
+	    int returnVal = chooser.showOpenDialog(viewObject);
+	    if (returnVal == JFileChooser.APPROVE_OPTION) {
+	    	return chooser.getSelectedFile();
+	    } else {
+	    	return null;
+	    }
 	}
 
 	@Override
@@ -71,6 +88,17 @@ public class Controller implements ActionListener {
 		} else if (ae.getSource() == viewObject.nextButton) {
 			switch (state) {
 				case "startScreen_1":
+					if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
+						
+					} else if (viewObject.otherDatasetButton.isSelected()) {
+						File selectedFile = getFile();
+					    try {
+							new DatasetLoader(selectedFile);
+						} catch (Exception e) {
+							e.printStackTrace();
+							System.out.println("Error: Dataset could not be loaded");
+						}
+					}
 					state = "startScreen_2";
 					break;
 				case "startScreen_2":
