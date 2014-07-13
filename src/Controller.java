@@ -4,11 +4,17 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import weka.core.Instances;
+import algorithms.KMeansClusterer;
+
 public class Controller implements ActionListener {
 	
 	// instance variables
 	private View viewObject;
 	private String state;
+	private String selectedDataset;
+	private KMeansClusterer clusterer;
+	private String query;
 	
 	public Controller() {
 		state = "startScreen_1";
@@ -89,7 +95,7 @@ public class Controller implements ActionListener {
 			switch (state) {
 				case "startScreen_1":
 					if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
-						
+						selectedDataset = "MCFC_Analytics_Full_Dataset";
 					} else if (viewObject.otherDatasetButton.isSelected()) {
 						File selectedFile = getFile();
 					    try {
@@ -103,6 +109,7 @@ public class Controller implements ActionListener {
 					break;
 				case "startScreen_2":
 					if (viewObject.clusteringButton.isSelected()) {
+						clusterer = new KMeansClusterer();
 						state = "clustering_step1";
 					} else if (viewObject.classificationButton.isSelected()) {
 						state = "classification_step1";
@@ -114,9 +121,21 @@ public class Controller implements ActionListener {
 					state = "clustering_step2";
 					break;
 				case "clustering_step2":
+					query = "select sum(goals), sum(assists)"
+							+ " from " + selectedDataset
+							+ " group by team";
+					clusterer.setInstanceQuery(query);
+					clusterer.fetchInstances();
 					state = "clustering_step3";
 					break;
 				case "clustering_step3":
+					String algorithmParameters = "-N " 
+							+ (int) viewObject.numberOfClustersSpinner.getValue()
+							+ " -I " 
+							+ (int) viewObject.numberOfIterationsSpinner.getValue();
+					clusterer.setOptions(algorithmParameters);
+					clusterer.train();
+					clusterer.evaluate();
 					state = "clustering_step4";
 					break;
 				case "classification_step1":

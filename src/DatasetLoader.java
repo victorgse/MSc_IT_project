@@ -60,7 +60,7 @@ public class DatasetLoader {
 	
 	public void loadDataIntoDatabase() throws SQLException {
 		// establish connection with database
-		Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB;create=true");
+		Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
 		Statement stmt = con.createStatement();
 		
 		// load schema

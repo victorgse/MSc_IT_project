@@ -15,6 +15,7 @@ public class View extends JFrame {
 	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton;
 	JRadioButton splitDatasetAutomaticallyButton, splitDatasetManuallyButton;
 	JRadioButton autoModelSelectionButton, manualModelSelectionButton;
+	JSpinner numberOfClustersSpinner, numberOfIterationsSpinner;
 	
 	// constructor
 	public View(Controller controller) {
@@ -183,7 +184,7 @@ public class View extends JFrame {
 				            2, //min
 				            10, //max
 				            1);//step
-				JSpinner numberOfClustersSpinner = new JSpinner(numberOfClustersSpinnerModel);
+				numberOfClustersSpinner = new JSpinner(numberOfClustersSpinnerModel);
 				middlePanel.add(numberOfClustersSpinner, c);
 				c.gridx = 0;
 				c.gridy = 1;
@@ -196,7 +197,7 @@ public class View extends JFrame {
 				            50, //min
 				            150, //max
 				            50);//step
-				JSpinner numberOfIterationsSpinner = new JSpinner(numberOfIterationsSpinnerModel);
+				numberOfIterationsSpinner = new JSpinner(numberOfIterationsSpinnerModel);
 				middlePanel.add(numberOfIterationsSpinner, c);
 				break;
 			case "classification_step1":
