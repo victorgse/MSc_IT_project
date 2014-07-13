@@ -2,12 +2,14 @@ package algorithms;
 
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.SimpleKMeans;
+import weka.experiment.InstanceQuery;
 
 public class KMeansClusterer extends ClusteringAlgorithm {
 	
 	// constructor
 	public KMeansClusterer() {
 		try {
+			instanceQuery = new InstanceQuery();
 			clusterer = new SimpleKMeans();
 			eval = new ClusterEvaluation();
 		} catch (Exception e) {
