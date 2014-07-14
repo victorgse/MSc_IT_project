@@ -1,4 +1,10 @@
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.*;
 //import javax.swing.border.*;
@@ -15,7 +21,11 @@ public class View extends JFrame {
 	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton;
 	JRadioButton splitDatasetAutomaticallyButton, splitDatasetManuallyButton;
 	JRadioButton autoModelSelectionButton, manualModelSelectionButton;
+	JComboBox<String> itemsToClusterCombo;
+	ArrayList<String> tableSchema;
+	JCheckBox[] features;
 	JSpinner numberOfClustersSpinner, numberOfIterationsSpinner;
+	JTextArea clusteringOutput;
 	
 	// constructor
 	public View(Controller controller) {
@@ -153,20 +163,36 @@ public class View extends JFrame {
 				middlePanel.add(anomalyDetectionButton, c);
 				break;
 			case "clustering_step1":
-				JComboBox itemsToClusterCombo = new JComboBox();
-				itemsToClusterCombo.addItem("Option 1");
-				itemsToClusterCombo.addItem("Option 2");
+				itemsToClusterCombo = new JComboBox<String>();
+				itemsToClusterCombo.addItem("Player performances in individual matches");
+				itemsToClusterCombo.addItem("Player performances summed up over the season");
+				itemsToClusterCombo.addItem("Team performances summed up over the season");
 				middlePanel.add(itemsToClusterCombo);
 				break;
 			case "clustering_step2":
 			case "classification_step2":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
-				JCheckBox[] features = new JCheckBox[50];
+				tableSchema = new ArrayList<String>();
+				try {
+					Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
+					Statement stmt = con.createStatement();
+					ResultSet RS = stmt.executeQuery("select columnname "
+							+ "from sys.systables t, sys.syscolumns "
+							+ "where TABLEID = REFERENCEID "
+							+ "and tablename = 'MCFC_ANALYTICS_FULL_DATASET' ");
+					while (RS.next()) {
+						tableSchema.add(RS.getString("columnname"));
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println("Something went wrong when reading table schema.");
+				}
+				features = new JCheckBox[tableSchema.size()];
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
-				for (int i = 0; i < 50; i++) {
-					features[i] = new JCheckBox("Feature " + i);
+				for (int i = 0; i < tableSchema.size(); i++) {
+					features[i] = new JCheckBox(tableSchema.get(i));
 					featuresPanel.add(features[i]);
 				}
 				featuresPane.getViewport().add(featuresPanel);
@@ -199,6 +225,12 @@ public class View extends JFrame {
 				            50);//step
 				numberOfIterationsSpinner = new JSpinner(numberOfIterationsSpinnerModel);
 				middlePanel.add(numberOfIterationsSpinner, c);
+				clusteringOutput = new JTextArea();
+				break;
+			case "clustering_step4":
+				JScrollPane resultsPane = new JScrollPane(clusteringOutput);
+				resultsPane.setPreferredSize(new Dimension(600, 200));
+				middlePanel.add(resultsPane);
 				break;
 			case "classification_step1":
 				splitDatasetAutomaticallyButton = new JRadioButton("60% training / "

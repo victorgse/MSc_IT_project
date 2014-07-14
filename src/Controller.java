@@ -1,10 +1,10 @@
 import java.awt.event.*;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import weka.core.Instances;
 import algorithms.KMeansClusterer;
 
 public class Controller implements ActionListener {
@@ -14,8 +14,9 @@ public class Controller implements ActionListener {
 	private String state;
 	private String selectedDataset;
 	private KMeansClusterer clusterer;
-	private String query;
+	private int selectedMcfcClusteringOption;
 	
+	// constructor
 	public Controller() {
 		state = "startScreen_1";
 	}
@@ -119,13 +120,31 @@ public class Controller implements ActionListener {
 					break;
 				case "clustering_step1":
 					state = "clustering_step2";
+					selectedMcfcClusteringOption = viewObject.itemsToClusterCombo.getSelectedIndex();
 					break;
 				case "clustering_step2":
-					query = "select sum(goals), sum(assists)"
-							+ " from " + selectedDataset
-							+ " group by team";
+					ArrayList clusteringFeatures = new ArrayList();
+					String query = "select ";
+					for (int i = 0; i < viewObject.features.length; i++) {
+						if (viewObject.features[i].isSelected()) {
+							clusteringFeatures.add(viewObject.tableSchema.get(i));
+							if (selectedMcfcClusteringOption == 0) {
+								query += viewObject.tableSchema.get(i) + ",";
+							} else {
+								query += "sum(" + viewObject.tableSchema.get(i) + "),";
+							}
+						}
+					}
+					query = query.substring(0, query.length()-1);
+					query += " from " + selectedDataset;
+					if (selectedMcfcClusteringOption == 1) {
+						query += " group by Player_ID";
+					} else if (selectedMcfcClusteringOption == 2) {
+						query += " group by Team";
+					}
 					clusterer.setInstanceQuery(query);
 					clusterer.fetchInstances();
+					clusterer.renameAttributesOfInstances(clusteringFeatures);
 					state = "clustering_step3";
 					break;
 				case "clustering_step3":
@@ -135,7 +154,7 @@ public class Controller implements ActionListener {
 							+ (int) viewObject.numberOfIterationsSpinner.getValue();
 					clusterer.setOptions(algorithmParameters);
 					clusterer.train();
-					clusterer.evaluate();
+					viewObject.clusteringOutput.setText(clusterer.evaluate());
 					state = "clustering_step4";
 					break;
 				case "classification_step1":

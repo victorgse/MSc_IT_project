@@ -1,5 +1,7 @@
 package algorithms;
 
+import java.util.ArrayList;
+
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 
@@ -23,9 +25,15 @@ public abstract class Algorithm {
 		}
 	}
 	
+	public void renameAttributesOfInstances(ArrayList<String> attributesOfInstances) {
+		for (int i = 0; i < attributesOfInstances.size(); i++) {
+			data.renameAttribute(i, attributesOfInstances.get(i));
+		}
+	}
+	
 	public abstract void setOptions(String algorithmParameters);
 	
 	public abstract void train();
 	
-	public abstract void evaluate();
+	public abstract String evaluate();
 }
