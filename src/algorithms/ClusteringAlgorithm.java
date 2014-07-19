@@ -5,10 +5,16 @@ import weka.clusterers.Clusterer;
 
 public abstract class ClusteringAlgorithm extends Algorithm {
 	
-	// instance variables
+	/**
+	 * instance variables
+	 */
 	Clusterer clusterer;
 	ClusterEvaluation eval;
 	
+	/* (non-Javadoc)
+	 * @see algorithms.Algorithm#train()
+	 * Trains a clusterer.
+	 */
 	public void train() {
 		try {
 			clusterer.buildClusterer(data);
@@ -18,6 +24,10 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see algorithms.Algorithm#evaluate()
+	 * Evaluates a clusterer.
+	 */
 	public String evaluate() {
 		eval.setClusterer(clusterer);
 		try {

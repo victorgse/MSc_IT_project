@@ -6,7 +6,9 @@ import weka.experiment.InstanceQuery;
 
 public class KMeansClusterer extends ClusteringAlgorithm {
 	
-	// constructor
+	/**
+	 * Constructor
+	 */
 	public KMeansClusterer() {
 		try {
 			instanceQuery = new InstanceQuery();
@@ -17,6 +19,10 @@ public class KMeansClusterer extends ClusteringAlgorithm {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see algorithms.Algorithm#setOptions(java.lang.String)
+	 * Sets the options of the K-Means clusterer.
+	 */
 	public void setOptions(String algorithmParameters) {
 		try {
 			options = weka.core.Utils.splitOptions(algorithmParameters);
