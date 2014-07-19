@@ -3,6 +3,9 @@ package algorithms;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 
+/**
+ * An abstract superclass which contains members that are common to all clustering algorithms.
+ */
 public abstract class ClusteringAlgorithm extends Algorithm {
 	
 	/**

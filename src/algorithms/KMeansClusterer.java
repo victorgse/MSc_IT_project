@@ -4,6 +4,10 @@ import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.SimpleKMeans;
 import weka.experiment.InstanceQuery;
 
+/**
+ * This class provides an implementation of the K-Means Clustering
+ * algorithm through the use of the Weka Machine Learning library.
+ */
 public class KMeansClusterer extends ClusteringAlgorithm {
 	
 	/**

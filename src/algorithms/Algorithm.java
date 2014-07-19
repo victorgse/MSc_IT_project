@@ -48,19 +48,16 @@ public abstract class Algorithm {
 		}
 	}
 	
-	
 	/**
 	 * Abstract method for setting the options of an algorithm.
 	 * @param algorithmParameters
 	 */
 	public abstract void setOptions(String algorithmParameters);
 	
-	
 	/**
-	 * Abstract method training an algorithm.
+	 * Abstract method for training an algorithm.
 	 */
 	public abstract void train();
-	
 	
 	/**
 	 * Abstract method for evaluating an algorithm
