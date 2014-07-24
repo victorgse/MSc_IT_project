@@ -14,7 +14,7 @@ public abstract class Algorithm {
 	 * instance variables
 	 */
 	protected InstanceQuery instanceQuery; //SQL query for fetching instances
-	protected Instances data; //dataset instances
+	protected Instances trainingSet; //dataset instances
 	protected String[] options; //algorithm options
 	
 	/**
@@ -31,7 +31,7 @@ public abstract class Algorithm {
 	 */
 	public void fetchInstances() {
 		try {
-			data = instanceQuery.retrieveInstances();
+			trainingSet = instanceQuery.retrieveInstances();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Something went wrong with retrieving instances.");
@@ -44,7 +44,7 @@ public abstract class Algorithm {
 	 */
 	public void renameAttributesOfInstances(ArrayList<String> namesOfAttributesOfInstances) {
 		for (int i = 0; i < namesOfAttributesOfInstances.size(); i++) {
-			data.renameAttribute(i, namesOfAttributesOfInstances.get(i));
+			trainingSet.renameAttribute(i, namesOfAttributesOfInstances.get(i));
 		}
 	}
 	
@@ -55,7 +55,7 @@ public abstract class Algorithm {
 	public abstract void setOptions(String algorithmParameters);
 	
 	/**
-	 * Abstract method for training an algorithm.
+	 * Abstract method training an algorithm.
 	 */
 	public abstract void train();
 	

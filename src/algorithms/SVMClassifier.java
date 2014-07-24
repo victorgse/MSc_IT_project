@@ -18,10 +18,7 @@ public class SVMClassifier extends ClassificationAlgorithm {
 		try {
 			instanceQuery = new InstanceQuery();
 			classifier = new LibSVM();
-			instanceQuery.setQuery("select team, goals, assists from MCFC_Analytics_Full_Dataset");
-			fetchInstances();
-			data.setClassIndex(0);
-			eval = new Evaluation(data);
+			//eval = new Evaluation(trainingSet);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

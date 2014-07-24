@@ -20,7 +20,7 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 	 */
 	public void train() {
 		try {
-			clusterer.buildClusterer(data);
+			clusterer.buildClusterer(trainingSet);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Something went wrong with training clusterer.");
@@ -34,7 +34,7 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 	public String evaluate() {
 		eval.setClusterer(clusterer);
 		try {
-			eval.evaluateClusterer(data);
+			eval.evaluateClusterer(trainingSet);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Something went wrong with evaluating clusterer.");
