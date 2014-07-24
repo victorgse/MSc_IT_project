@@ -1,6 +1,6 @@
 import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,7 +19,7 @@ public class Controller implements ActionListener {
 	private KMeansClusterer clusterer; //the clustering object
 	private int selectedMcfcClusteringOption; //tracks the types of MCFC data items to be clustered
 	private SVMClassifier classifier; //the classification object
-	private ArrayList<String> selectedFeatures; //a list of the features selected by user
+	private TreeSet<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
 	
 	/**
@@ -54,6 +54,13 @@ public class Controller implements ActionListener {
 	}
 
 	/**
+	 * @return the selectedFeatures
+	 */
+	public TreeSet<String> getSelectedFeatures() {
+		return selectedFeatures;
+	}
+
+	/**
 	 * A helper method for fetching an .xls file selected by user.
 	 * @return
 	 */
@@ -76,7 +83,7 @@ public class Controller implements ActionListener {
 	public void collectSelectedFeatures() {
 		for (int i = 0; i < viewObject.features.length; i++) {
 			if (viewObject.features[i].isSelected()) {
-				selectedFeatures.add(viewObject.tableSchema.get(i));
+				selectedFeatures.add(viewObject.features[i].getText());
 			}
 		}
 	}
@@ -162,15 +169,15 @@ public class Controller implements ActionListener {
 				selectedMcfcClusteringOption = viewObject.itemsToClusterCombo.getSelectedIndex();
 				break;
 			case "clustering_step2":
-				selectedFeatures = new ArrayList<String>();
+				selectedFeatures = new TreeSet<String>();
 				collectSelectedFeatures();
 				query = "select ";
 				if (selectedDataset.equals("MCFC_Analytics_Full_Dataset")) {
-					for (int i = 0; i < selectedFeatures.size(); i++) {
+					for (String feature : selectedFeatures) {
 						if (selectedMcfcClusteringOption == 0) {
-							query += selectedFeatures.get(i) + ",";
+							query += feature + ",";
 						} else {
-							query += "sum(" + selectedFeatures.get(i) + "),";
+							query += "sum(" + feature + "),";
 						}
 					}
 				} else {
@@ -185,7 +192,7 @@ public class Controller implements ActionListener {
 				}
 				clusterer.setInstanceQuery(query);
 				clusterer.fetchInstances();
-				//clusterer.renameAttributesOfInstances(selectedFeatures);
+				clusterer.renameAttributesOfInstances(selectedFeatures);
 				state = "clustering_step3";
 				break;
 			case "clustering_step3":
@@ -199,21 +206,21 @@ public class Controller implements ActionListener {
 				state = "clustering_step4";
 				break;
 			case "classification_step1":
-				selectedFeatures = new ArrayList<String>();
+				selectedFeatures = new TreeSet<String>();
 				collectSelectedFeatures();
 				query = "select ";
-				for (int i = 0; i < selectedFeatures.size(); i++) {
-					query += selectedFeatures.get(i) + ",";
+				for (String feature : selectedFeatures) {
+					query += feature + ",";
 				}
 				state = "classification_step2";
 				break;
 			case "classification_step2":
-				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
-				query += selectedFeatures.get(selectedFeatures.size() - 1);
+				//selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
+				query += viewObject.targetLabelCombo.getSelectedItem().toString();
 				query += " from " + selectedDataset;
 				classifier.setInstanceQuery(query);
 				classifier.fetchInstances();
-				classifier.setTargetLabel(selectedFeatures.size() - 1);
+				classifier.setTargetLabel(selectedFeatures.size());
 				state = "classification_step3";
 				break;
 			case "classification_step3":

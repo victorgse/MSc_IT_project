@@ -1,6 +1,6 @@
 package algorithms;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
@@ -42,9 +42,11 @@ public abstract class Algorithm {
 	 * Method for renaming the attributes of instances.
 	 * @param attributesOfInstances
 	 */
-	public void renameAttributesOfInstances(ArrayList<String> namesOfAttributesOfInstances) {
-		for (int i = 0; i < namesOfAttributesOfInstances.size(); i++) {
-			trainingSet.renameAttribute(i, namesOfAttributesOfInstances.get(i));
+	public void renameAttributesOfInstances(TreeSet<String> namesOfAttributesOfInstances) {
+		int i = 0;
+		for (String name : namesOfAttributesOfInstances) {
+			trainingSet.renameAttribute(i, name);
+			i++;
 		}
 	}
 	

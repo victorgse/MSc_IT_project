@@ -4,7 +4,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import javax.swing.*;
 import javax.swing.JSpinner.DefaultEditor;
@@ -29,7 +29,7 @@ public class View extends JFrame {
 	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton; //the radio buttons for selecting a task
 	JRadioButton crossValidationButton, percentageSplitButton; //the radio buttons for selecting a testing option for clusterer
 	JComboBox<String> itemsToClusterCombo; //combo box for selecting the types of data items to analyse
-	ArrayList<String> tableSchema; //list storing the fields of a table
+	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
 	JCheckBox[] features; //check boxes allowing the user to select features
 	JSpinner numberOfClustersSpinner, maxNumberOfIterationsSpinner; //spinners for K-Means' options
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
@@ -210,10 +210,18 @@ public class View extends JFrame {
 				features = new JCheckBox[tableSchema.size()];
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
+				int i = 0;
+				for (String field : tableSchema) {
+					features[i] = new JCheckBox(field);
+					featuresPanel.add(features[i]);
+					i++;
+				}
+				/*
 				for (int i = 0; i < tableSchema.size(); i++) {
 					features[i] = new JCheckBox(tableSchema.get(i));
 					featuresPanel.add(features[i]);
 				}
+				*/
 				featuresPane.getViewport().add(featuresPanel);
 				middlePanel.add(featuresPane);
 				break;
@@ -255,9 +263,16 @@ public class View extends JFrame {
 			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
 				tableSchema = getFieldsOfDataset();
+				TreeSet<String> targetLabelOptions = tableSchema;
+				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
+				for (String option : targetLabelOptions) {
+					targetLabelCombo.addItem(option);
+				}
+				/*
 				for (int i = 0; i < tableSchema.size(); i++) {
 					targetLabelCombo.addItem(tableSchema.get(i));
 				}
+				*/
 				middlePanel.add(targetLabelCombo);
 				break;
 			case "classification_step3":
@@ -385,8 +400,8 @@ public class View extends JFrame {
 	 * A helper method for fetching a table's schema.
 	 * @return
 	 */
-	private ArrayList<String> getFieldsOfDataset() {
-		ArrayList<String> tableFields = new ArrayList<String>();
+	private TreeSet<String> getFieldsOfDataset() {
+		TreeSet<String> tableFields = new TreeSet<String>();
 		try {
 			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
 			Statement stmt = con.createStatement();
