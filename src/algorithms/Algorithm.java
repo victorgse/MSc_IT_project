@@ -37,7 +37,7 @@ public abstract class Algorithm {
 			System.out.println("Something went wrong with retrieving instances.");
 		}
 	}
-	
+
 	/**
 	 * Method for renaming the attributes of instances.
 	 * @param attributesOfInstances
@@ -48,6 +48,13 @@ public abstract class Algorithm {
 			trainingSet.renameAttribute(i, name);
 			i++;
 		}
+	}
+	
+	/**
+	 * @return the trainingSet
+	 */
+	public Instances getTrainingSet() {
+		return trainingSet;
 	}
 	
 	/**
@@ -62,9 +69,10 @@ public abstract class Algorithm {
 	public abstract void train();
 	
 	/**
-	 * Abstract method for evaluating an algorithm
-	 * @return String containing essential information of an evaluation of algorithm
+	 * Abstract method for evaluating an algorithm.
+	 * @return Object containing essential information of an evaluation of algorithm
+	 * (The actual type of evaluation Object returned will vary depending on the type of algorithm)
 	 */
-	public abstract String evaluate();
+	public abstract Object evaluate();
 	
 }

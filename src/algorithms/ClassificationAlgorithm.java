@@ -69,7 +69,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 * Evaluates a classifier.
 	 */
 	@Override
-	public String evaluate() {
+	public Evaluation evaluate() {
 		try {
 			eval = new Evaluation(trainingSet);
 		} catch (Exception e1) {
@@ -88,7 +88,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			e.printStackTrace();
 			System.out.println("Something went wrong with evaluating classifier.");
 		}
-		return eval.toSummaryString();
+		return eval;
 	}
 
 }

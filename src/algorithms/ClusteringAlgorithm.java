@@ -31,7 +31,7 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 	 * @see algorithms.Algorithm#evaluate()
 	 * Evaluates a clusterer.
 	 */
-	public String evaluate() {
+	public ClusterEvaluation evaluate() {
 		eval.setClusterer(clusterer);
 		try {
 			eval.evaluateClusterer(trainingSet);
@@ -39,12 +39,12 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 			e.printStackTrace();
 			System.out.println("Something went wrong with evaluating clusterer.");
 		}
-		return eval.clusterResultsToString();
 		/*
 		for (double d : eval.getClusterAssignments()) {
 			System.out.println("" + d);
 		}
 		*/
+		return eval;
 	}
 
 }

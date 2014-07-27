@@ -5,6 +5,9 @@ import java.util.TreeSet;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import weka.classifiers.Evaluation;
+import weka.clusterers.ClusterEvaluation;
+import weka.core.Instances;
 import algorithms.KMeansClusterer;
 import algorithms.SVMClassifier;
 
@@ -202,7 +205,24 @@ public class Controller implements ActionListener {
 						+ (int) viewObject.maxNumberOfIterationsSpinner.getValue();
 				clusterer.setOptions(algorithmParameters);
 				clusterer.train();
-				viewObject.algorithmOutputTextArea.setText(clusterer.evaluate());
+				
+				ClusterEvaluation clustererEvaluation = clusterer.evaluate();
+				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
+				
+				Instances instances = clusterer.getTrainingSet();
+				String[] axesLabels = new String[3];
+				for (int m = 0; m < 3; m++) {
+					axesLabels[m] = instances.attribute(m).name();
+				}
+				double[][] coordinates = new double[instances.numInstances()][instances.numAttributes()];
+				for (int i = 0; i < instances.numInstances(); i++) {
+					for (int j = 0; j < instances.numAttributes(); j++) {
+						coordinates[i][j] = instances.get(i).value(j);
+					}
+				}
+				double[] clusterAssignments = clustererEvaluation.getClusterAssignments();
+				new PickablePointsScatter3D(axesLabels, coordinates, clusterAssignments);
+				
 				state = "clustering_step4";
 				break;
 			case "classification_step1":
@@ -229,7 +249,8 @@ public class Controller implements ActionListener {
 				break;
 			case "classification_step4":
 				classifier.setEvaluationOption("CV");
-				viewObject.algorithmOutputTextArea.setText(classifier.evaluate());
+				Evaluation classifierEvaluation = classifier.evaluate();
+				viewObject.algorithmOutputTextArea.setText(classifierEvaluation.toSummaryString());
 				state = "classification_step5";
 				break;
 		}
