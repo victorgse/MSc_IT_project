@@ -16,10 +16,13 @@ public class Controller implements ActionListener {
 	/**
 	 * instance variables
 	 */
-	private View viewObject; //a reference to the GUI object
+	private View viewObject; //the main view object
+	private VisualisationView visualisationViewObject; //the visualisation view object
+	private PickablePointsScatter3D plot;
 	private String state; //keeps track of what state the program is in
 	private String selectedDataset; //the name of the dataset that has been selected by user
 	private KMeansClusterer clusterer; //the clustering object
+	private ClusterEvaluation clustererEvaluation; //the clustering evaluation object
 	private int selectedMcfcClusteringOption; //tracks the types of MCFC data items to be clustered
 	private SVMClassifier classifier; //the classification object
 	private TreeSet<String> selectedFeatures; //a list of the features selected by user
@@ -94,7 +97,7 @@ public class Controller implements ActionListener {
 	/**
 	 * A helper method for processing clicks of the "Start Over" button.
 	 */
-	public void processStartOverButtonClick() {
+	private void processStartOverButtonClick() {
 		state = "startScreen_1";
 		viewObject.updateView(state);
 	}
@@ -102,7 +105,7 @@ public class Controller implements ActionListener {
 	/**
 	 * A helper method for processing clicks of the "Back" button.
 	 */
-	public void processBackButtonClick() {
+	private void processBackButtonClick() {
 		switch (state) {
 			case "startScreen_2":
 				state = "startScreen_1";
@@ -140,7 +143,7 @@ public class Controller implements ActionListener {
 	/**
 	 * A helper method for processing clicks of the "Next" button.
 	 */
-	public void processNextButtonClick() {
+	private void processNextButtonClick() {
 		switch (state) {
 			case "startScreen_1":
 				if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
@@ -206,22 +209,10 @@ public class Controller implements ActionListener {
 				clusterer.setOptions(algorithmParameters);
 				clusterer.train();
 				
-				ClusterEvaluation clustererEvaluation = clusterer.evaluate();
+				clustererEvaluation = clusterer.evaluate();
 				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
 				
-				Instances instances = clusterer.getTrainingSet();
-				String[] axesLabels = new String[3];
-				for (int m = 0; m < 3; m++) {
-					axesLabels[m] = instances.attribute(m).name();
-				}
-				double[][] coordinates = new double[instances.numInstances()][instances.numAttributes()];
-				for (int i = 0; i < instances.numInstances(); i++) {
-					for (int j = 0; j < instances.numAttributes(); j++) {
-						coordinates[i][j] = instances.get(i).value(j);
-					}
-				}
-				double[] clusterAssignments = clustererEvaluation.getClusterAssignments();
-				new PickablePointsScatter3D(axesLabels, coordinates, clusterAssignments);
+				processActualisePlotButtonClick();
 				
 				state = "clustering_step4";
 				break;
@@ -257,6 +248,42 @@ public class Controller implements ActionListener {
 		viewObject.updateView(state);
 	}
 	
+	private void processActualisePlotButtonClick() {
+		Instances instances = clusterer.getTrainingSet();
+		String[] axeLabels;
+		double[][] coordinates;
+		double[] classAssignments = clustererEvaluation.getClusterAssignments();
+		//int numClasses = 
+		if (visualisationViewObject == null) {
+			axeLabels = new String[3];
+			for (int m = 0; m < 3; m++) {
+				axeLabels[m] = instances.attribute(m).name();
+			}
+			coordinates = new double[instances.numInstances()][3];
+			for (int i = 0; i < instances.numInstances(); i++) {
+				for (int j = 0; j < 3; j++) {
+					coordinates[i][j] = instances.get(i).value(j);
+				}
+			}
+			plot = new PickablePointsScatter3D(axeLabels, coordinates, classAssignments);
+			visualisationViewObject = new VisualisationView(this, instances, plot, clustererEvaluation.getNumClusters());
+			visualisationViewObject.setVisible(true);
+		} else {
+			axeLabels = new String[3];
+			axeLabels[0] = (String) visualisationViewObject.xAxisCombo.getSelectedItem();
+			axeLabels[1] = (String) visualisationViewObject.yAxisCombo.getSelectedItem();
+			axeLabels[2] = (String) visualisationViewObject.zAxisCombo.getSelectedItem();
+			plot.renameAxes(axeLabels);
+			coordinates = new double[instances.numInstances()][3];
+			for (int i = 0; i < instances.numInstances(); i++) {
+				coordinates[i][0] = instances.get(i).value(visualisationViewObject.xAxisCombo.getSelectedIndex());
+				coordinates[i][1] = instances.get(i).value(visualisationViewObject.yAxisCombo.getSelectedIndex());
+				coordinates[i][2] = instances.get(i).value(visualisationViewObject.zAxisCombo.getSelectedIndex());
+			}
+			plot.updatePoints(coordinates);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -267,6 +294,8 @@ public class Controller implements ActionListener {
 			processBackButtonClick();
 		} else if (ae.getSource() == viewObject.nextButton) {
 			processNextButtonClick();
+		} else if (ae.getSource() == visualisationViewObject.actualisePlotButton) {
+			processActualisePlotButtonClick();
 		}
 	}
 

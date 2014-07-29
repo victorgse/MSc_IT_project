@@ -353,7 +353,6 @@ public class View extends JFrame {
 					bottomPanel = new JPanel();
 					bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 					bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-					//bottomPanel.setBorder(new TitledBorder(new EtchedBorder(), "Bottom"));
 					
 					startOverButton = new JButton("Start Over");
 					startOverButton.addActionListener(controllerObject);
