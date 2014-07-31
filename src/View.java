@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -6,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.border.*;
@@ -31,7 +34,7 @@ public class View extends JFrame {
 	JComboBox<String> itemsToClusterCombo; //combo box for selecting the types of data items to analyse
 	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
 	JCheckBox[] features; //check boxes allowing the user to select features
-	JSpinner numberOfClustersSpinner, maxNumberOfIterationsSpinner; //spinners for K-Means' options
+	JSpinner numberOfClustersSpinner, numberOfKMeansRunsSpinner; //spinners for K-Means' options
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
 	JComboBox<String> targetLabelCombo;
 	
@@ -88,20 +91,34 @@ public class View extends JFrame {
 		switch (state) {
 			case "startScreen_1":
 				if (!topInitiated) {
-					topPanel = new JPanel();
+					try {
+						topPanel = new JPanel() {
+							Image img = ImageIO.read(new File("MWC.png"));
+									//Toolkit.getDefaultToolkit().getImage("/MSc_IT_project/cool-background.jpg");
+							protected void paintComponent(Graphics g) {
+								super.paintComponent(g);
+								g.drawImage(img, 0, 0, null);
+							}
+						};
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					//topPanel = new JPanel();
 					topPanel.setLayout(new GridBagLayout());
-					topPanel.setPreferredSize(new Dimension(1140, 290));
+					topPanel.setPreferredSize(new Dimension(1140, 300));
 					topPanel.setBackground(Color.YELLOW);
 					
 					infoLabel = new JLabel();
 					infoLabel.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 48));
+					infoLabel.setForeground(Color.WHITE);
 
 					topPanel.add(infoLabel);
 					
 					this.add(topPanel, BorderLayout.NORTH);
 					topInitiated = true;
 				}
-				infoLabel.setText("Which dataset do you wish to use?");
+				infoLabel.setText("Which dataset do you wish to analyse?");
 				break;
 			case "startScreen_2":
 				infoLabel.setText("What task do you wish to perform?");
@@ -206,22 +223,17 @@ public class View extends JFrame {
 			case "classification_step1":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
-				tableSchema = getFieldsOfDataset();
-				features = new JCheckBox[tableSchema.size()];
+				tableSchema = getFieldsOfDataset(false);
+				TreeSet<String> numericFields = getFieldsOfDataset(true);
+				features = new JCheckBox[numericFields.size()];
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
 				int i = 0;
-				for (String field : tableSchema) {
+				for (String field : numericFields) {
 					features[i] = new JCheckBox(field);
 					featuresPanel.add(features[i]);
 					i++;
 				}
-				/*
-				for (int i = 0; i < tableSchema.size(); i++) {
-					features[i] = new JCheckBox(tableSchema.get(i));
-					featuresPanel.add(features[i]);
-				}
-				*/
 				featuresPane.getViewport().add(featuresPanel);
 				middlePanel.add(featuresPane);
 				break;
@@ -229,7 +241,7 @@ public class View extends JFrame {
 				c.fill = GridBagConstraints.HORIZONTAL; //align
 				c.gridx = 0; //first column
 				c.gridy = 0; //first row
-				JLabel numberOfClustersLabel = new JLabel("Number of Clusters (K):");
+				JLabel numberOfClustersLabel = new JLabel("How many groups of similar examples within the data (clusters) should the K-Means algorithm identify?");
 				middlePanel.add(numberOfClustersLabel, c);
 				c.insets = new Insets(0,10,0,0);  //left padding
 				c.gridx = 1; //second column
@@ -237,42 +249,36 @@ public class View extends JFrame {
 				SpinnerModel numberOfClustersSpinnerModel =
 				         new SpinnerNumberModel(3, //initial value
 				            2, //min
-				            10, //max
-				            1);//step
+				            5, //max
+				            1); //step
 				numberOfClustersSpinner = new JSpinner(numberOfClustersSpinnerModel);
 				((DefaultEditor) numberOfClustersSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(numberOfClustersSpinner, c);
 				c.insets = new Insets(10,0,0,0);  //top padding
 				c.gridx = 0; //first column
 				c.gridy = 1; //second row
-				JLabel maxNumberOfIterationsLabel = new JLabel("Maximum Number of K-Means Iterations:");
-				middlePanel.add(maxNumberOfIterationsLabel, c);
+				JLabel numberOfKMeansRunsLabel = new JLabel("How many times should the K-Means algorithm be ran?");
+				middlePanel.add(numberOfKMeansRunsLabel, c);
 				c.insets = new Insets(10,10,0,0);  //top and left padding
 				c.gridx = 1; //second column
 				c.gridy = 1; //second row
-				SpinnerModel maxNumberOfIterationsSpinnerModel =
+				SpinnerModel numberOfKMeansRunsSpinnerModel =
 				         new SpinnerNumberModel(50, //initial value
-				            10, //min
-				            50, //max
-				            10);//step
-				maxNumberOfIterationsSpinner = new JSpinner(maxNumberOfIterationsSpinnerModel);
-				((DefaultEditor) maxNumberOfIterationsSpinner.getEditor()).getTextField().setEditable(false);
-				middlePanel.add(maxNumberOfIterationsSpinner, c);
+				            1, //min
+				            100, //max
+				            1); //step
+				numberOfKMeansRunsSpinner = new JSpinner(numberOfKMeansRunsSpinnerModel);
+				((DefaultEditor) numberOfKMeansRunsSpinner.getEditor()).getTextField().setEditable(false);
+				middlePanel.add(numberOfKMeansRunsSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
 			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
-				tableSchema = getFieldsOfDataset();
 				TreeSet<String> targetLabelOptions = tableSchema;
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
 				for (String option : targetLabelOptions) {
 					targetLabelCombo.addItem(option);
 				}
-				/*
-				for (int i = 0; i < tableSchema.size(); i++) {
-					targetLabelCombo.addItem(tableSchema.get(i));
-				}
-				*/
 				middlePanel.add(targetLabelCombo);
 				break;
 			case "classification_step3":
@@ -296,7 +302,7 @@ public class View extends JFrame {
 				         new SpinnerNumberModel(5, //initial value
 				            1, //min
 				            100, //max
-				            1);//step
+				            1); //step
 				JSpinner regularisationSpinner = new JSpinner(regularisationSpinnerModel);
 				middlePanel.add(regularisationSpinner, c);
 				c.gridx = 0;
@@ -309,7 +315,7 @@ public class View extends JFrame {
 				         new SpinnerNumberModel(1, //initial value
 				            0.5, //min
 				            10, //max
-				            0.05);//step
+				            0.05); //step
 				JSpinner gammaSpinner = new JSpinner(gammaSpinnerModel);
 				middlePanel.add(gammaSpinner, c);
 				break;
@@ -399,15 +405,19 @@ public class View extends JFrame {
 	 * A helper method for fetching a table's schema.
 	 * @return
 	 */
-	private TreeSet<String> getFieldsOfDataset() {
+	private TreeSet<String> getFieldsOfDataset(boolean numericOnly) {
 		TreeSet<String> tableFields = new TreeSet<String>();
 		try {
 			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
 			Statement stmt = con.createStatement();
-			ResultSet RS = stmt.executeQuery("select columnname "
+			String query = "select columnname "
 					+ "from sys.systables t, sys.syscolumns "
 					+ "where TABLEID = REFERENCEID "
-					+ "and tablename = 'MCFC_ANALYTICS_FULL_DATASET' ");
+					+ "and tablename = 'MCFC_ANALYTICS_FULL_DATASET'";
+			if (numericOnly) {
+				query += " and CAST(COLUMNDATATYPE AS VARCHAR(128)) = 'NUMERIC(10,2)'";
+			}
+			ResultSet RS = stmt.executeQuery(query);
 			while (RS.next()) {
 				tableFields.add(RS.getString("columnname"));
 			}

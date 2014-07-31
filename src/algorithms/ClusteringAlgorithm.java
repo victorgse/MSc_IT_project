@@ -39,11 +39,6 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 			e.printStackTrace();
 			System.out.println("Something went wrong with evaluating clusterer.");
 		}
-		/*
-		for (double d : eval.getClusterAssignments()) {
-			System.out.println("" + d);
-		}
-		*/
 		return eval;
 	}
 

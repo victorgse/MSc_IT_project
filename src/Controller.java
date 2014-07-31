@@ -203,13 +203,12 @@ public class Controller implements ActionListener {
 				break;
 			case "clustering_step3":
 				String algorithmParameters = "-N " 
-						+ (int) viewObject.numberOfClustersSpinner.getValue()
-						+ " -I " 
-						+ (int) viewObject.maxNumberOfIterationsSpinner.getValue();
+						+ (int) viewObject.numberOfClustersSpinner.getValue();
 				clusterer.setOptions(algorithmParameters);
-				clusterer.train();
 				
+				clusterer.train((int) viewObject.numberOfKMeansRunsSpinner.getValue());
 				clustererEvaluation = clusterer.evaluate();
+				
 				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
 				
 				processActualisePlotButtonClick();
