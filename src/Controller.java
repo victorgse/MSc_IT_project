@@ -70,14 +70,15 @@ public class Controller implements ActionListener {
 	 * A helper method for fetching an .xls file selected by user.
 	 * @return
 	 */
-	public File getFile() {
-		JFileChooser chooser = new JFileChooser();
+	private File getFile() {
+		JFileChooser fileChooser = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "Excel .xls files", "xls");
-	    chooser.setFileFilter(filter);
-	    int returnVal = chooser.showOpenDialog(viewObject);
+	    fileChooser.setFileFilter(filter);
+	    fileChooser.setAcceptAllFileFilterUsed(false);
+	    int returnVal = fileChooser.showOpenDialog(viewObject);
 	    if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    	return chooser.getSelectedFile();
+	    	return fileChooser.getSelectedFile();
 	    } else {
 	    	return null;
 	    }
@@ -86,7 +87,7 @@ public class Controller implements ActionListener {
 	/**
 	 * A helper method that adds the features selected by user to the selectedFeatures list.
 	 */
-	public void collectSelectedFeatures() {
+	private void collectSelectedFeatures() {
 		for (int i = 0; i < viewObject.features.length; i++) {
 			if (viewObject.features[i].isSelected()) {
 				selectedFeatures.add(viewObject.features[i].getText());
@@ -98,6 +99,7 @@ public class Controller implements ActionListener {
 	 * A helper method for processing clicks of the "Start Over" button.
 	 */
 	private void processStartOverButtonClick() {
+		visualisationViewObject = null;
 		state = "startScreen_1";
 		viewObject.updateView(state);
 	}
@@ -122,6 +124,7 @@ public class Controller implements ActionListener {
 				state = "clustering_step2";
 				break;
 			case "clustering_step4":
+				visualisationViewObject = null;
 				state = "clustering_step3";
 				break;
 			case "classification_step2":
@@ -148,16 +151,26 @@ public class Controller implements ActionListener {
 			case "startScreen_1":
 				if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
 					selectedDataset = "MCFC_Analytics_Full_Dataset";
+					state = "startScreen_2";
 				} else if (viewObject.otherDatasetButton.isSelected()) {
 					File selectedFile = getFile();
-				    try {
+					/*
+					if (selectedFile != null) {
+						try {
+							new DatasetLoader(selectedFile);
+						} catch (Exception e) {
+							System.out.println("Error: Dataset could not be loaded");
+							System.out.println("Please select a dataset.");
+						}
+					}
+					*/
+					try {
 						new DatasetLoader(selectedFile);
 					} catch (Exception e) {
-						e.printStackTrace();
 						System.out.println("Error: Dataset could not be loaded");
+						System.out.println("Please select a dataset.");
 					}
 				}
-				state = "startScreen_2";
 				break;
 			case "startScreen_2":
 				if (viewObject.clusteringButton.isSelected()) {
@@ -205,14 +218,10 @@ public class Controller implements ActionListener {
 				String algorithmParameters = "-N " 
 						+ (int) viewObject.numberOfClustersSpinner.getValue();
 				clusterer.setOptions(algorithmParameters);
-				
 				clusterer.train((int) viewObject.numberOfKMeansRunsSpinner.getValue());
 				clustererEvaluation = clusterer.evaluate();
-				
 				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
-				
 				processActualisePlotButtonClick();
-				
 				state = "clustering_step4";
 				break;
 			case "classification_step1":

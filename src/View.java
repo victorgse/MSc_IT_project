@@ -395,9 +395,14 @@ public class View extends JFrame {
 				startOverButton.setEnabled(true);
 				backButton.setEnabled(true);
 				break;
+			case "clustering_step3":
+			case "classification_step4":
+				nextButton.setEnabled(true);
+				break;
 			case "clustering_step4":
 			case "classification_step5":
 				nextButton.setEnabled(false);
+				break;
 		}
 	}
 	
