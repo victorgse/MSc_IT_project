@@ -33,7 +33,7 @@ public class View extends JFrame {
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //the radio buttons for selecting a dataset
 	//JRadioButton[] availableDatasetsButtons; //the radio buttons for selecting a dataset
 	//JRadioButton otherDatasetButton; //the radio button for opting to insert a new dataset
-	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton; //the radio buttons for selecting a task
+	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, crossValidationButton, percentageSplitButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
 	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
@@ -86,8 +86,8 @@ public class View extends JFrame {
 		JMenuItem aboutItem = new JMenuItem("About");
 		helpMenu.add(aboutItem);
 		
-		JMenuItem userManualItem = new JMenuItem("User Manual");
-		helpMenu.add(userManualItem);
+		//JMenuItem userManualItem = new JMenuItem("User Manual");
+		//helpMenu.add(userManualItem);
 	}
 	
 	/**
@@ -101,14 +101,12 @@ public class View extends JFrame {
 					try {
 						topPanel = new JPanel() {
 							Image img = ImageIO.read(new File("MWC.png"));
-									//Toolkit.getDefaultToolkit().getImage("/MSc_IT_project/cool-background.jpg");
 							protected void paintComponent(Graphics g) {
 								super.paintComponent(g);
 								g.drawImage(img, 0, 0, null);
 							}
 						};
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					topPanel.setLayout(new GridBagLayout());
@@ -130,7 +128,7 @@ public class View extends JFrame {
 				infoLabel.setText("What task do you wish to perform?");
 				break;
 			case "clustering_step1":
-				infoLabel.setText("What data items do you wish to cluster?");
+				infoLabel.setText("What kind of data items do you wish to cluster?");
 				break;
 			case "clustering_step2":
 				infoLabel.setText("What features do you wish to cluster by?");
@@ -142,7 +140,7 @@ public class View extends JFrame {
 				infoLabel.setText("Results of the K-Means clustering algorithm");
 				break;
 			case "classification_step1":
-				infoLabel.setText("At what level of analysis do you wish to make predictions?");
+				infoLabel.setText("What kind of data items do you wish to classify?");
 				break;
 			case "classification_step2":
 				infoLabel.setText("What features do you wish to use to make predictions?");
@@ -168,7 +166,6 @@ public class View extends JFrame {
 	 */
 	private void layoutMiddle(String state) {
 		GridBagConstraints c = new GridBagConstraints();
-		//c.fill = GridBagConstraints.HORIZONTAL;
 		if (middleInitiated) {
 			middlePanel.removeAll();
 			middlePanel.repaint();
@@ -228,12 +225,12 @@ public class View extends JFrame {
 				clusteringButton = new JRadioButton("Clustering");
 				clusteringButton.setSelected(true);
 				classificationButton = new JRadioButton("Classification");
-				anomalyDetectionButton = new JRadioButton("Anomaly Detection");
+				outlierDetectionButton = new JRadioButton("Outlier Detection");
 				
 				ButtonGroup group2 = new ButtonGroup();
 				group2.add(clusteringButton);
 				group2.add(classificationButton);
-				group2.add(anomalyDetectionButton);
+				group2.add(outlierDetectionButton);
 				
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
@@ -244,7 +241,7 @@ public class View extends JFrame {
 				middlePanel.add(classificationButton, c);
 				c.gridx = 0;
 				c.gridy = 2;
-				middlePanel.add(anomalyDetectionButton, c);
+				middlePanel.add(outlierDetectionButton, c);
 				break;
 			case "clustering_step1":
 			case "classification_step1":
@@ -359,9 +356,11 @@ public class View extends JFrame {
 				SpinnerModel regularisationSpinnerModel =
 				         new SpinnerNumberModel(1.0, //initial value
 				            0.1, //min
-				            100.0, //max
+				            10.0, //max
 				            0.1); //step
 				regularisationSpinner = new JSpinner(regularisationSpinnerModel);
+				regularisationSpinner.setPreferredSize(new Dimension(55, 20));
+				((DefaultEditor) regularisationSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(regularisationSpinner, c);
 				c.insets = new Insets(10,0,0,0); //top padding
 				c.gridx = 0;
@@ -377,6 +376,8 @@ public class View extends JFrame {
 				            10.0, //max
 				            0.1); //step
 				gammaSpinner = new JSpinner(gammaSpinnerModel);
+				gammaSpinner.setPreferredSize(new Dimension(55, 20));
+				((DefaultEditor) gammaSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(gammaSpinner, c);
 				break;
 			case "classification_step5":

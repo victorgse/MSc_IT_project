@@ -31,7 +31,7 @@ public class DatasetLoader {
 	private int colNum; //number of columns of data in dataset
 	private String[][] data; //String matrix for storing the dataset in primary memory
 	private String[] dataTypes; //String array for storing the data types of the fields
-	private String datasetName;
+	private String datasetName; //the name of the new dataset
 	
 	/**
 	 * Constructor

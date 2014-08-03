@@ -23,7 +23,10 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	Instances testSet;
 	
 	/**
-	 * Method for setting the target label
+	 * Method for setting the target label.
+	 * It converts the class attribute from numeric to nominal if necessary,
+	 * and it discretises the values of the class attribute if there are more
+	 * than five classes initially.
 	 * @param classIndex
 	 */
 	public void setTargetLabel(int classIndex) {
@@ -37,7 +40,6 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 				numericToNominalConverter.setInputFormat(trainingSet);
 				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (newTrainingSet.classAttribute().numValues() <= 5) {
@@ -53,7 +55,6 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 					numericToDiscreteNominalConverter.setInputFormat(trainingSet);
 					trainingSet = Filter.useFilter(trainingSet, numericToDiscreteNominalConverter);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

@@ -70,12 +70,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 		
 		points = new ArrayList<>();
 		for (int i = 0; i < coordinates.length; i++) {
-        	Color colour;
-        	if ((int) classAssignments[i] < COLOURS.length) {
-        		colour = COLOURS[(int) classAssignments[i]];
-        	} else {
-        		colour = new Color(100,100,100); //REMOVE LATER!!!!!!!!!!!!!!!!!!!!!!!
-        	}
+        	Color colour = COLOURS[(int) classAssignments[i]];
             double x = coordinates[i][0];
             double y = coordinates[i][1];
             double z = coordinates[i][2];

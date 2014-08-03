@@ -113,7 +113,7 @@ public class Controller implements ActionListener {
 				break;
 			case "clustering_step1":
 			case "classification_step1":
-			case "anomalyDetection_step1":
+			case "outlierDetection_step1":
 				state = "startScreen_2";
 				break;
 			case "clustering_step2":
@@ -168,7 +168,6 @@ public class Controller implements ActionListener {
 						new DatasetLoader(selectedFile);
 					} catch (Exception e) {
 						System.out.println("Error: Dataset could not be loaded");
-						System.out.println("Please select a dataset.");
 					}
 					state = "startScreen_1";
 				}
@@ -206,8 +205,8 @@ public class Controller implements ActionListener {
 					} else {
 						state = "classification_step2";
 					}
-				} else if (viewObject.anomalyDetectionButton.isSelected()) {
-					state = "anomalyDetection_step1";
+				} else if (viewObject.outlierDetectionButton.isSelected()) {
+					state = "outlierDetection_step1";
 				}
 				break;
 			case "clustering_step1":
@@ -346,7 +345,6 @@ public class Controller implements ActionListener {
 				for (int i = 0; i < instances.numClasses(); i++) {
 					classLabels[i] = instances.classAttribute().value(i);
 				}
-				
 				// remove class attribute
 				try {
 					Remove remove = new Remove();
@@ -355,10 +353,8 @@ public class Controller implements ActionListener {
 					remove.setInputFormat(instances);
 					instances = Filter.useFilter(instances, remove);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			    
 				break;
 		}
 		if (visualisationViewObject == null) {

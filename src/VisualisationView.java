@@ -124,7 +124,7 @@ public class VisualisationView extends JFrame{
 		
 		legendPanel = new JPanel();
 		legendPanel.setBorder(new TitledBorder(new EtchedBorder(), "Class Legend"));
-		for (int i = 0; i < 5; i++) { //i < classLabels.length
+		for (int i = 0; i < classLabels.length; i++) {
 			JLabel nextClassLabel = new JLabel(classLabels[i]);
 			Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
 					PickablePointsScatter3D.COLOURS[i].g, 
