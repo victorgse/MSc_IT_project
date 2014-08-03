@@ -1,6 +1,5 @@
 package algorithms;
 
-import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LibSVM;
 import weka.experiment.InstanceQuery;
 
@@ -18,7 +17,6 @@ public class SVMClassifier extends ClassificationAlgorithm {
 		try {
 			instanceQuery = new InstanceQuery();
 			classifier = new LibSVM();
-			//eval = new Evaluation(trainingSet);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -34,7 +32,7 @@ public class SVMClassifier extends ClassificationAlgorithm {
 			((LibSVM) classifier).setOptions(options);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Something went wrong with setting SVM's options.");
+			System.out.println("Something went wrong with setting the SVM's options.");
 		}
 	}
 	

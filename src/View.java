@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -29,14 +31,19 @@ public class View extends JFrame {
 	private boolean topInitiated, middleInitiated, bottomInitiated; //have the JPanels been initialised?
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //the radio buttons for selecting a dataset
+	//JRadioButton[] availableDatasetsButtons; //the radio buttons for selecting a dataset
+	//JRadioButton otherDatasetButton; //the radio button for opting to insert a new dataset
 	JRadioButton clusteringButton, classificationButton, anomalyDetectionButton; //the radio buttons for selecting a task
-	JRadioButton crossValidationButton, percentageSplitButton; //the radio buttons for selecting a testing option for clusterer
-	JComboBox<String> itemsToClusterCombo; //combo box for selecting the types of data items to analyse
+	JRadioButton trainingSetButton, crossValidationButton, percentageSplitButton; //the radio buttons for selecting a testing option for the clusterer
+	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
 	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
 	JCheckBox[] features; //check boxes allowing the user to select features
+	JComboBox<String> targetLabelCombo; //combo box for selecting a target label for the SVM classifier
 	JSpinner numberOfClustersSpinner, numberOfKMeansRunsSpinner; //spinners for K-Means' options
+	JComboBox<String> kernelTypeCombo; //combo box for choosing a kernel for the SVM classifier
+	JSpinner regularisationSpinner, gammaSpinner; //spinners for some of the SVM's options
+	JLabel regularisationLabel, gammaLabel; //labels describing the regularisation and gamma spinners
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
-	JComboBox<String> targetLabelCombo;
 	
 	/**
 	 * Constructor
@@ -104,7 +111,6 @@ public class View extends JFrame {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//topPanel = new JPanel();
 					topPanel.setLayout(new GridBagLayout());
 					topPanel.setPreferredSize(new Dimension(1140, 300));
 					topPanel.setBackground(Color.YELLOW);
@@ -136,18 +142,21 @@ public class View extends JFrame {
 				infoLabel.setText("Results of the K-Means clustering algorithm");
 				break;
 			case "classification_step1":
-				infoLabel.setText("What features do you wish to use to make predictions?");
+				infoLabel.setText("At what level of analysis do you wish to make predictions?");
 				break;
 			case "classification_step2":
-				infoLabel.setText("What feature would you like to predict?");
+				infoLabel.setText("What features do you wish to use to make predictions?");
 				break;
 			case "classification_step3":
-				infoLabel.setText("Please specify parameters for the SVM algorithm.");
+				infoLabel.setText("What feature would you like to predict?");
 				break;
 			case "classification_step4":
-				infoLabel.setText("How should the classifier's performance be evaluated?");
+				infoLabel.setText("Please specify parameters for the SVM algorithm.");
 				break;
 			case "classification_step5":
+				infoLabel.setText("How should the classifier's performance be evaluated?");
+				break;
+			case "classification_step6":
 				infoLabel.setText("Results of the SVM classification algorithm");
 				break;
 		}
@@ -159,6 +168,7 @@ public class View extends JFrame {
 	 */
 	private void layoutMiddle(String state) {
 		GridBagConstraints c = new GridBagConstraints();
+		//c.fill = GridBagConstraints.HORIZONTAL;
 		if (middleInitiated) {
 			middlePanel.removeAll();
 			middlePanel.repaint();
@@ -179,7 +189,7 @@ public class View extends JFrame {
 				ButtonGroup group = new ButtonGroup();
 				group.add(mcfcAnalyticsFullDatasetButton);
 				group.add(otherDatasetButton);
-				
+
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
 				c.gridy = 0;
@@ -187,6 +197,32 @@ public class View extends JFrame {
 				c.gridx = 0;
 				c.gridy = 1;
 				middlePanel.add(otherDatasetButton, c);
+				
+				middlePanel.setVisible(false);
+				middlePanel.setVisible(true);
+				
+				/*
+				TreeSet<String> availableDatasets = getNamesOfAvailableDatasets();
+				
+				ButtonGroup group = new ButtonGroup();
+				availableDatasetsButtons = new JRadioButton[availableDatasets.size()];
+				
+				int k = 0;
+				for (String dataset : availableDatasets) {
+					availableDatasetsButtons[k] = new JRadioButton(dataset);
+					group.add(availableDatasetsButtons[k]);
+					c.gridy = k;
+					middlePanel.add(availableDatasetsButtons[k], c);
+					k++;
+				}
+				
+				availableDatasetsButtons[0].setSelected(true);
+				
+				otherDatasetButton = new JRadioButton("Other");
+				group.add(otherDatasetButton);
+				c.gridy = k;
+				middlePanel.add(otherDatasetButton, c);
+				*/
 				break;
 			case "startScreen_2":
 				clusteringButton = new JRadioButton("Clustering");
@@ -211,16 +247,17 @@ public class View extends JFrame {
 				middlePanel.add(anomalyDetectionButton, c);
 				break;
 			case "clustering_step1":
-				if (controllerObject.getSelectedDataset().equals("MCFC_Analytics_Full_Dataset")) {
-					itemsToClusterCombo = new JComboBox<String>();
-					itemsToClusterCombo.addItem("Player performances in individual matches");
-					itemsToClusterCombo.addItem("Player performances summed up over the season");
-					itemsToClusterCombo.addItem("Team performances summed up over the season");
-					middlePanel.add(itemsToClusterCombo);
+			case "classification_step1":
+				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					levelOfAnalysisCombo = new JComboBox<String>();
+					levelOfAnalysisCombo.addItem("Player performances in individual matches");
+					levelOfAnalysisCombo.addItem("Player performances summed up over the season");
+					levelOfAnalysisCombo.addItem("Team performances summed up over the season");
+					middlePanel.add(levelOfAnalysisCombo);
 				}
 				break;
 			case "clustering_step2":
-			case "classification_step1":
+			case "classification_step2":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
 				tableSchema = getFieldsOfDataset(false);
@@ -238,12 +275,12 @@ public class View extends JFrame {
 				middlePanel.add(featuresPane);
 				break;
 			case "clustering_step3":
-				c.fill = GridBagConstraints.HORIZONTAL; //align
+				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0; //first column
 				c.gridy = 0; //first row
-				JLabel numberOfClustersLabel = new JLabel("How many groups of similar examples within the data (clusters) should the K-Means algorithm identify?");
+				JLabel numberOfClustersLabel = new JLabel("How many clusters should the K-Means algorithm group the data into?");
 				middlePanel.add(numberOfClustersLabel, c);
-				c.insets = new Insets(0,10,0,0);  //left padding
+				c.insets = new Insets(0,10,0,0); //left padding
 				c.gridx = 1; //second column
 				c.gridy = 0; //first row
 				SpinnerModel numberOfClustersSpinnerModel =
@@ -254,12 +291,12 @@ public class View extends JFrame {
 				numberOfClustersSpinner = new JSpinner(numberOfClustersSpinnerModel);
 				((DefaultEditor) numberOfClustersSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(numberOfClustersSpinner, c);
-				c.insets = new Insets(10,0,0,0);  //top padding
+				c.insets = new Insets(10,0,0,0); //top padding
 				c.gridx = 0; //first column
 				c.gridy = 1; //second row
 				JLabel numberOfKMeansRunsLabel = new JLabel("How many times should the K-Means algorithm be ran?");
 				middlePanel.add(numberOfKMeansRunsLabel, c);
-				c.insets = new Insets(10,10,0,0);  //top and left padding
+				c.insets = new Insets(10,10,0,0); //top and left padding
 				c.gridx = 1; //second column
 				c.gridy = 1; //second row
 				SpinnerModel numberOfKMeansRunsSpinnerModel =
@@ -272,7 +309,7 @@ public class View extends JFrame {
 				middlePanel.add(numberOfKMeansRunsSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
-			case "classification_step2":
+			case "classification_step3":
 				targetLabelCombo = new JComboBox<String>();
 				TreeSet<String> targetLabelOptions = tableSchema;
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
@@ -281,66 +318,92 @@ public class View extends JFrame {
 				}
 				middlePanel.add(targetLabelCombo);
 				break;
-			case "classification_step3":
+			case "classification_step4":
+				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
 				c.gridy = 0;
 				JLabel kernelTypeLabel = new JLabel("Kernel Type:");
 				middlePanel.add(kernelTypeLabel, c);
+				c.insets = new Insets(0,10,0,0); //left padding
 				c.gridx = 1;
 				c.gridy = 0;
-				JComboBox<String> kernelTypeCombo = new JComboBox<String>();
+				kernelTypeCombo = new JComboBox<String>();
 				kernelTypeCombo.addItem("Gaussian Kernel");
 				kernelTypeCombo.addItem("Linear Kernel");
+				kernelTypeCombo.addActionListener(new ActionListener () {
+					@Override
+					public void actionPerformed(ActionEvent ae) {
+						if(kernelTypeCombo.getSelectedItem().toString().equals("Gaussian Kernel")) {
+							regularisationLabel.setEnabled(true);
+							regularisationSpinner.setEnabled(true);
+							gammaLabel.setEnabled(true);
+							gammaSpinner.setEnabled(true);
+						} else {
+							regularisationLabel.setEnabled(false);
+							regularisationSpinner.setEnabled(false);
+							gammaLabel.setEnabled(false);
+							gammaSpinner.setEnabled(false);
+						}
+					}
+				});
 				middlePanel.add(kernelTypeCombo, c);
+				c.insets = new Insets(10,0,0,0); //top padding
 				c.gridx = 0;
 				c.gridy = 1;
-				JLabel regularisationLabel = new JLabel("Regularisation Parameter (C):");
+				regularisationLabel = new JLabel("Regularisation Parameter (C):");
 				middlePanel.add(regularisationLabel, c);
+				c.fill = GridBagConstraints.NONE;
+				c.insets = new Insets(10,10,0,0); //top and left padding
 				c.gridx = 1;
 				c.gridy = 1;
 				SpinnerModel regularisationSpinnerModel =
-				         new SpinnerNumberModel(5, //initial value
-				            1, //min
-				            100, //max
-				            1); //step
-				JSpinner regularisationSpinner = new JSpinner(regularisationSpinnerModel);
+				         new SpinnerNumberModel(1.0, //initial value
+				            0.1, //min
+				            100.0, //max
+				            0.1); //step
+				regularisationSpinner = new JSpinner(regularisationSpinnerModel);
 				middlePanel.add(regularisationSpinner, c);
+				c.insets = new Insets(10,0,0,0); //top padding
 				c.gridx = 0;
 				c.gridy = 2;
-				JLabel gammaLabel = new JLabel("Parameter of the Gaussian Kernel (gamma):");
+				gammaLabel = new JLabel("Parameter of the Gaussian Kernel (gamma):");
 				middlePanel.add(gammaLabel, c);
+				c.insets = new Insets(10,10,0,0); //top and left padding
 				c.gridx = 1;
 				c.gridy = 2;
 				SpinnerModel gammaSpinnerModel =
-				         new SpinnerNumberModel(1, //initial value
-				            0.5, //min
-				            10, //max
-				            0.05); //step
-				JSpinner gammaSpinner = new JSpinner(gammaSpinnerModel);
+				         new SpinnerNumberModel(0.0, //initial value
+				            0.0, //min
+				            10.0, //max
+				            0.1); //step
+				gammaSpinner = new JSpinner(gammaSpinnerModel);
 				middlePanel.add(gammaSpinner, c);
 				break;
-			case "classification_step4":
+			case "classification_step5":
+				trainingSetButton = new JRadioButton("Test on training set");
+				trainingSetButton.setSelected(true);
 				crossValidationButton = new JRadioButton("Cross-validation");
-				crossValidationButton.setSelected(true);
-				percentageSplitButton = new JRadioButton("Percentage split: 60% training / "
-						+ "20% validation / 20% test");
+				percentageSplitButton = new JRadioButton("Percentage split: 70% training / 30% test");
 				
-				ButtonGroup group3 = new ButtonGroup();
-				group3.add(crossValidationButton);
-				group3.add(percentageSplitButton);
+				ButtonGroup testOptionButtonGroup = new ButtonGroup();
+				testOptionButtonGroup.add(trainingSetButton);
+				testOptionButtonGroup.add(crossValidationButton);
+				testOptionButtonGroup.add(percentageSplitButton);
 				
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
 				c.gridy = 0;
-				middlePanel.add(crossValidationButton, c);
-				c.fill = GridBagConstraints.HORIZONTAL;
+				middlePanel.add(trainingSetButton, c);
 				c.gridx = 0;
 				c.gridy = 1;
+				middlePanel.add(crossValidationButton, c);
+				c.gridx = 0;
+				c.gridy = 2;
 				middlePanel.add(percentageSplitButton, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
 			case "clustering_step4":
-			case "classification_step5":
+			case "classification_step6":
 				JScrollPane resultsPane = new JScrollPane(algorithmOutputTextArea);
 				resultsPane.setPreferredSize(new Dimension(600, 200));
 				middlePanel.add(resultsPane);
@@ -396,15 +459,38 @@ public class View extends JFrame {
 				backButton.setEnabled(true);
 				break;
 			case "clustering_step3":
-			case "classification_step4":
+			case "classification_step5":
 				nextButton.setEnabled(true);
 				break;
 			case "clustering_step4":
-			case "classification_step5":
+			case "classification_step6":
 				nextButton.setEnabled(false);
 				break;
 		}
 	}
+	
+	/**
+	 * A helper method for getting the names of datasets stored in the database.
+	 * @return
+	 */ /*
+	private TreeSet<String> getNamesOfAvailableDatasets() {
+		TreeSet<String> datasetsInDatabase = new TreeSet<String>();
+		try {
+			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
+			Statement stmt = con.createStatement();
+			String query =  "select tablename "
+					+ "from sys.systables "
+					+ "where tabletype = 'T'";
+			ResultSet RS = stmt.executeQuery(query);
+			while (RS.next()) {
+				datasetsInDatabase.add(RS.getString("tablename"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Something went wrong when fetching the names of available datasets.");
+		}
+		return datasetsInDatabase;
+	} */
 	
 	/**
 	 * A helper method for fetching a table's schema.

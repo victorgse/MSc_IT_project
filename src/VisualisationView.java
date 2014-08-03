@@ -12,9 +12,9 @@ public class VisualisationView extends JFrame{
 	 * instance variables
 	 */
 	private Controller controllerObject; //a reference to the controller object
-	private Instances instances; //the dataset instances
 	private PickablePointsScatter3D scatterPlot; //a reference to the scatter plot object
-	private int numClasses;
+	private Instances instances; //the dataset instances
+	String[] classLabels;
 	private JPanel leftPanel, rightPanel;
 	private JPanel axeSelectionPanel, controlsPanel, visualisationPanel, legendPanel;
 	JLabel xAxisLabel, yAxisLabel, zAxisLabel;
@@ -26,11 +26,11 @@ public class VisualisationView extends JFrame{
 	 * @param controllerObject
 	 * @param instances 
 	 */
-	public VisualisationView(Controller controllerObject, Instances instances, PickablePointsScatter3D scatterPlot, int numClasses) {
+	public VisualisationView(Controller controllerObject, PickablePointsScatter3D scatterPlot, Instances instances, String[] classLabels) {
 		this.controllerObject = controllerObject;
-		this.instances = instances;
-		this.numClasses = numClasses;
 		this.scatterPlot = scatterPlot;
+		this.instances = instances;
+		this.classLabels = classLabels;
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(960, 540); //the size of the JFrame window
@@ -124,8 +124,8 @@ public class VisualisationView extends JFrame{
 		
 		legendPanel = new JPanel();
 		legendPanel.setBorder(new TitledBorder(new EtchedBorder(), "Class Legend"));
-		for (int i = 0; i < numClasses; i++) {
-			JLabel nextClassLabel = new JLabel("Cluster" + i);
+		for (int i = 0; i < 5; i++) { //i < classLabels.length
+			JLabel nextClassLabel = new JLabel(classLabels[i]);
 			Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
 					PickablePointsScatter3D.COLOURS[i].g, 
 					PickablePointsScatter3D.COLOURS[i].b);
