@@ -23,14 +23,15 @@ public class DatasetLoader {
 	/**
 	 * instance variables
 	 */
-	File excel; //the excel .xls file
-	FileInputStream fis; //an input stream for reading data from a file
-	HSSFWorkbook wb; //an excel workbook
-	HSSFSheet ws; //an excel worksheet
-	int rowNum; //number of rows of data in dataset
-	int colNum; //number of columns of data in dataset
-	String[][] data; //String matrix for storing the dataset in primary memory
-	String[] dataTypes; //String array for storing the data types of the fields
+	private File excel; //the excel .xls file
+	private FileInputStream fis; //an input stream for reading data from a file
+	private HSSFWorkbook wb; //an excel workbook
+	private HSSFSheet ws; //an excel worksheet
+	private int rowNum; //number of rows of data in dataset
+	private int colNum; //number of columns of data in dataset
+	private String[][] data; //String matrix for storing the dataset in primary memory
+	private String[] dataTypes; //String array for storing the data types of the fields
+	private String datasetName;
 	
 	/**
 	 * Constructor
@@ -46,14 +47,22 @@ public class DatasetLoader {
 		colNum = ws.getRow(0).getLastCellNum();
 		data = new String[rowNum][colNum];
 		dataTypes = new String[colNum];
+		datasetName = wb.getSheetName(0).replace(" ", "_");
 		readDataFromExcelFile();
 		insertDataIntoDatabase();
 	}
 	
 	/**
+	 * @return the datasetName
+	 */
+	public String getDatasetName() {
+		return datasetName;
+	}
+
+	/**
 	 * Method which reads the .xls dataset and inserts it into the matrix data.
 	 */
-	public void readDataFromExcelFile() {
+	private void readDataFromExcelFile() {
 		for (int i = 0; i < rowNum; i++) {
 			HSSFRow row = ws.getRow(i);
 			for (int j = 0; j < colNum; j++) {
@@ -80,9 +89,9 @@ public class DatasetLoader {
 	 * from the .xls dataset into the embedded database.
 	 * @throws SQLException
 	 */
-	public void insertDataIntoDatabase() throws SQLException {
+	private void insertDataIntoDatabase() throws SQLException {
 		//establish connection with the database
-		Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
+		Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB;create=true");
 		Statement stmt = con.createStatement();
 		
 		/*
@@ -90,7 +99,7 @@ public class DatasetLoader {
 		 * the new table is named after the excel worksheet that contains the dataset;
 		 * empty spaces in the fields of the schema are replaced by underscores
 		 */
-		String schema = "create table " + wb.getSheetName(0).replace(" ", "_") + "(";
+		String schema = "create table " + datasetName + "(";
 		for (int i = 0; i < colNum - 1; i++) {
 			schema += data[0][i].replace(' ', '_').replace('-', '_') + " " + dataTypes[i] + ", ";
 		}
@@ -103,7 +112,7 @@ public class DatasetLoader {
 		 * the "'" symbol is used to escape an "'" symbol
 		*/
 		for (int i = 1; i < rowNum; i++) {
-			String rowValues = "insert into " + wb.getSheetName(0).replace(" ", "_") + " values(";
+			String rowValues = "insert into " + datasetName + " values(";
 			for (int j = 0; j < colNum - 1; j++) {
 				if (dataTypes[j].equals("varchar(30)")) {
 					rowValues += "'" + data[i][j].replace("'", "''") + "', ";
@@ -127,7 +136,7 @@ public class DatasetLoader {
 	 * @param cell
 	 * @return a String representation of the content of the cell
 	 */
-	public String cellToString(HSSFCell cell) {
+	private String cellToString(HSSFCell cell) {
 		int type; //cell type
 		Object cellContent; //object for storing the content of the cell
 		
