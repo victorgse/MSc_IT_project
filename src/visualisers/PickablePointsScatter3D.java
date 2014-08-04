@@ -1,7 +1,14 @@
+package visualisers;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jzy3d.analysis.AbstractAnalysis;
+import org.jzy3d.chart.ChartLauncher;
+import org.jzy3d.chart.controllers.keyboard.screenshot.AWTScreenshotKeyController;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.chart.controllers.mouse.picking.AWTMousePickingController;
 import org.jzy3d.chart.controllers.thread.camera.CameraThreadController;
@@ -12,10 +19,11 @@ import org.jzy3d.picking.IObjectPickedListener;
 import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.pickable.PickablePoint;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
+import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
 
 public class PickablePointsScatter3D extends AbstractAnalysis {
 	
-	static final Color[] COLOURS = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN};
+	public static final Color[] COLOURS = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN};
 	private List<PickablePoint> points;
 	private String[] axeLabels;
 	private double[][] coordinates;
@@ -33,7 +41,6 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 			plotInitiated = false;
 			init();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -50,6 +57,9 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
    		CameraThreadController thread = new CameraThreadController();
      	mouse.addSlaveThreadController(thread);
      	chart.addController(thread);
+     	
+     	// Enable screenshots
+     	chart.getCanvas().addKeyController(new AWTScreenshotKeyController(chart, "./screenshots/screenshot.png"));
         
         updatePoints(coordinates);
         
@@ -78,7 +88,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
             Coord3d position = new Coord3d(x, y, z);
             Color colour = COLOURS[(int) actualClassAssignments[i] - 1];
             float width;
-            if (predictedClassAssignments != null) { //classification algorithm
+            if (predictedClassAssignments != null) { //is it a classification algorithm?
             	if (actualClassAssignments[i] == predictedClassAssignments[i]) { //classified correctly
                 	width = 3;
                 } else { //classified incorrectly

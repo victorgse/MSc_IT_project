@@ -1,8 +1,10 @@
+
 import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
+import visualisers.PickablePointsScatter3D;
 import weka.core.Instances;
 
 @SuppressWarnings("serial")
