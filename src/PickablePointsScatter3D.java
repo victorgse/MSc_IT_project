@@ -15,18 +15,21 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 public class PickablePointsScatter3D extends AbstractAnalysis {
 	
+	static final Color[] COLOURS = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN};
 	private List<PickablePoint> points;
 	private String[] axeLabels;
 	private double[][] coordinates;
-	private double[] classAssignments;
-	static final Color[] COLOURS = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN};
+	private double[] actualClassAssignments;
+	private double[] predictedClassAssignments;
 	private boolean plotInitiated;
 	
-	public PickablePointsScatter3D(String[] axeLabels, double[][] coordinates, double[] classAssignments) {
+	public PickablePointsScatter3D(String[] axeLabels, double[][] coordinates, 
+			double[] actualClassAssignments, double[] predictedClassAssignments) {
 		try {
 			this.axeLabels = axeLabels;
 			this.coordinates = coordinates;
-			this.classAssignments = classAssignments;
+			this.actualClassAssignments = actualClassAssignments;
+			this.predictedClassAssignments = predictedClassAssignments;
 			plotInitiated = false;
 			init();
 		} catch (Exception e) {
@@ -62,23 +65,33 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	AWTMousePickingController<?,?> mousePicker;
 	public void updatePoints(double[][] coordinates) {
 		if (plotInitiated) {
-			for (PickablePoint p : points) {
-	        	chart.getScene().remove(p);
+			for (PickablePoint point : points) {
+	        	chart.getScene().remove(point);
 			}
 			mousePicker.dispose();
 		}
-		
 		points = new ArrayList<>();
 		for (int i = 0; i < coordinates.length; i++) {
-        	Color colour = COLOURS[(int) classAssignments[i]];
             double x = coordinates[i][0];
             double y = coordinates[i][1];
             double z = coordinates[i][2];
-            Coord3d p = new Coord3d(x, y, z);
-            points.add(new PickablePoint(p, colour, 5));
+            Coord3d position = new Coord3d(x, y, z);
+            Color colour = COLOURS[(int) actualClassAssignments[i] - 1];
+            float width;
+            if (predictedClassAssignments != null) { //classification algorithm
+            	if (actualClassAssignments[i] == predictedClassAssignments[i]) { //classified correctly
+                	width = 3;
+                } else { //classified incorrectly
+                	width = 5;
+                }
+            } else { //non-classification algorithm
+            	width = 5;
+            }
+            PickablePoint point = new PickablePoint(position, colour, width);
+            points.add(point);
         }
-		for (PickablePoint p : points) {
-        	chart.getScene().add(p);
+		for (PickablePoint point : points) {
+        	chart.getScene().add(point);
 		}
 		enablePicking(points);
 	}
@@ -87,13 +100,13 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 		mousePicker = new AWTMousePickingController<>(chart, 10);
 		PickingSupport picking = mousePicker.getPickingSupport();
 
-		for (PickablePoint p : points) {
-			picking.registerPickableObject(p, p);
+		for (PickablePoint point : points) {
+			picking.registerPickableObject(point, point);
 		}
 		
 		IObjectPickedListener listener = new IObjectPickedListener() {
 			@Override
-			public void objectPicked(List<?> picked, PickingSupport ps) {
+			public void objectPicked(List<?> picked, PickingSupport pickingSupport) {
 				processPicked(picked);
 			}
 		};

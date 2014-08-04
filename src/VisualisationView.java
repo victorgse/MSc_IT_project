@@ -124,14 +124,25 @@ public class VisualisationView extends JFrame{
 		
 		legendPanel = new JPanel();
 		legendPanel.setBorder(new TitledBorder(new EtchedBorder(), "Class Legend"));
+		legendPanel.setLayout(new BorderLayout());
+		if (controllerObject.getState().equals("classification_step6")) {
+			JPanel legendNorthPanel = new JPanel();
+			JLabel smallLabel = new JLabel("Small ==> correctly classified     ");
+			legendNorthPanel.add(smallLabel);
+			JLabel bigLabel = new JLabel("Big ==> incorrectly classified");
+			legendNorthPanel.add(bigLabel);
+			legendPanel.add(legendNorthPanel, BorderLayout.NORTH);
+		}
+		JPanel legendCenterPanel = new JPanel();
 		for (int i = 0; i < classLabels.length; i++) {
 			JLabel nextClassLabel = new JLabel(classLabels[i]);
 			Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
 					PickablePointsScatter3D.COLOURS[i].g, 
 					PickablePointsScatter3D.COLOURS[i].b);
 			nextClassLabel.setForeground(color);
-			legendPanel.add(nextClassLabel);
+			legendCenterPanel.add(nextClassLabel);
 		}
+		legendPanel.add(legendCenterPanel, BorderLayout.CENTER);
 		rightPanel.add(legendPanel, BorderLayout.SOUTH);
 		
 		this.add(rightPanel, BorderLayout.CENTER);

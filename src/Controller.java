@@ -260,7 +260,7 @@ public class Controller implements ActionListener {
 				processActualise3dPlotButtonClick();
 				break;
 			case "classification_step3":
-				//selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
+				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
 				if (desiredLevelOfAnalysis == 0) {
 					query += viewObject.targetLabelCombo.getSelectedItem().toString();
 					query += " from " + selectedDataset;
@@ -276,7 +276,7 @@ public class Controller implements ActionListener {
 				classifier.setInstanceQuery(query);
 				classifier.fetchInstances();
 				classifier.renameAttributesOfInstances(selectedFeatures);
-				classifier.setTargetLabel(selectedFeatures.size());
+				classifier.setTargetLabel(selectedFeatures.size() - 1);
 				state = "classification_step4";
 				break;
 			case "classification_step4":
@@ -320,15 +320,20 @@ public class Controller implements ActionListener {
 		Instances instances = null;
 		String[] axeLabels;
 		double[][] coordinates;
-		double[] classAssignments = null;
+		double[] actualClassAssignments = null;
+		double[] predictedClassAssignments = null;
 		String[] classLabels = null;
 		switch (state) {
 			case "clustering_step4":
 				instances = clusterer.getTrainingSet();
-				classAssignments = clustererEvaluation.getClusterAssignments();
+				actualClassAssignments = clustererEvaluation.getClusterAssignments();
+				for (int i = 0; i < instances.numInstances(); i++) {
+					actualClassAssignments[i] += 1;
+				}
 				classLabels = new String[clustererEvaluation.getNumClusters()];
 				for (int i = 0; i < clustererEvaluation.getNumClusters(); i++) {
-					classLabels[i] = "Cluster " + i;
+					int clusterNumber = i + 1;
+					classLabels[i] = "Cluster " + clusterNumber;
 				}
 				break;
 			case "classification_step6":
@@ -336,14 +341,14 @@ public class Controller implements ActionListener {
 					instances = classifier.getTrainingSet();
 				} else if (classifierEvaluationMethod.equals("testSet")) {
 					instances = classifier.getTestSet();
+				} else if (classifierEvaluationMethod.equals("CV")) {
+					instances = classifier.getTrainingSet();
 				}
-				classAssignments = new double[instances.numInstances()];
-				for (int i = 0; i < instances.numInstances(); i++) {
-					classAssignments[i] = instances.get(i).classValue();
-				}
+				actualClassAssignments = classifier.getActualClassAssignments();
+				predictedClassAssignments = classifier.getPredictedClassAssignments();
 				classLabels = new String[instances.numClasses()];
 				for (int i = 0; i < instances.numClasses(); i++) {
-					classLabels[i] = instances.classAttribute().value(i);
+					classLabels[i] = instances.classAttribute().value(i) + " " + instances.classAttribute().name();
 				}
 				// remove class attribute
 				try {
@@ -368,7 +373,8 @@ public class Controller implements ActionListener {
 					coordinates[i][j] = instances.get(i).value(j);
 				}
 			}
-			plot = new PickablePointsScatter3D(axeLabels, coordinates, classAssignments);
+			plot = new PickablePointsScatter3D(axeLabels, coordinates, 
+					actualClassAssignments, predictedClassAssignments);
 			visualisationViewObject = new VisualisationView(this, plot, instances, classLabels);
 			visualisationViewObject.setVisible(true);
 		} else {

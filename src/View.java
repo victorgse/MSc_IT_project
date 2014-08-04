@@ -34,7 +34,7 @@ public class View extends JFrame {
 	//JRadioButton[] availableDatasetsButtons; //the radio buttons for selecting a dataset
 	//JRadioButton otherDatasetButton; //the radio button for opting to insert a new dataset
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
-	JRadioButton trainingSetButton, crossValidationButton, percentageSplitButton; //the radio buttons for selecting a testing option for the clusterer
+	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
 	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
 	JCheckBox[] features; //check boxes allowing the user to select features
@@ -383,13 +383,13 @@ public class View extends JFrame {
 			case "classification_step5":
 				trainingSetButton = new JRadioButton("Test on training set");
 				trainingSetButton.setSelected(true);
-				crossValidationButton = new JRadioButton("Cross-validation");
 				percentageSplitButton = new JRadioButton("Percentage split: 70% training / 30% test");
+				crossValidationButton = new JRadioButton("Cross-validation");
 				
 				ButtonGroup testOptionButtonGroup = new ButtonGroup();
 				testOptionButtonGroup.add(trainingSetButton);
-				testOptionButtonGroup.add(crossValidationButton);
 				testOptionButtonGroup.add(percentageSplitButton);
+				testOptionButtonGroup.add(crossValidationButton);
 				
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
@@ -397,10 +397,10 @@ public class View extends JFrame {
 				middlePanel.add(trainingSetButton, c);
 				c.gridx = 0;
 				c.gridy = 1;
-				middlePanel.add(crossValidationButton, c);
+				middlePanel.add(percentageSplitButton, c);
 				c.gridx = 0;
 				c.gridy = 2;
-				middlePanel.add(percentageSplitButton, c);
+				middlePanel.add(crossValidationButton, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
 			case "clustering_step4":
