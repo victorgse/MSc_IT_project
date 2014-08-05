@@ -1,13 +1,10 @@
 package visualisers;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jzy3d.analysis.AbstractAnalysis;
-import org.jzy3d.chart.ChartLauncher;
 import org.jzy3d.chart.controllers.keyboard.screenshot.AWTScreenshotKeyController;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.chart.controllers.mouse.picking.AWTMousePickingController;
@@ -19,11 +16,10 @@ import org.jzy3d.picking.IObjectPickedListener;
 import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.pickable.PickablePoint;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
-import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
 
 public class PickablePointsScatter3D extends AbstractAnalysis {
 	
-	public static final Color[] COLOURS = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN};
+	public static final Color[] COLOURS = {Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.CYAN};
 	private List<PickablePoint> points;
 	private String[] axeLabels;
 	private double[][] coordinates;

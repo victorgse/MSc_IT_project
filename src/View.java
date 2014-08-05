@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -43,6 +44,7 @@ public class View extends JFrame {
 	JComboBox<String> kernelTypeCombo; //combo box for choosing a kernel for the SVM classifier
 	JSpinner regularisationSpinner, gammaSpinner; //spinners for some of the SVM's options
 	JLabel regularisationLabel, gammaLabel; //labels describing the regularisation and gamma spinners
+	JSpinner epsilonSpinner; //spinner for setting the epsilon parameter of the outlier detector
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
 	
 	/**
@@ -157,6 +159,18 @@ public class View extends JFrame {
 			case "classification_step6":
 				infoLabel.setText("Results of the SVM classification algorithm");
 				break;
+			case "outlierDetection_step1":
+				infoLabel.setText("What data items do you wish to search for outliers?");
+				break;
+			case "outlierDetection_step2":
+				infoLabel.setText("What features do you wish to use to identify outliers?");
+				break;
+			case "outlierDetection_step3":
+				infoLabel.setText("Please specify parameters for the Outlier Detector.");
+				break;
+			case "outlierDetection_step4":
+				infoLabel.setText("Results of the Outlier Detection algorithm");
+				break;
 		}
 	}
 	
@@ -245,6 +259,7 @@ public class View extends JFrame {
 				break;
 			case "clustering_step1":
 			case "classification_step1":
+			case "outlierDetection_step1":
 				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
 					levelOfAnalysisCombo = new JComboBox<String>();
 					levelOfAnalysisCombo.addItem("Player performances in individual matches");
@@ -255,6 +270,7 @@ public class View extends JFrame {
 				break;
 			case "clustering_step2":
 			case "classification_step2":
+			case "outlierDetection_step2":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
 				tableSchema = getFieldsOfDataset(false);
@@ -403,8 +419,30 @@ public class View extends JFrame {
 				middlePanel.add(crossValidationButton, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
+			case "outlierDetection_step3":
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 0; //first column
+				c.gridy = 0; //first row
+				JLabel epsilonLabel = new JLabel("Threshold for designating outliers:");
+				middlePanel.add(epsilonLabel, c);
+				c.insets = new Insets(0,10,0,0); //left padding
+				c.gridx = 1; //second column
+				c.gridy = 0; //first row
+				SpinnerModel epsilonSpinnerModel =
+				         new SpinnerNumberModel(3.00, //initial value
+				            0.00, //min
+				            6.00, //max
+				            0.01); //step
+				epsilonSpinner = new JSpinner(epsilonSpinnerModel);
+				epsilonSpinner.setPreferredSize(new Dimension(55, 20));
+				((DefaultEditor) epsilonSpinner.getEditor()).getTextField().setEditable(false);
+				middlePanel.add(epsilonSpinner, c);
+				algorithmOutputTextArea = new JTextArea();
+				break;
 			case "clustering_step4":
 			case "classification_step6":
+			case "outlierDetection_step4":
+				algorithmOutputTextArea.setEditable(false);
 				JScrollPane resultsPane = new JScrollPane(algorithmOutputTextArea);
 				resultsPane.setPreferredSize(new Dimension(600, 200));
 				middlePanel.add(resultsPane);
@@ -461,10 +499,12 @@ public class View extends JFrame {
 				break;
 			case "clustering_step3":
 			case "classification_step5":
+			case "outlierDetection_step3":
 				nextButton.setEnabled(true);
 				break;
 			case "clustering_step4":
 			case "classification_step6":
+			case "outlierDetector_step4":
 				nextButton.setEnabled(false);
 				break;
 		}

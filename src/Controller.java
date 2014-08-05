@@ -5,12 +5,15 @@ import java.util.TreeSet;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import algorithms.KMeansClusterer;
+import algorithms.OutlierDetector;
+import algorithms.OutlierEvaluation;
 import algorithms.SVMClassifier;
 
 public class Controller implements ActionListener {
@@ -25,12 +28,14 @@ public class Controller implements ActionListener {
 	private String selectedDataset; //the name of the dataset that has been selected by user
 	private KMeansClusterer clusterer; //the clustering object
 	private ClusterEvaluation clustererEvaluation; //the clusterer evaluation object
+	private SVMClassifier classifier; //the classifier object
 	private Evaluation classifierEvaluation; //the classifier evaluation object
 	private String classifierEvaluationMethod; //the desired classifier evaluation method
+	private OutlierDetector outlierDetector; //the outlier detector object
 	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
-	private SVMClassifier classifier; //the classification object
 	private TreeSet<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
+	private OutlierEvaluation outlierEvaluation;
 	
 	/**
 	 * Constructor
@@ -149,6 +154,15 @@ public class Controller implements ActionListener {
 			case "classification_step6":
 				state = "classification_step5";
 				break;
+			case "outlierDetection_step2":
+				state = "outlierDetection_step1";
+				break;
+			case "outlierDetection_step3":
+				state = "outlierDetection_step2";
+				break;
+			case "outlierDetection_step4":
+				state = "outlierDetection_step3";
+				break;
 		}
 		viewObject.updateView(state);
 	}
@@ -206,20 +220,29 @@ public class Controller implements ActionListener {
 						state = "classification_step2";
 					}
 				} else if (viewObject.outlierDetectionButton.isSelected()) {
-					state = "outlierDetection_step1";
+					outlierDetector = new OutlierDetector();
+					if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+						state = "outlierDetection_step1";
+					} else {
+						state = "outlierDetection_step2";
+					}
 				}
 				break;
 			case "clustering_step1":
 			case "classification_step1":
+			case "outlierDetection_step1":
 				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();
 				if (state.equals("clustering_step1")) {
 					state = "clustering_step2";
 				} else if (state.equals("classification_step1")) {
 					state = "classification_step2";
+				} else if (state.equals("outlierDetection_step1")) {
+					state = "outlierDetection_step2";
 				}
 				break;
 			case "clustering_step2":
 			case "classification_step2":
+			case "outlierDetection_step2":
 				selectedFeatures = getSelectedFeatures();
 				query = "select ";
 				for (String feature : selectedFeatures) {
@@ -232,7 +255,7 @@ public class Controller implements ActionListener {
 						query += "sum(" + feature + "),";
 					}
 				}
-				if (state.equals("clustering_step2")) {
+				if (state.equals("clustering_step2") || state.equals("outlierDetection_step2")) {
 					query = query.substring(0, query.length()-1);
 					query += " from " + selectedDataset;
 					if (desiredLevelOfAnalysis == 1) {
@@ -240,10 +263,17 @@ public class Controller implements ActionListener {
 					} else if (desiredLevelOfAnalysis == 2) {
 						query += " group by Team";
 					}
-					clusterer.setInstanceQuery(query);
-					clusterer.fetchInstances();
-					clusterer.renameAttributesOfInstances(selectedFeatures);
-					state = "clustering_step3";
+					if (state.equals("clustering_step2")) {
+						clusterer.setInstanceQuery(query);
+						clusterer.fetchInstances();
+						clusterer.renameAttributesOfInstances(selectedFeatures);
+						state = "clustering_step3";
+					} else if (state.equals("outlierDetection_step2")) {
+						outlierDetector.setInstanceQuery(query);
+						outlierDetector.fetchInstances();
+						outlierDetector.renameAttributesOfInstances(selectedFeatures);
+						state = "outlierDetection_step3";
+					}
 				} else if (state.equals("classification_step2")) {
 					state = "classification_step3";
 				}
@@ -312,6 +342,16 @@ public class Controller implements ActionListener {
 				state = "classification_step6";
 				processActualise3dPlotButtonClick();
 				break;
+			case "outlierDetection_step3":
+				double outlierFactor = (double) viewObject.epsilonSpinner.getValue();
+				String OutlierDetectorParameters = "-O " + outlierFactor;
+				outlierDetector.setOptions(OutlierDetectorParameters);
+				outlierDetector.train();
+				outlierEvaluation = outlierDetector.evaluate();
+				//viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
+				state = "outlierDetection_step4";
+				processActualise3dPlotButtonClick();
+				break;
 		}
 		viewObject.updateView(state);
 	}
@@ -360,6 +400,16 @@ public class Controller implements ActionListener {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				break;
+			case "outlierDetection_step4":
+				instances = outlierDetector.getTrainingSet();
+				actualClassAssignments = outlierEvaluation.getClassAssignments();
+				for (int i = 0; i < instances.numInstances(); i++) {
+					actualClassAssignments[i] += 1;
+				}
+				classLabels = new String[2];
+				classLabels[0] = "Normal";
+				classLabels[1] = "Outlier";
 				break;
 		}
 		if (visualisationViewObject == null) {
