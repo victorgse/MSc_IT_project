@@ -273,7 +273,7 @@ public class Controller implements ActionListener {
 				clustererEvaluation = clusterer.evaluate();
 				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
 				state = "clustering_step3";
-				processActualise3dPlotButtonClick();
+				processActualisePlotButtonClick();
 				break;
 			case "classification_step2":
 				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
@@ -327,24 +327,24 @@ public class Controller implements ActionListener {
 				viewObject.algorithmOutputTextArea.setText(classifierEvaluation.toSummaryString());
 				state = "classification_step5";
 				if (!classifierEvaluationMethod.equals("CV")) {
-					processActualise3dPlotButtonClick();
+					processActualisePlotButtonClick();
 				}
 				break;
 			case "outlierDetection_step2":
-				double outlierFactor = (double) viewObject.epsilonSpinner.getValue();
+				double outlierFactor = (double) viewObject.outlierFactorSpinner.getValue();
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
 				outlierDetector.train();
 				outlierEvaluation = outlierDetector.evaluate();
 				//viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
 				state = "outlierDetection_step3";
-				processActualise3dPlotButtonClick();
+				processActualisePlotButtonClick();
 				break;
 		}
 		viewObject.updateView(state);
 	}
 	
-	private void processActualise3dPlotButtonClick() {
+	private void processActualisePlotButtonClick() {
 		Instances instances = null;
 		String[] axeLabels;
 		double[][] coordinates;
@@ -408,6 +408,7 @@ public class Controller implements ActionListener {
 				for (int j = 0; j < 3; j++) {
 					coordinates[i][j] = instances.get(i).value(j);
 				}
+				//coordinates[i][1] = 0;
 				//coordinates[i][2] = 0;
 			}
 			plot = new PickablePointsScatter3D(axeLabels, coordinates, 
@@ -442,7 +443,7 @@ public class Controller implements ActionListener {
 		} else if (ae.getSource() == viewObject.nextButton) {
 			processNextButtonClick();
 		} else if (ae.getSource() == visualisationViewObject.actualisePlotButton) {
-			processActualise3dPlotButtonClick();
+			processActualisePlotButtonClick();
 		}
 	}
 

@@ -43,7 +43,7 @@ public class View extends JFrame {
 	JComboBox<String> kernelTypeCombo; //combo box for choosing a kernel for the SVM classifier
 	JSpinner regularisationSpinner, gammaSpinner; //spinners for some of the SVM's options
 	JLabel regularisationLabel, gammaLabel; //labels describing the regularisation and gamma spinners
-	JSpinner epsilonSpinner; //spinner for setting the epsilon parameter of the outlier detector
+	JSpinner outlierFactorSpinner; //spinner for setting the outlierFactor parameter of the outlier detector
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
 	
 	/**
@@ -414,20 +414,20 @@ public class View extends JFrame {
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0; //first column
 				c.gridy = 0; //first row
-				JLabel epsilonLabel = new JLabel("Threshold for designating outliers:");
-				middlePanel.add(epsilonLabel, c);
+				JLabel outlierFactorLabel = new JLabel("Outlier Threshold Setting:");
+				middlePanel.add(outlierFactorLabel, c);
 				c.insets = new Insets(0,10,0,0); //left padding
 				c.gridx = 1; //second column
 				c.gridy = 0; //first row
-				SpinnerModel epsilonSpinnerModel =
-				         new SpinnerNumberModel(3.00, //initial value
-				            0.00, //min
-				            6.00, //max
-				            0.01); //step
-				epsilonSpinner = new JSpinner(epsilonSpinnerModel);
-				epsilonSpinner.setPreferredSize(new Dimension(55, 20));
-				((DefaultEditor) epsilonSpinner.getEditor()).getTextField().setEditable(false);
-				middlePanel.add(epsilonSpinner, c);
+				SpinnerModel outlierFactorSpinnerModel =
+				         new SpinnerNumberModel(3.0, //initial value
+				            0.0, //min
+				            6.0, //max
+				            0.1); //step
+				outlierFactorSpinner = new JSpinner(outlierFactorSpinnerModel);
+				outlierFactorSpinner.setPreferredSize(new Dimension(55, 20));
+				((DefaultEditor) outlierFactorSpinner.getEditor()).getTextField().setEditable(false);
+				middlePanel.add(outlierFactorSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
 			case "clustering_step3":
