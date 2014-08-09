@@ -11,7 +11,7 @@ public class OutlierEvaluation {
 	 * @return the classAssignments
 	 */
 	public double[] getClassAssignments() {
-		return classAssignments;
+		return classAssignments.clone();
 	}
 
 	/**

@@ -127,7 +127,7 @@ public class VisualisationView extends JFrame{
 		legendPanel = new JPanel();
 		legendPanel.setBorder(new TitledBorder(new EtchedBorder(), "Class Legend"));
 		legendPanel.setLayout(new BorderLayout());
-		if (controllerObject.getState().equals("classification_step6")) {
+		if (controllerObject.getState().equals("classification_step5")) {
 			JPanel legendNorthPanel = new JPanel();
 			JLabel smallLabel = new JLabel("Small ==> correctly classified     ");
 			legendNorthPanel.add(smallLabel);

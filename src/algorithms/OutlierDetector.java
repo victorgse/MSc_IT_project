@@ -1,5 +1,6 @@
 package algorithms;
 
+import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.InterquartileRange;
@@ -11,6 +12,7 @@ public class OutlierDetector extends Algorithm {
 	 */
 	private InterquartileRange outlierDetector;
 	private OutlierEvaluation eval;
+	private Instances filteredTrainingSet;
 
 	/**
 	 * Constructor
@@ -51,7 +53,7 @@ public class OutlierDetector extends Algorithm {
 	@Override
 	public void train() {
 		try {
-			trainingSet = Filter.useFilter(trainingSet, outlierDetector);
+			filteredTrainingSet = Filter.useFilter(trainingSet, outlierDetector);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,9 +61,9 @@ public class OutlierDetector extends Algorithm {
 
 	@Override
 	public OutlierEvaluation evaluate() {
-		double[] classAssignments = new double[trainingSet.numInstances()]; //1 --> outlier, 0 otherwise
-		for (int i = 0; i < trainingSet.numInstances(); i++) {
-			if (trainingSet.get(i).value(trainingSet.attribute("Outlier")) == 1) {
+		double[] classAssignments = new double[filteredTrainingSet.numInstances()]; //1 --> outlier, 0 otherwise
+		for (int i = 0; i < filteredTrainingSet.numInstances(); i++) {
+			if (filteredTrainingSet.get(i).value(filteredTrainingSet.attribute("Outlier")) == 1) {
 				classAssignments[i] = 1;
 			} else {
 				classAssignments[i] = 0;

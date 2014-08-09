@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
@@ -27,8 +26,8 @@ public class View extends JFrame {
 	 */
 	private Controller controllerObject; //a reference to the controller object
 	private JPanel topPanel, middlePanel, bottomPanel; //the panels for the three areas of the GUI
-	private JPanel statusPanel; //the panel that holds the status label
-	private JLabel infoLabel, statusLabel; //the info and status labels
+	private JPanel programStatePanel; //the panel that holds the programState label
+	private JLabel infoLabel, programStateLabel; //the info and programState labels
 	private boolean topInitiated, middleInitiated, bottomInitiated; //have the JPanels been initialised?
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //the radio buttons for selecting a dataset
@@ -127,48 +126,42 @@ public class View extends JFrame {
 				infoLabel.setText("Which dataset do you wish to analyse?");
 				break;
 			case "startScreen_2":
+				infoLabel.setText("What kind of data items do you wish to analyse?");
+				break;
+			case "startScreen_3":
 				infoLabel.setText("What task do you wish to perform?");
 				break;
 			case "clustering_step1":
-				infoLabel.setText("What kind of data items do you wish to cluster?");
-				break;
-			case "clustering_step2":
 				infoLabel.setText("What features do you wish to cluster by?");
 				break;
-			case "clustering_step3":
+			case "clustering_step2":
 				infoLabel.setText("Please specify parameters for the K-Means algorithm.");
 				break;
-			case "clustering_step4":
+			case "clustering_step3":
 				infoLabel.setText("Results of the K-Means clustering algorithm");
 				break;
 			case "classification_step1":
-				infoLabel.setText("What kind of data items do you wish to classify?");
-				break;
-			case "classification_step2":
 				infoLabel.setText("What features do you wish to use to make predictions?");
 				break;
-			case "classification_step3":
+			case "classification_step2":
 				infoLabel.setText("What feature would you like to predict?");
 				break;
-			case "classification_step4":
+			case "classification_step3":
 				infoLabel.setText("Please specify parameters for the SVM algorithm.");
 				break;
-			case "classification_step5":
+			case "classification_step4":
 				infoLabel.setText("How should the classifier's performance be evaluated?");
 				break;
-			case "classification_step6":
+			case "classification_step5":
 				infoLabel.setText("Results of the SVM classification algorithm");
 				break;
 			case "outlierDetection_step1":
-				infoLabel.setText("What data items do you wish to search for outliers?");
-				break;
-			case "outlierDetection_step2":
 				infoLabel.setText("What features do you wish to use to identify outliers?");
 				break;
-			case "outlierDetection_step3":
+			case "outlierDetection_step2":
 				infoLabel.setText("Please specify parameters for the Outlier Detector.");
 				break;
-			case "outlierDetection_step4":
+			case "outlierDetection_step3":
 				infoLabel.setText("Results of the Outlier Detection algorithm");
 				break;
 		}
@@ -236,6 +229,15 @@ public class View extends JFrame {
 				*/
 				break;
 			case "startScreen_2":
+				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					levelOfAnalysisCombo = new JComboBox<String>();
+					levelOfAnalysisCombo.addItem("Player performances in individual matches");
+					levelOfAnalysisCombo.addItem("Player performances summed up over the season");
+					levelOfAnalysisCombo.addItem("Team performances summed up over the season");
+					middlePanel.add(levelOfAnalysisCombo);
+				}
+				break;
+			case "startScreen_3":
 				clusteringButton = new JRadioButton("Clustering");
 				clusteringButton.setSelected(true);
 				classificationButton = new JRadioButton("Classification");
@@ -260,17 +262,6 @@ public class View extends JFrame {
 			case "clustering_step1":
 			case "classification_step1":
 			case "outlierDetection_step1":
-				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
-					levelOfAnalysisCombo = new JComboBox<String>();
-					levelOfAnalysisCombo.addItem("Player performances in individual matches");
-					levelOfAnalysisCombo.addItem("Player performances summed up over the season");
-					levelOfAnalysisCombo.addItem("Team performances summed up over the season");
-					middlePanel.add(levelOfAnalysisCombo);
-				}
-				break;
-			case "clustering_step2":
-			case "classification_step2":
-			case "outlierDetection_step2":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
 				tableSchema = getFieldsOfDataset(false);
@@ -287,7 +278,7 @@ public class View extends JFrame {
 				featuresPane.getViewport().add(featuresPanel);
 				middlePanel.add(featuresPane);
 				break;
-			case "clustering_step3":
+			case "clustering_step2":
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0; //first column
 				c.gridy = 0; //first row
@@ -322,7 +313,7 @@ public class View extends JFrame {
 				middlePanel.add(numberOfKMeansRunsSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
-			case "classification_step3":
+			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
 				TreeSet<String> targetLabelOptions = tableSchema;
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
@@ -331,7 +322,7 @@ public class View extends JFrame {
 				}
 				middlePanel.add(targetLabelCombo);
 				break;
-			case "classification_step4":
+			case "classification_step3":
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
 				c.gridy = 0;
@@ -396,7 +387,7 @@ public class View extends JFrame {
 				((DefaultEditor) gammaSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(gammaSpinner, c);
 				break;
-			case "classification_step5":
+			case "classification_step4":
 				trainingSetButton = new JRadioButton("Test on training set");
 				trainingSetButton.setSelected(true);
 				percentageSplitButton = new JRadioButton("Percentage split: 70% training / 30% test");
@@ -419,7 +410,7 @@ public class View extends JFrame {
 				middlePanel.add(crossValidationButton, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
-			case "outlierDetection_step3":
+			case "outlierDetection_step2":
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0; //first column
 				c.gridy = 0; //first row
@@ -439,9 +430,9 @@ public class View extends JFrame {
 				middlePanel.add(epsilonSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
 				break;
-			case "clustering_step4":
-			case "classification_step6":
-			case "outlierDetection_step4":
+			case "clustering_step3":
+			case "classification_step5":
+			case "outlierDetection_step3":
 				algorithmOutputTextArea.setEditable(false);
 				JScrollPane resultsPane = new JScrollPane(algorithmOutputTextArea);
 				resultsPane.setPreferredSize(new Dimension(600, 200));
@@ -470,13 +461,13 @@ public class View extends JFrame {
 					nextButton.addActionListener(controllerObject);
 					
 
-					statusPanel = new JPanel();
-					statusPanel.setBorder(new TitledBorder(new EtchedBorder(), "Status"));
-					statusLabel = new JLabel();
-					statusPanel.add(statusLabel);
+					programStatePanel = new JPanel();
+					programStatePanel.setBorder(new TitledBorder(new EtchedBorder(), "Program State"));
+					programStateLabel = new JLabel();
+					programStatePanel.add(programStateLabel);
 					
 					bottomPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-					bottomPanel.add(statusPanel);
+					bottomPanel.add(programStatePanel);
 					bottomPanel.add(Box.createRigidArea(new Dimension(50, 0)));
 					//bottomPanel.add(Box.createHorizontalGlue());
 					bottomPanel.add(startOverButton);
@@ -489,22 +480,56 @@ public class View extends JFrame {
 					this.add(bottomPanel, BorderLayout.SOUTH);
 					bottomInitiated = true;
 				}
+				programStateLabel.setText("Initial Setup Screen - Select a Dataset");
 				startOverButton.setEnabled(false);
 				backButton.setEnabled(false);
 				nextButton.setEnabled(true);
 				break;
 			case "startScreen_2":
+				programStateLabel.setText("Initial Setup Screen - Specify Level of Analysis");
 				startOverButton.setEnabled(true);
 				backButton.setEnabled(true);
 				break;
-			case "clustering_step3":
-			case "classification_step5":
-			case "outlierDetection_step3":
+			case "startScreen_3":
+				programStateLabel.setText("Initial Setup Screen - Choose a Task to Perform");
+				break;
+			case "clustering_step1":
+				programStateLabel.setText("Clustering (Step 1 of 3) - Select Features");
+				break;
+			case "clustering_step2":
+				programStateLabel.setText("Clustering (Step 2 of 3) - Set Algorithm Parameters");
 				nextButton.setEnabled(true);
 				break;
-			case "clustering_step4":
-			case "classification_step6":
-			case "outlierDetector_step4":
+			case "clustering_step3":
+				programStateLabel.setText("Clustering (Step 3 of 3) - Displaying Results");
+				nextButton.setEnabled(false);
+				break;
+			case "classification_step1":
+				programStateLabel.setText("Classification (Step 1 of 5) - Select Features");
+				break;
+			case "classification_step2":
+				programStateLabel.setText("Classification (Step 2 of 5) - Specify Target Label");
+				break;
+			case "classification_step3":
+				programStateLabel.setText("Classification (Step 3 of 5) - Set Algorithm Parameters");
+				break;
+			case "classification_step4":
+				programStateLabel.setText("Classification (Step 4 of 5) - Specify Algorithm Testing Option");
+				nextButton.setEnabled(true);
+				break;
+			case "classification_step5":
+				programStateLabel.setText("Classification (Step 5 of 5) - Displaying Results");
+				nextButton.setEnabled(false);
+				break;
+			case "outlierDetection_step1":
+				programStateLabel.setText("Outlier Detection (Step 1 of 3) - Select Features");
+				break;
+			case "outlierDetection_step2":
+				programStateLabel.setText("Outlier Detection (Step 2 of 3) - Set Algorithm Parameters");
+				nextButton.setEnabled(true);
+				break;
+			case "outlierDetection_step3":
+				programStateLabel.setText("Outlier Detection (Step 3 of 3) - Displaying Results");
 				nextButton.setEnabled(false);
 				break;
 		}

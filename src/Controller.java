@@ -5,6 +5,8 @@ import java.util.TreeSet;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
+
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
@@ -103,6 +105,9 @@ public class Controller implements ActionListener {
 	 * A helper method for processing clicks of the "Start Over" button.
 	 */
 	private void processStartOverButtonClick() {
+		if (visualisationViewObject != null) {
+			visualisationViewObject.dispose();
+		}
 		visualisationViewObject = null;
 		state = "startScreen_1";
 		viewObject.updateView(state);
@@ -116,31 +121,30 @@ public class Controller implements ActionListener {
 			case "startScreen_2":
 				state = "startScreen_1";
 				break;
+			case "startScreen_3":
+				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					state = "startScreen_2";
+				} else {
+					state = "startScreen_1";
+				}
+				break;
 			case "clustering_step1":
 			case "classification_step1":
 			case "outlierDetection_step1":
-				state = "startScreen_2";
+				state = "startScreen_3";
 				break;
 			case "clustering_step2":
-				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-					state = "clustering_step1";
-				} else {
-					state = "startScreen_2";
-				}
+				state = "clustering_step1";
 				break;
 			case "clustering_step3":
+				if (visualisationViewObject != null) {
+					visualisationViewObject.dispose();
+				}
+				visualisationViewObject = null;
 				state = "clustering_step2";
 				break;
-			case "clustering_step4":
-				visualisationViewObject = null;
-				state = "clustering_step3";
-				break;
 			case "classification_step2":
-				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-					state = "classification_step1";
-				} else {
-					state = "startScreen_2";
-				}
+				state = "classification_step1";
 				break;
 			case "classification_step3":
 				state = "classification_step2";
@@ -149,19 +153,21 @@ public class Controller implements ActionListener {
 				state = "classification_step3";
 				break;
 			case "classification_step5":
+				if (visualisationViewObject != null) {
+					visualisationViewObject.dispose();
+				}
+				visualisationViewObject = null;
 				state = "classification_step4";
-				break;
-			case "classification_step6":
-				state = "classification_step5";
 				break;
 			case "outlierDetection_step2":
 				state = "outlierDetection_step1";
 				break;
 			case "outlierDetection_step3":
+				if (visualisationViewObject != null) {
+					visualisationViewObject.dispose();
+				}
+				visualisationViewObject = null;
 				state = "outlierDetection_step2";
-				break;
-			case "outlierDetection_step4":
-				state = "outlierDetection_step3";
 				break;
 		}
 		viewObject.updateView(state);
@@ -180,10 +186,10 @@ public class Controller implements ActionListener {
 					File selectedFile = getFile();
 					try {
 						new DatasetLoader(selectedFile);
+						state = "startScreen_3";
 					} catch (Exception e) {
 						System.out.println("Error: Dataset could not be loaded");
 					}
-					state = "startScreen_1";
 				}
 				/*
 				for (int i = 0; i < viewObject.availableDatasetsButtons.length; i++) {
@@ -205,44 +211,24 @@ public class Controller implements ActionListener {
 				*/
 				break;
 			case "startScreen_2":
+				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();
+				state = "startScreen_3";
+				break;
+			case "startScreen_3":
 				if (viewObject.clusteringButton.isSelected()) {
 					clusterer = new KMeansClusterer();
-					if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-						state = "clustering_step1";
-					} else {
-						state = "clustering_step2";
-					}
+					state = "clustering_step1";
 				} else if (viewObject.classificationButton.isSelected()) {
 					classifier = new SVMClassifier();
-					if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-						state = "classification_step1";
-					} else {
-						state = "classification_step2";
-					}
+					state = "classification_step1";
 				} else if (viewObject.outlierDetectionButton.isSelected()) {
 					outlierDetector = new OutlierDetector();
-					if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-						state = "outlierDetection_step1";
-					} else {
-						state = "outlierDetection_step2";
-					}
+					state = "outlierDetection_step1";
 				}
 				break;
 			case "clustering_step1":
 			case "classification_step1":
 			case "outlierDetection_step1":
-				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();
-				if (state.equals("clustering_step1")) {
-					state = "clustering_step2";
-				} else if (state.equals("classification_step1")) {
-					state = "classification_step2";
-				} else if (state.equals("outlierDetection_step1")) {
-					state = "outlierDetection_step2";
-				}
-				break;
-			case "clustering_step2":
-			case "classification_step2":
-			case "outlierDetection_step2":
 				selectedFeatures = getSelectedFeatures();
 				query = "select ";
 				for (String feature : selectedFeatures) {
@@ -255,7 +241,7 @@ public class Controller implements ActionListener {
 						query += "sum(" + feature + "),";
 					}
 				}
-				if (state.equals("clustering_step2") || state.equals("outlierDetection_step2")) {
+				if (state.equals("clustering_step1") || state.equals("outlierDetection_step1")) {
 					query = query.substring(0, query.length()-1);
 					query += " from " + selectedDataset;
 					if (desiredLevelOfAnalysis == 1) {
@@ -263,22 +249,22 @@ public class Controller implements ActionListener {
 					} else if (desiredLevelOfAnalysis == 2) {
 						query += " group by Team";
 					}
-					if (state.equals("clustering_step2")) {
+					if (state.equals("clustering_step1")) {
 						clusterer.setInstanceQuery(query);
 						clusterer.fetchInstances();
 						clusterer.renameAttributesOfInstances(selectedFeatures);
-						state = "clustering_step3";
-					} else if (state.equals("outlierDetection_step2")) {
+						state = "clustering_step2";
+					} else if (state.equals("outlierDetection_step1")) {
 						outlierDetector.setInstanceQuery(query);
 						outlierDetector.fetchInstances();
 						outlierDetector.renameAttributesOfInstances(selectedFeatures);
-						state = "outlierDetection_step3";
+						state = "outlierDetection_step2";
 					}
-				} else if (state.equals("classification_step2")) {
-					state = "classification_step3";
+				} else if (state.equals("classification_step1")) {
+					state = "classification_step2";
 				}
 				break;
-			case "clustering_step3":
+			case "clustering_step2":
 				int desiredNumberOfClusters = (int) viewObject.numberOfClustersSpinner.getValue();
 				int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
 				String KMeansClustererParameters = "-N " + desiredNumberOfClusters;
@@ -286,10 +272,10 @@ public class Controller implements ActionListener {
 				clusterer.train(desiredNumberOfKMeansRuns);
 				clustererEvaluation = clusterer.evaluate();
 				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
-				state = "clustering_step4";
+				state = "clustering_step3";
 				processActualise3dPlotButtonClick();
 				break;
-			case "classification_step3":
+			case "classification_step2":
 				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
 				if (desiredLevelOfAnalysis == 0) {
 					query += viewObject.targetLabelCombo.getSelectedItem().toString();
@@ -307,9 +293,9 @@ public class Controller implements ActionListener {
 				classifier.fetchInstances();
 				classifier.renameAttributesOfInstances(selectedFeatures);
 				classifier.setTargetLabel(selectedFeatures.size() - 1);
-				state = "classification_step4";
+				state = "classification_step3";
 				break;
-			case "classification_step4":
+			case "classification_step3":
 				String selectedKernel = (String) viewObject.kernelTypeCombo.getSelectedItem();
 				double regularisation = (double) viewObject.regularisationSpinner.getValue();
 				double gamma = (double) viewObject.gammaSpinner.getValue();
@@ -324,9 +310,9 @@ public class Controller implements ActionListener {
 					SVMClassifierParameters += " -C " + regularisation + " -G " + gamma;
 				}
 				classifier.setOptions(SVMClassifierParameters);
-				state = "classification_step5";
+				state = "classification_step4";
 				break;
-			case "classification_step5":
+			case "classification_step4":
 				if (viewObject.trainingSetButton.isSelected()) {
 					classifierEvaluationMethod = "trainingSet";
 				} else if (viewObject.crossValidationButton.isSelected()) {
@@ -339,17 +325,19 @@ public class Controller implements ActionListener {
 				classifier.train();
 				classifierEvaluation = classifier.evaluate();
 				viewObject.algorithmOutputTextArea.setText(classifierEvaluation.toSummaryString());
-				state = "classification_step6";
-				processActualise3dPlotButtonClick();
+				state = "classification_step5";
+				if (!classifierEvaluationMethod.equals("CV")) {
+					processActualise3dPlotButtonClick();
+				}
 				break;
-			case "outlierDetection_step3":
+			case "outlierDetection_step2":
 				double outlierFactor = (double) viewObject.epsilonSpinner.getValue();
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
 				outlierDetector.train();
 				outlierEvaluation = outlierDetector.evaluate();
 				//viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
-				state = "outlierDetection_step4";
+				state = "outlierDetection_step3";
 				processActualise3dPlotButtonClick();
 				break;
 		}
@@ -364,7 +352,7 @@ public class Controller implements ActionListener {
 		double[] predictedClassAssignments = null;
 		String[] classLabels = null;
 		switch (state) {
-			case "clustering_step4":
+			case "clustering_step3":
 				instances = clusterer.getTrainingSet();
 				actualClassAssignments = clustererEvaluation.getClusterAssignments();
 				for (int i = 0; i < instances.numInstances(); i++) {
@@ -376,13 +364,11 @@ public class Controller implements ActionListener {
 					classLabels[i] = "Cluster " + clusterNumber;
 				}
 				break;
-			case "classification_step6":
+			case "classification_step5":
 				if (classifierEvaluationMethod.equals("trainingSet")) {
 					instances = classifier.getTrainingSet();
 				} else if (classifierEvaluationMethod.equals("testSet")) {
 					instances = classifier.getTestSet();
-				} else if (classifierEvaluationMethod.equals("CV")) {
-					instances = classifier.getTrainingSet();
 				}
 				actualClassAssignments = classifier.getActualClassAssignments();
 				predictedClassAssignments = classifier.getPredictedClassAssignments();
@@ -401,7 +387,7 @@ public class Controller implements ActionListener {
 					e.printStackTrace();
 				}
 				break;
-			case "outlierDetection_step4":
+			case "outlierDetection_step3":
 				instances = outlierDetector.getTrainingSet();
 				actualClassAssignments = outlierEvaluation.getClassAssignments();
 				for (int i = 0; i < instances.numInstances(); i++) {
@@ -422,9 +408,11 @@ public class Controller implements ActionListener {
 				for (int j = 0; j < 3; j++) {
 					coordinates[i][j] = instances.get(i).value(j);
 				}
+				//coordinates[i][2] = 0;
 			}
 			plot = new PickablePointsScatter3D(axeLabels, coordinates, 
 					actualClassAssignments, predictedClassAssignments);
+			//plot.getChart().getView().setViewPositionMode(ViewPositionMode.TOP);
 			visualisationViewObject = new VisualisationView(this, plot, instances, classLabels);
 			visualisationViewObject.setVisible(true);
 		} else {
