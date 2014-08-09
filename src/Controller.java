@@ -147,7 +147,7 @@ public class Controller implements ActionListener {
 				state = "classification_step1";
 				break;
 			case "classification_step3":
-				state = "classification_step2";
+				state = "classification_step1";
 				break;
 			case "classification_step4":
 				state = "classification_step3";

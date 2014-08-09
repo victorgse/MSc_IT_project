@@ -149,7 +149,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			objectForPredictionsPrinting = new PlainText();
 			buffer = new StringBuffer();
 			objectForPredictionsPrinting.setBuffer(buffer);
-			//predictions.setOutputDistribution(true);
+			objectForPredictionsPrinting.setOutputDistribution(true);
 			if (evaluationOption.equals("trainingSet")) {
 				objectForPredictionsPrinting.setHeader(trainingSet);
 				eval.evaluateModel(classifier, trainingSet, objectForPredictionsPrinting);
@@ -158,17 +158,19 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 				eval.evaluateModel(classifier, testSet, objectForPredictionsPrinting);
 			} else if (evaluationOption.equals("CV")) {
 				objectForPredictionsPrinting.setHeader(trainingSet);
-				eval.crossValidateModel(classifier, trainingSet, 10, new Random(1), trainingSet);
+				eval.crossValidateModel(classifier, trainingSet, 10, new Random(1), objectForPredictionsPrinting);
 			}
-			String[] lines = objectForPredictionsPrinting.getBuffer().toString().split("\n");
-			actualClassAssignments = new double[lines.length];
-			predictedClassAssignments = new double[lines.length];
-			for (int i = 0; i < lines.length; i++) {
-				String[] tokens = lines[i].split("[ ]+");
-				actualClassAssignments[i] = Double.parseDouble(tokens[2].substring(0, 1));
-				predictedClassAssignments[i] = Double.parseDouble(tokens[3].substring(0, 1));
+			if (evaluationOption.equals("trainingSet") || evaluationOption.equals("testSet")) {
+				String[] lines = objectForPredictionsPrinting.getBuffer().toString().split("\n");
+				actualClassAssignments = new double[lines.length];
+				predictedClassAssignments = new double[lines.length];
+				for (int i = 0; i < lines.length; i++) {
+					String[] tokens = lines[i].split("[ ]+");
+					actualClassAssignments[i] = Double.parseDouble(tokens[2].substring(0, 1));
+					predictedClassAssignments[i] = Double.parseDouble(tokens[3].substring(0, 1));
+				}
 			}
-			System.out.println(objectForPredictionsPrinting.getBuffer());
+			//System.out.println(objectForPredictionsPrinting.getBuffer());
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Something went wrong with evaluating classifier.");

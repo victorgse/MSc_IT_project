@@ -30,6 +30,7 @@ public class SVMClassifier extends ClassificationAlgorithm {
 		try {
 			options = weka.core.Utils.splitOptions(algorithmParameters);
 			((LibSVM) classifier).setOptions(options);
+			((LibSVM) classifier).setProbabilityEstimates(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Something went wrong with setting the SVM's options.");
