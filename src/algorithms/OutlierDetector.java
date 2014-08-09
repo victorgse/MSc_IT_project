@@ -31,7 +31,6 @@ public class OutlierDetector extends Algorithm {
 	 */
 	public void setOptions(String algorithmParameters) {
 		String[] tokens = algorithmParameters.split(" ");
-		System.out.println(tokens[0]);
 		double outlierFactor = 0;
 		for (int i = 0; i < tokens.length; i++) {
 			if (tokens[i].equals("-O")) {
