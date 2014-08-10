@@ -3,6 +3,7 @@ import java.io.File;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
@@ -110,7 +111,11 @@ public class Controller implements ActionListener {
 		}
 		visualisationViewObject = null;
 		state = "startScreen_1";
-		viewObject.updateView(state);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				viewObject.updateView(state);
+			}
+		});
 	}
 	
 	/**
@@ -170,7 +175,11 @@ public class Controller implements ActionListener {
 				state = "outlierDetection_step2";
 				break;
 		}
-		viewObject.updateView(state);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				viewObject.updateView(state);
+			}
+		});
 	}
 	
 	/**
@@ -310,7 +319,29 @@ public class Controller implements ActionListener {
 					SVMClassifierParameters += " -C " + regularisation + " -G " + gamma;
 				}
 				classifier.setOptions(SVMClassifierParameters);
-				state = "classification_step4";
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+								public void run() {
+									viewObject.startOverButton.setEnabled(false);
+									viewObject.backButton.setEnabled(false);
+									viewObject.nextButton.setEnabled(false);
+									viewObject.setProgramStateLabel("Classification (Step 3 of 5) - Training Classifier...");
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						classifier.train();
+						state = "classification_step4";
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								viewObject.updateView(state);
+							}
+						});
+					}
+				}).start();
 				break;
 			case "classification_step4":
 				if (viewObject.trainingSetButton.isSelected()) {
@@ -322,13 +353,33 @@ public class Controller implements ActionListener {
 					classifier.splitDataset(0.70);
 				}
 				classifier.setEvaluationOption(classifierEvaluationMethod);
-				classifier.train();
-				classifierEvaluation = classifier.evaluate();
-				viewObject.algorithmOutputTextArea.setText(classifierEvaluation.toSummaryString());
-				state = "classification_step5";
-				if (!classifierEvaluationMethod.equals("CV")) {
-					processActualisePlotButtonClick();
-				}
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+								public void run() {
+									viewObject.startOverButton.setEnabled(false);
+									viewObject.backButton.setEnabled(false);
+									viewObject.nextButton.setEnabled(false);
+									viewObject.setProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						classifierEvaluation = classifier.evaluate();
+						state = "classification_step5";
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								viewObject.algorithmOutputTextArea.setText(classifierEvaluation.toSummaryString());
+								viewObject.updateView(state);
+							}
+						});
+						if (!classifierEvaluationMethod.equals("CV")) {
+							processActualisePlotButtonClick();
+						}
+					}
+				}).start();
 				break;
 			case "outlierDetection_step2":
 				double outlierFactor = (double) viewObject.outlierFactorSpinner.getValue();
@@ -336,12 +387,16 @@ public class Controller implements ActionListener {
 				outlierDetector.setOptions(OutlierDetectorParameters);
 				outlierDetector.train();
 				outlierEvaluation = outlierDetector.evaluate();
-				//viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
+				//viewObject.algorithmOutputTextArea.setText(outlierEvaluation.ResultsToString());
 				state = "outlierDetection_step3";
 				processActualisePlotButtonClick();
 				break;
 		}
-		viewObject.updateView(state);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				viewObject.updateView(state);
+			}
+		});
 	}
 	
 	private void processActualisePlotButtonClick() {
@@ -399,21 +454,38 @@ public class Controller implements ActionListener {
 				break;
 		}
 		if (visualisationViewObject == null) {
-			axeLabels = new String[3];
-			for (int m = 0; m < 3; m++) {
-				axeLabels[m] = instances.attribute(m).name();
+			if (instances.numAttributes() >= 3) {
+				axeLabels = new String[3];
+				for (int m = 0; m < 3; m++) {
+					axeLabels[m] = instances.attribute(m).name();
+				}
+			} else {
+				axeLabels = new String[instances.numAttributes()];
+				for (int m = 0; m < instances.numAttributes(); m++) {
+					axeLabels[m] = instances.attribute(m).name();
+				}
 			}
 			coordinates = new double[instances.numInstances()][3];
 			for (int i = 0; i < instances.numInstances(); i++) {
-				for (int j = 0; j < 3; j++) {
-					coordinates[i][j] = instances.get(i).value(j);
+				if (instances.numAttributes() >= 3) {
+					for (int j = 0; j < 3; j++) {
+						coordinates[i][j] = instances.get(i).value(j);
+					}
+				} else if (instances.numAttributes() == 2) {
+					coordinates[i][0] = instances.get(i).value(0);
+					coordinates[i][1] = instances.get(i).value(1);
+					coordinates[i][2] = 0;
+				} else if (instances.numAttributes() == 1) {
+					coordinates[i][0] = instances.get(i).value(0);
+					coordinates[i][1] = 0;
+					coordinates[i][2] = 0;
 				}
-				//coordinates[i][1] = 0;
-				//coordinates[i][2] = 0;
 			}
 			plot = new PickablePointsScatter3D(axeLabels, coordinates, 
 					actualClassAssignments, predictedClassAssignments);
-			//plot.getChart().getView().setViewPositionMode(ViewPositionMode.TOP);
+			if (instances.numAttributes() < 3) {
+				plot.getChart().getView().setViewPositionMode(ViewPositionMode.TOP);
+			}
 			visualisationViewObject = new VisualisationView(this, plot, instances, classLabels);
 			visualisationViewObject.setVisible(true);
 		} else {

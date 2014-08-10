@@ -63,9 +63,15 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
     }
 	
 	public void renameAxes(String[] axeLabels) {
-		chart.getAxeLayout().setXAxeLabel(axeLabels[0]);
-        chart.getAxeLayout().setYAxeLabel(axeLabels[1]);
-        chart.getAxeLayout().setZAxeLabel(axeLabels[2]);
+		switch (axeLabels.length) {
+			case 3:
+				chart.getAxeLayout().setZAxeLabel(axeLabels[2]);
+			case 2:
+				chart.getAxeLayout().setYAxeLabel(axeLabels[1]);
+			case 1:
+				chart.getAxeLayout().setXAxeLabel(axeLabels[0]);
+				break;
+		}
 	}
 	
 	AWTMousePickingController<?,?> mousePicker;

@@ -73,10 +73,15 @@ public class VisualisationView extends JFrame{
 		yAxisCombo = new JComboBox<String>();
 		yAxisCombo.setPreferredSize(new Dimension(250, 40));
 		yAxisCombo.setMaximumSize(new Dimension(250, 40));
-		for (int i = 0; i < instances.numAttributes(); i++) {
-			yAxisCombo.addItem(instances.attribute(i).name());
+		if (instances.numAttributes() > 1) {
+			for (int i = 0; i < instances.numAttributes(); i++) {
+				yAxisCombo.addItem(instances.attribute(i).name());
+			}
+			yAxisCombo.setSelectedIndex(1);
+		} else {
+			yAxisLabel.setEnabled(false);
+			yAxisCombo.setEnabled(false);
 		}
-		yAxisCombo.setSelectedIndex(1);
 		axeSelectionPanel.add(yAxisCombo);
 		axeSelectionPanel.add(Box.createVerticalGlue());
 		
@@ -86,10 +91,15 @@ public class VisualisationView extends JFrame{
 		zAxisCombo = new JComboBox<String>();
 		zAxisCombo.setPreferredSize(new Dimension(250, 40));
 		zAxisCombo.setMaximumSize(new Dimension(250, 40));
-		for (int i = 0; i < instances.numAttributes(); i++) {
-			zAxisCombo.addItem(instances.attribute(i).name());
+		if (instances.numAttributes() > 2) {
+			for (int i = 0; i < instances.numAttributes(); i++) {
+				zAxisCombo.addItem(instances.attribute(i).name());
+			}
+			zAxisCombo.setSelectedIndex(2);
+		} else {
+			zAxisLabel.setEnabled(false);
+			zAxisCombo.setEnabled(false);
 		}
-		zAxisCombo.setSelectedIndex(2);
 		axeSelectionPanel.add(zAxisCombo);
 		axeSelectionPanel.add(Box.createVerticalGlue());
 		
