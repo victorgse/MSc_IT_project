@@ -4,6 +4,8 @@ package visualisers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.chart.controllers.keyboard.screenshot.AWTScreenshotKeyController;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
@@ -17,24 +19,37 @@ import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.pickable.PickablePoint;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
+import weka.core.Instances;
+
 public class PickablePointsScatter3D extends AbstractAnalysis {
 	
 	public static final Color[] COLOURS = {Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.CYAN};
 	private List<PickablePoint> points;
+	private String selectedDataset;
 	private String[] axeLabels;
 	private double[][] coordinates;
 	private double[] actualClassAssignments;
 	private double[] predictedClassAssignments;
+	private Instances instances;
+	private String[] namesOfInstances;
+	private String[] classLabels;
 	private boolean plotInitiated;
+	private InstanceInfoFrame instanceInfoFrame;
 	
-	public PickablePointsScatter3D(String[] axeLabels, double[][] coordinates, 
-			double[] actualClassAssignments, double[] predictedClassAssignments) {
+	public PickablePointsScatter3D(String selectedDataset, String[] axeLabels, double[][] coordinates, 
+			double[] actualClassAssignments, double[] predictedClassAssignments, 
+			Instances instances, String[] namesOfInstances, String[] classLabels) {
 		try {
+			this.selectedDataset = selectedDataset;
 			this.axeLabels = axeLabels;
 			this.coordinates = coordinates;
 			this.actualClassAssignments = actualClassAssignments;
 			this.predictedClassAssignments = predictedClassAssignments;
+			this.instances = instances;
+			this.namesOfInstances = namesOfInstances;
+			this.classLabels = classLabels;
 			plotInitiated = false;
+			instanceInfoFrame = null;
 			init();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,13 +141,38 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	}
 	
 	private void processPicked(List<?> picked) {
-		if (picked.isEmpty()) {
-			System.out.println("Nothing was picked.");
-		} else {
-			System.out.println("These were picked:");
+		String clickedInstancesInfo = "";
+		if (!picked.isEmpty()) {
 			for (Object p: picked) {
-				System.out.println(p);
+				final String[] tokens = p.toString().split("[ :]+");
+				int indexOfClickedInstance = Integer.parseInt(tokens[1]) % instances.numInstances();
+				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					clickedInstancesInfo += "Instance: " + namesOfInstances[indexOfClickedInstance] + "\n";
+				} else {
+					clickedInstancesInfo += "Instance: " + indexOfClickedInstance + "\n";
+				}
+				for (int i = 0; i < instances.numAttributes(); i++) {
+					clickedInstancesInfo += instances.attribute(i).name() + ": " + instances.get(indexOfClickedInstance).value(i) + "\n";
+				}
+				if (predictedClassAssignments != null) {
+					clickedInstancesInfo += "Actual Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n";
+					clickedInstancesInfo += "Predicted Class: " + classLabels[(int) predictedClassAssignments[indexOfClickedInstance] - 1] + "\n";
+				} else {
+					clickedInstancesInfo += "Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n\n";
+				}
 			}
+			final String copyOfclickedInstancesInfo = clickedInstancesInfo;
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					if (instanceInfoFrame == null) {
+						instanceInfoFrame = new InstanceInfoFrame();
+					} else if (!instanceInfoFrame.isVisible()) {
+						instanceInfoFrame = null;
+						instanceInfoFrame = new InstanceInfoFrame();
+					}
+					instanceInfoFrame.setTextOfInstanceInfoTextArea(copyOfclickedInstancesInfo);
+				}
+			});
 		}
 	}
 	
