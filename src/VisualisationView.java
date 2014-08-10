@@ -34,7 +34,7 @@ public class VisualisationView extends JFrame{
 		this.instances = instances;
 		this.classLabels = classLabels;
 		
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(960, 540); //the size of the JFrame window
 		//setResizable(false); //disables resizing of the JFrame window
 		setLocation(80, 80); //the initial location of the JFrame window on the screen
