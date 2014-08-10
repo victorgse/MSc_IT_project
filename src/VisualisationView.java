@@ -144,17 +144,33 @@ public class VisualisationView extends JFrame{
 			JLabel bigLabel = new JLabel("Big ==> incorrectly classified");
 			legendNorthPanel.add(bigLabel);
 			legendPanel.add(legendNorthPanel, BorderLayout.NORTH);
+			
+			JPanel legendCenterPanel = new JPanel();
+			String[] tokens = classLabels[0].split(" ");
+			JLabel classLabel = new JLabel(tokens[1] + ": ");
+			legendCenterPanel.add(classLabel);
+			for (int i = 0; i < classLabels.length; i++) {
+				tokens = classLabels[i].split(" ");
+				JLabel nextClassLabel = new JLabel(tokens[0]);
+				Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
+						PickablePointsScatter3D.COLOURS[i].g, 
+						PickablePointsScatter3D.COLOURS[i].b);
+				nextClassLabel.setForeground(color);
+				legendCenterPanel.add(nextClassLabel);
+			}
+			legendPanel.add(legendCenterPanel, BorderLayout.CENTER);
+		} else {
+			JPanel legendCenterPanel = new JPanel();
+			for (int i = 0; i < classLabels.length; i++) {
+				JLabel nextClassLabel = new JLabel(classLabels[i]);
+				Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
+						PickablePointsScatter3D.COLOURS[i].g, 
+						PickablePointsScatter3D.COLOURS[i].b);
+				nextClassLabel.setForeground(color);
+				legendCenterPanel.add(nextClassLabel);
+			}
+			legendPanel.add(legendCenterPanel, BorderLayout.CENTER);
 		}
-		JPanel legendCenterPanel = new JPanel();
-		for (int i = 0; i < classLabels.length; i++) {
-			JLabel nextClassLabel = new JLabel(classLabels[i]);
-			Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
-					PickablePointsScatter3D.COLOURS[i].g, 
-					PickablePointsScatter3D.COLOURS[i].b);
-			nextClassLabel.setForeground(color);
-			legendCenterPanel.add(nextClassLabel);
-		}
-		legendPanel.add(legendCenterPanel, BorderLayout.CENTER);
 		rightPanel.add(legendPanel, BorderLayout.SOUTH);
 		
 		this.add(rightPanel, BorderLayout.CENTER);
