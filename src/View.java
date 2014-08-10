@@ -26,7 +26,7 @@ public class View extends JFrame {
 	 */
 	private Controller controllerObject; //a reference to the controller object
 	private JPanel topPanel, middlePanel, bottomPanel; //the panels for the three areas of the GUI
-	private JPanel programStatePanel; //the panel that holds the programState label
+	JPanel programStatePanel; //the panel that holds the programState label
 	private JLabel infoLabel, programStateLabel; //the info and programState labels
 	private boolean topInitiated, middleInitiated, bottomInitiated; //have the JPanels been initialised?
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
@@ -36,7 +36,7 @@ public class View extends JFrame {
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
-	TreeSet<String> tableSchema, selectedFeatures; //sets storing the fields of the dataset and the selected features
+	TreeSet<String> tableSchema; //stores the dataset's fields.
 	JCheckBox[] features; //check boxes allowing the user to select features
 	JComboBox<String> targetLabelCombo; //combo box for selecting a target label for the SVM classifier
 	JSpinner numberOfClustersSpinner, numberOfKMeansRunsSpinner; //spinners for K-Means' options
@@ -239,9 +239,12 @@ public class View extends JFrame {
 				break;
 			case "startScreen_3":
 				clusteringButton = new JRadioButton("Clustering");
+				clusteringButton.setToolTipText("Clustering aims to discover groups of similar items within the data.");
 				clusteringButton.setSelected(true);
 				classificationButton = new JRadioButton("Classification");
+				classificationButton.setToolTipText("Classification aims to make discrete predictions.");
 				outlierDetectionButton = new JRadioButton("Outlier Detection");
+				outlierDetectionButton.setToolTipText("Outlier Detection aims to identify outlier items within the data.");
 				
 				ButtonGroup group2 = new ButtonGroup();
 				group2.add(clusteringButton);
@@ -498,11 +501,14 @@ public class View extends JFrame {
 				break;
 			case "clustering_step2":
 				programStateLabel.setText("Clustering (Step 2 of 3) - Set Algorithm Parameters");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				nextButton.setEnabled(true);
 				break;
 			case "clustering_step3":
 				programStateLabel.setText("Clustering (Step 3 of 3) - Displaying Results");
-				nextButton.setEnabled(false);
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				break;
 			case "classification_step1":
 				programStateLabel.setText("Classification (Step 1 of 5) - Select Features");
@@ -515,11 +521,14 @@ public class View extends JFrame {
 				break;
 			case "classification_step4":
 				programStateLabel.setText("Classification (Step 4 of 5) - Specify Algorithm Testing Option");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				nextButton.setEnabled(true);
 				break;
 			case "classification_step5":
 				programStateLabel.setText("Classification (Step 5 of 5) - Displaying Results");
-				nextButton.setEnabled(false);
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				break;
 			case "outlierDetection_step1":
 				programStateLabel.setText("Outlier Detection (Step 1 of 3) - Select Features");
@@ -583,6 +592,17 @@ public class View extends JFrame {
 			System.out.println("Something went wrong when reading table schema.");
 		}
 		return tableFields;
+	}
+	
+	public void setProgramStateLabel(String text) {
+		programStateLabel.setText(text);
+	}
+
+	/**
+	 * @return the programStateLabel
+	 */
+	public JLabel getProgramStateLabel() {
+		return programStateLabel;
 	}
 	
 }

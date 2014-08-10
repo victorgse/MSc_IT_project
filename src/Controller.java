@@ -275,14 +275,44 @@ public class Controller implements ActionListener {
 				break;
 			case "clustering_step2":
 				int desiredNumberOfClusters = (int) viewObject.numberOfClustersSpinner.getValue();
-				int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
 				String KMeansClustererParameters = "-N " + desiredNumberOfClusters;
 				clusterer.setOptions(KMeansClustererParameters);
-				clusterer.train(desiredNumberOfKMeansRuns);
-				clustererEvaluation = clusterer.evaluate();
-				viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
-				state = "clustering_step3";
-				processActualisePlotButtonClick();
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+								public void run() {
+									viewObject.startOverButton.setEnabled(false);
+									viewObject.backButton.setEnabled(false);
+									viewObject.nextButton.setEnabled(false);
+									viewObject.setProgramStateLabel("Clustering (Step 2 of 3) - Training Clusterer...");
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
+						clusterer.train(desiredNumberOfKMeansRuns);
+						try {
+							SwingUtilities.invokeAndWait(new Runnable() {
+								public void run() {
+									viewObject.setProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
+								}
+							});
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						clustererEvaluation = clusterer.evaluate();
+						state = "clustering_step3";
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								viewObject.algorithmOutputTextArea.setText(clustererEvaluation.clusterResultsToString());
+								viewObject.updateView(state);
+							}
+						});
+						processActualisePlotButtonClick();
+					}
+				}).start();
 				break;
 			case "classification_step2":
 				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
