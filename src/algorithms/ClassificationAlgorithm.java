@@ -41,12 +41,11 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			Instances newTrainingSet = null;
 			try {
 				NumericToNominal numericToNominalConverter = new NumericToNominal();
-				numericToNominalConverter.setAttributeIndices("last");
+				numericToNominalConverter.setAttributeIndices(String.valueOf(classIndex));
 				numericToNominalConverter.setInvertSelection(false);
 				numericToNominalConverter.setInputFormat(trainingSet);
 				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (newTrainingSet.classAttribute().numValues() <= 5) {
@@ -54,7 +53,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			} else {
 				try {
 					Discretize numericToDiscreteNominalConverter = new Discretize();
-					numericToDiscreteNominalConverter.setAttributeIndices("last");
+					numericToDiscreteNominalConverter.setAttributeIndices(String.valueOf(classIndex));
 					numericToDiscreteNominalConverter.setBins(5);
 					numericToDiscreteNominalConverter.setIgnoreClass(true);
 					numericToDiscreteNominalConverter.setInvertSelection(false);
@@ -62,7 +61,6 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 					numericToDiscreteNominalConverter.setInputFormat(trainingSet);
 					trainingSet = Filter.useFilter(trainingSet, numericToDiscreteNominalConverter);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -149,7 +147,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			objectForPredictionsPrinting = new PlainText();
 			buffer = new StringBuffer();
 			objectForPredictionsPrinting.setBuffer(buffer);
-			objectForPredictionsPrinting.setOutputDistribution(true);
+			//objectForPredictionsPrinting.setOutputDistribution(true);
 			if (evaluationOption.equals("trainingSet")) {
 				objectForPredictionsPrinting.setHeader(trainingSet);
 				eval.evaluateModel(classifier, trainingSet, objectForPredictionsPrinting);

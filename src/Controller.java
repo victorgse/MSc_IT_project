@@ -262,6 +262,9 @@ public class Controller implements ActionListener {
 						clusterer.setInstanceQuery(query);
 						clusterer.fetchInstances();
 						clusterer.renameAttributesOfInstances(selectedFeatures);
+						if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
+							clusterer.scaleAndMeanNormaliseFeatures();
+						}
 						state = "clustering_step2";
 					} else if (state.equals("outlierDetection_step1")) {
 						outlierDetector.setInstanceQuery(query);
@@ -332,6 +335,9 @@ public class Controller implements ActionListener {
 				classifier.fetchInstances();
 				classifier.renameAttributesOfInstances(selectedFeatures);
 				classifier.setTargetLabel(selectedFeatures.size() - 1);
+				if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
+					classifier.scaleAndMeanNormaliseFeatures();
+				}
 				state = "classification_step3";
 				break;
 			case "classification_step3":

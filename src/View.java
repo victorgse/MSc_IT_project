@@ -38,6 +38,7 @@ public class View extends JFrame {
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
 	TreeSet<String> tableSchema; //stores the dataset's fields.
 	JCheckBox[] features; //check boxes allowing the user to select features
+	JCheckBox scaleAndMeanNormaliseFeatures; //check box allowing the user to request feature scaling and mean normalisation
 	JComboBox<String> targetLabelCombo; //combo box for selecting a target label for the SVM classifier
 	JSpinner numberOfClustersSpinner, numberOfKMeansRunsSpinner; //spinners for K-Means' options
 	JComboBox<String> kernelTypeCombo; //combo box for choosing a kernel for the SVM classifier
@@ -279,7 +280,15 @@ public class View extends JFrame {
 					i++;
 				}
 				featuresPane.getViewport().add(featuresPanel);
-				middlePanel.add(featuresPane);
+				c.gridx = 1; //second column
+				c.gridy = 0; //first row
+				middlePanel.add(featuresPane, c);
+				if (!controllerObject.getState().equals("outlierDetection_step1")) {
+					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
+					c.gridx = 2; //third column
+					c.gridy = 0; //first row
+					middlePanel.add(scaleAndMeanNormaliseFeatures, c);
+				}
 				break;
 			case "clustering_step2":
 				c.fill = GridBagConstraints.HORIZONTAL;

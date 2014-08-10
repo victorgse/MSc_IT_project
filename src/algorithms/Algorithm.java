@@ -4,6 +4,8 @@ import java.util.TreeSet;
 
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Normalize;
 
 /**
  * An abstract superclass which contains members that are common to all inheriting algorithms.
@@ -55,6 +57,16 @@ public abstract class Algorithm {
 	 */
 	public Instances getTrainingSet() {
 		return trainingSet;
+	}
+	
+	public void scaleAndMeanNormaliseFeatures() {
+		Normalize normalizer = new Normalize();
+		try {
+			normalizer.setInputFormat(trainingSet);
+			trainingSet = Filter.useFilter(trainingSet, normalizer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
