@@ -38,7 +38,7 @@ public class Controller implements ActionListener {
 	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
 	private TreeSet<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
-	private OutlierEvaluation outlierEvaluation;
+	private OutlierEvaluation outlierDetectorEvaluation; //the outlierDetector evaluation object
 	
 	/**
 	 * Constructor
@@ -416,7 +416,7 @@ public class Controller implements ActionListener {
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
 				outlierDetector.train();
-				outlierEvaluation = outlierDetector.evaluate();
+				outlierDetectorEvaluation = outlierDetector.evaluate();
 				//viewObject.algorithmOutputTextArea.setText(outlierEvaluation.ResultsToString());
 				state = "outlierDetection_step3";
 				processActualisePlotButtonClick();
@@ -474,7 +474,7 @@ public class Controller implements ActionListener {
 				break;
 			case "outlierDetection_step3":
 				instances = outlierDetector.getTrainingSet();
-				actualClassAssignments = outlierEvaluation.getClassAssignments();
+				actualClassAssignments = outlierDetectorEvaluation.getClassAssignments();
 				for (int i = 0; i < instances.numInstances(); i++) {
 					actualClassAssignments[i] += 1;
 				}
