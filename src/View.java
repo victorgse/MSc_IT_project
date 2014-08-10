@@ -36,7 +36,7 @@ public class View extends JFrame {
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
-	TreeSet<String> tableSchema; //stores the dataset's fields.
+	TreeSet<String> numericFieldsOfTableSchema; //stores the dataset's numeric fields.
 	JCheckBox[] features; //check boxes allowing the user to select features
 	JCheckBox scaleAndMeanNormaliseFeatures; //check box allowing the user to request feature scaling and mean normalisation
 	JComboBox<String> targetLabelCombo; //combo box for selecting a target label for the SVM classifier
@@ -87,9 +87,6 @@ public class View extends JFrame {
 		
 		JMenuItem aboutItem = new JMenuItem("About");
 		helpMenu.add(aboutItem);
-		
-		//JMenuItem userManualItem = new JMenuItem("User Manual");
-		//helpMenu.add(userManualItem);
 	}
 	
 	/**
@@ -268,13 +265,12 @@ public class View extends JFrame {
 			case "outlierDetection_step1":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
-				tableSchema = getFieldsOfDataset(false);
-				TreeSet<String> numericFields = getFieldsOfDataset(true);
-				features = new JCheckBox[numericFields.size()];
+				numericFieldsOfTableSchema = getFieldsOfDataset(true);
+				features = new JCheckBox[numericFieldsOfTableSchema.size()];
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
 				int i = 0;
-				for (String field : numericFields) {
+				for (String field : numericFieldsOfTableSchema) {
 					features[i] = new JCheckBox(field);
 					featuresPanel.add(features[i]);
 					i++;
@@ -327,7 +323,7 @@ public class View extends JFrame {
 				break;
 			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
-				TreeSet<String> targetLabelOptions = tableSchema;
+				TreeSet<String> targetLabelOptions = numericFieldsOfTableSchema;
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
 				for (String option : targetLabelOptions) {
 					targetLabelCombo.addItem(option);
@@ -588,7 +584,7 @@ public class View extends JFrame {
 			String query = "select columnname "
 					+ "from sys.systables t, sys.syscolumns "
 					+ "where TABLEID = REFERENCEID "
-					+ "and tablename = 'MCFC_ANALYTICS_FULL_DATASET'";
+					+ "and tablename = '" + controllerObject.getSelectedDataset() + "'";
 			if (numericOnly) {
 				query += " and CAST(COLUMNDATATYPE AS VARCHAR(128)) = 'NUMERIC(10,2)'";
 			}
