@@ -185,8 +185,10 @@ public class View extends JFrame {
 				}
 				
 				mcfcAnalyticsFullDatasetButton = new JRadioButton("MCFC Analytics Full Dataset");
+				mcfcAnalyticsFullDatasetButton.setToolTipText("Analyse the MCFC Analytics Full Dataset.");
 				mcfcAnalyticsFullDatasetButton.setSelected(true);
 				otherDatasetButton = new JRadioButton("Other");
+				otherDatasetButton.setToolTipText("Load a new .xls dataset into the database.");
 				
 				ButtonGroup group = new ButtonGroup();
 				group.add(mcfcAnalyticsFullDatasetButton);
@@ -268,6 +270,7 @@ public class View extends JFrame {
 				numericFieldsOfTableSchema = getFieldsOfDataset(true);
 				features = new JCheckBox[numericFieldsOfTableSchema.size()];
 				JPanel featuresPanel = new JPanel();
+				featuresPanel.setToolTipText("You must select at lease 1 feature (preferably more).");
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
 				int i = 0;
 				for (String field : numericFieldsOfTableSchema) {
@@ -281,6 +284,7 @@ public class View extends JFrame {
 				middlePanel.add(featuresPane, c);
 				if (!controllerObject.getState().equals("outlierDetection_step1")) {
 					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
+					scaleAndMeanNormaliseFeatures.setToolTipText("This option would bring all selected features on a [0, 1] scale.");
 					c.gridx = 2; //third column
 					c.gridy = 0; //first row
 					middlePanel.add(scaleAndMeanNormaliseFeatures, c);
@@ -317,6 +321,7 @@ public class View extends JFrame {
 				            100, //max
 				            1); //step
 				numberOfKMeansRunsSpinner = new JSpinner(numberOfKMeansRunsSpinnerModel);
+				numberOfKMeansRunsSpinner.setToolTipText("K-Means depends on random initialisations (of the cluster centroids) - multiple runs make it more likely that K-Means would pick up a good hypothesis model.");
 				((DefaultEditor) numberOfKMeansRunsSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(numberOfKMeansRunsSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
