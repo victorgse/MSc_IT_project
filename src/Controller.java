@@ -446,8 +446,10 @@ public class Controller implements ActionListener {
 			case "clustering_step3":
 				instances = clusterer.getTrainingSet();
 				actualClassAssignments = clustererEvaluation.getClusterAssignments();
-				for (int i = 0; i < instances.numInstances(); i++) {
-					actualClassAssignments[i] += 1;
+				if (visualisationViewObject == null) {
+					for (int i = 0; i < instances.numInstances(); i++) {
+						actualClassAssignments[i] += 1;
+					}
 				}
 				classLabels = new String[clustererEvaluation.getNumClusters()];
 				for (int i = 0; i < clustererEvaluation.getNumClusters(); i++) {
@@ -470,7 +472,7 @@ public class Controller implements ActionListener {
 				// remove class attribute
 				try {
 					Remove remove = new Remove();
-				    remove.setAttributeIndices("last");
+				    remove.setAttributeIndices(String.valueOf(instances.classIndex() + 1));
 				    remove.setInvertSelection(false);
 					remove.setInputFormat(instances);
 					instances = Filter.useFilter(instances, remove);
@@ -518,7 +520,7 @@ public class Controller implements ActionListener {
 				}
 			}
 			plot = new PickablePointsScatter3D(axeLabels, coordinates, 
-					actualClassAssignments, predictedClassAssignments);
+					actualClassAssignments, predictedClassAssignments, instances, classLabels);
 			if (instances.numAttributes() < 3) {
 				plot.getChart().getView().setViewPositionMode(ViewPositionMode.TOP);
 			}
