@@ -41,7 +41,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			Instances newTrainingSet = null;
 			try {
 				NumericToNominal numericToNominalConverter = new NumericToNominal();
-				numericToNominalConverter.setAttributeIndices(String.valueOf(classIndex));
+				numericToNominalConverter.setAttributeIndices(String.valueOf(classIndex + 1));
 				numericToNominalConverter.setInvertSelection(false);
 				numericToNominalConverter.setInputFormat(trainingSet);
 				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
@@ -53,7 +53,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			} else {
 				try {
 					Discretize numericToDiscreteNominalConverter = new Discretize();
-					numericToDiscreteNominalConverter.setAttributeIndices(String.valueOf(classIndex));
+					numericToDiscreteNominalConverter.setAttributeIndices(String.valueOf(classIndex + 1));
 					numericToDiscreteNominalConverter.setBins(5);
 					numericToDiscreteNominalConverter.setIgnoreClass(true);
 					numericToDiscreteNominalConverter.setInvertSelection(false);
