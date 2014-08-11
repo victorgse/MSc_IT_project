@@ -34,19 +34,19 @@ public class Controller implements ActionListener {
 	 */
 	private MainView viewObject; //the main view object
 	private VisualisationView visualisationViewObject; //the visualisation view object
-	private PickablePointsScatter3D plot;
+	private PickablePointsScatter3D plot; //the plot object
 	private String state; //keeps track of what state the program is in
 	private String selectedDataset; //the name of the dataset that has been selected by user
-	private KMeansClusterer clusterer; //the clustering object
+	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
+	private KMeansClusterer clusterer; //the clusterer object
 	private ClusterEvaluation clustererEvaluation; //the clusterer evaluation object
 	private SVMClassifier classifier; //the classifier object
 	private Evaluation classifierEvaluation; //the classifier evaluation object
 	private String classifierEvaluationMethod; //the desired classifier evaluation method
-	private OutlierDetector outlierDetector; //the outlier detector object
-	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
+	private OutlierDetector outlierDetector; //the outlierDetector object
+	private OutlierEvaluation outlierDetectorEvaluation; //the outlierDetector evaluation object
 	private TreeSet<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
-	private OutlierEvaluation outlierDetectorEvaluation; //the outlierDetector evaluation object
 	
 	/**
 	 * Constructor
