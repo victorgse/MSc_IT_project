@@ -19,14 +19,14 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	/**
 	 * instance variables
 	 */
-	Classifier classifier;
-	Evaluation eval;
-	String evaluationOption;
-	Instances testSet;
-	AbstractOutput objectForPredictionsPrinting;
-	StringBuffer buffer;
-	double[] actualClassAssignments;
-	double[] predictedClassAssignments;
+	protected Classifier classifier;
+	protected Evaluation eval;
+	protected String evaluationOption;
+	protected Instances testSet;
+	protected AbstractOutput objectForPredictionsPrinting;
+	protected StringBuffer buffer;
+	protected double[] actualClassAssignments;
+	protected double[] predictedClassAssignments;
 	
 	/**
 	 * Method for setting the target label.
@@ -37,11 +37,15 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 */
 	public void setTargetLabel(int classIndex) {
 		trainingSet.setClassIndex(classIndex);
+		nominaliseOrDiscretiseInstances(String.valueOf(classIndex + 1));
+	}
+	
+	public void nominaliseOrDiscretiseInstances(String attributeIndices) {
 		if (!trainingSet.classAttribute().isNominal()) {
 			Instances newTrainingSet = null;
 			try {
 				NumericToNominal numericToNominalConverter = new NumericToNominal();
-				numericToNominalConverter.setAttributeIndices(String.valueOf(classIndex + 1));
+				numericToNominalConverter.setAttributeIndices(attributeIndices);
 				numericToNominalConverter.setInvertSelection(false);
 				numericToNominalConverter.setInputFormat(trainingSet);
 				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
@@ -53,7 +57,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			} else {
 				try {
 					Discretize numericToDiscreteNominalConverter = new Discretize();
-					numericToDiscreteNominalConverter.setAttributeIndices(String.valueOf(classIndex + 1));
+					numericToDiscreteNominalConverter.setAttributeIndices(attributeIndices);
 					numericToDiscreteNominalConverter.setBins(5);
 					numericToDiscreteNominalConverter.setIgnoreClass(true);
 					numericToDiscreteNominalConverter.setInvertSelection(false);
@@ -72,6 +76,18 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 */
 	public void setEvaluationOption(String evaluationOption) {
 		this.evaluationOption = evaluationOption;
+	}
+
+	/**
+	 * Method for splitting a dataset into training and test sets (in specified proportions).
+	 * @param trainingPercent
+	 */
+	public void splitDataset(double trainingPercent) {
+		int trainingSetSize = (int) Math.round(trainingSet.numInstances() * trainingPercent);
+		int testSetSize = trainingSet.numInstances() - trainingSetSize;
+		Instances trainSet = new Instances(trainingSet, 0, trainingSetSize);
+		testSet = new Instances(trainingSet, trainingSetSize, testSetSize);
+		trainingSet = trainSet;
 	}
 	
 	/**
@@ -93,34 +109,6 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 */
 	public double[] getPredictedClassAssignments() {
 		return predictedClassAssignments;
-	}
-	
-	/**
-	 * Method for splitting a dataset into training, validation, and test sets (in specified proportions).
-	 * @param trainingPercent
-	 * @param ValidationPercent
-	 * @param TestPercent
-	 */ /*
-	public void splitDataset(double trainingPercent, double validationPercent, double testPercent) {
-		int trainingSetSize = (int) Math.round(trainingSet.numInstances() * trainingPercent);
-		int validationSetSize = (int) Math.round(trainingSet.numInstances() * validationPercent);
-		int testSetSize = trainingSet.numInstances() - (trainingSetSize + validationSetSize);
-		Instances trainSet = new Instances(trainingSet, 0, trainingSetSize);
-		validationSet = new Instances(trainingSet, trainingSetSize, validationSetSize);
-		testSet = new Instances(trainingSet, trainingSetSize + validationSetSize, testSetSize);
-		trainingSet = trainSet;
-	} */
-
-	/**
-	 * Method for splitting a dataset into training and test sets (in specified proportions).
-	 * @param trainingPercent
-	 */
-	public void splitDataset(double trainingPercent) {
-		int trainingSetSize = (int) Math.round(trainingSet.numInstances() * trainingPercent);
-		int testSetSize = trainingSet.numInstances() - trainingSetSize;
-		Instances trainSet = new Instances(trainingSet, 0, trainingSetSize);
-		testSet = new Instances(trainingSet, trainingSetSize, testSetSize);
-		trainingSet = trainSet;
 	}
 
 	/* (non-Javadoc)

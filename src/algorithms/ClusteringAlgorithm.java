@@ -11,8 +11,8 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 	/**
 	 * instance variables
 	 */
-	Clusterer clusterer;
-	ClusterEvaluation eval;
+	protected Clusterer clusterer;
+	protected ClusterEvaluation eval;
 	
 	/* (non-Javadoc)
 	 * @see algorithms.Algorithm#train()
