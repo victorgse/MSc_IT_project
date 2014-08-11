@@ -29,7 +29,7 @@ public class Controller implements ActionListener {
 	/**
 	 * instance variables
 	 */
-	private View viewObject; //the main view object
+	private MainView viewObject; //the main view object
 	private VisualisationView visualisationViewObject; //the visualisation view object
 	private PickablePointsScatter3D plot;
 	private String state; //keeps track of what state the program is in
@@ -56,7 +56,7 @@ public class Controller implements ActionListener {
 	 * viewObject Setter
 	 * @param view
 	 */
-	public void setView(View view) {
+	public void setView(MainView view) {
 		viewObject = view;
 	}
 

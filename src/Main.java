@@ -9,7 +9,7 @@ public class Main {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				View view = new View(controller);
+				MainView view = new MainView(controller);
 				view.setVisible(true);
 				controller.setView(view);
 			}

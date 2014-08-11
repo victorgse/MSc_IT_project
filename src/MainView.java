@@ -19,7 +19,7 @@ import javax.swing.border.*;
  * Defines a GUI.
  */
 @SuppressWarnings("serial")
-public class View extends JFrame {
+public class MainView extends JFrame {
 	
 	/**
 	 * instance variables
@@ -51,7 +51,7 @@ public class View extends JFrame {
 	 * Constructor
 	 * @param controller
 	 */
-	public View(Controller controller) {
+	public MainView(Controller controller) {
 		controllerObject = controller;
 		topInitiated = middleInitiated = bottomInitiated = false;
 		
