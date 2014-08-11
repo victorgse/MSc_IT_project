@@ -1,7 +1,8 @@
-package algorithms;
+package algorithms.classification;
 
 import java.util.Random;
 
+import algorithms.Algorithm;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;

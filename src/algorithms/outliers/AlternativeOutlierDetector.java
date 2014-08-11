@@ -1,5 +1,6 @@
-package algorithms;
+package algorithms.outliers;
 
+import algorithms.Algorithm;
 import weka.core.Instance;
 import weka.experiment.InstanceQuery;
 

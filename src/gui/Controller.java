@@ -1,4 +1,5 @@
 package gui;
+
 import java.awt.event.*;
 import java.io.File;
 import java.sql.Connection;
@@ -14,6 +15,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
 
+import algorithms.classification.SVMClassifier;
+import algorithms.clustering.KMeansClusterer;
+import algorithms.outliers.OutlierDetector;
+import algorithms.outliers.OutlierEvaluation;
 import tools.DatasetLoader;
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
@@ -21,10 +26,6 @@ import weka.clusterers.ClusterEvaluation;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
-import algorithms.KMeansClusterer;
-import algorithms.OutlierDetector;
-import algorithms.OutlierEvaluation;
-import algorithms.SVMClassifier;
 
 public class Controller implements ActionListener {
 	

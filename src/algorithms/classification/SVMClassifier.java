@@ -1,4 +1,4 @@
-package algorithms;
+package algorithms.classification;
 
 import weka.classifiers.functions.LibSVM;
 import weka.experiment.InstanceQuery;

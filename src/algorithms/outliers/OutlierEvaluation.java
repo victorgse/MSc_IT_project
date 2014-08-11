@@ -1,4 +1,4 @@
-package algorithms;
+package algorithms.outliers;
 
 public class OutlierEvaluation {
 	

@@ -1,4 +1,4 @@
-package algorithms;
+package algorithms.clustering;
 
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
