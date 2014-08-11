@@ -270,7 +270,7 @@ public class View extends JFrame {
 				numericFieldsOfTableSchema = getFieldsOfDataset(true);
 				features = new JCheckBox[numericFieldsOfTableSchema.size()];
 				JPanel featuresPanel = new JPanel();
-				featuresPanel.setToolTipText("You must select at lease 1 feature (preferably more).");
+				featuresPanel.setToolTipText("You must select at lease 1 feature (preferably 3 or more).");
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
 				int i = 0;
 				for (String field : numericFieldsOfTableSchema) {
@@ -321,7 +321,9 @@ public class View extends JFrame {
 				            100, //max
 				            1); //step
 				numberOfKMeansRunsSpinner = new JSpinner(numberOfKMeansRunsSpinnerModel);
-				numberOfKMeansRunsSpinner.setToolTipText("K-Means depends on random initialisations (of the cluster centroids) - multiple runs make it more likely that K-Means would pick up a good hypothesis model.");
+				numberOfKMeansRunsSpinner.setToolTipText("<html>The results of K-Means depend on the random initialisations of its cluster centroids.<br>"
+						+ "Running K-Means multiple times makes it more likely that a good hypothesis model<br>"
+						+ "would be picked up.");
 				((DefaultEditor) numberOfKMeansRunsSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(numberOfKMeansRunsSpinner, c);
 				algorithmOutputTextArea = new JTextArea();
@@ -345,6 +347,8 @@ public class View extends JFrame {
 				c.gridx = 1;
 				c.gridy = 0;
 				kernelTypeCombo = new JComboBox<String>();
+				kernelTypeCombo.setToolTipText("<html>Using a Linear Kernel, the SVM classifier would be able to plot simple linear hypotheses.<br>"
+						+ "Using a Gaussian Kernel, the SVM classifier would be able to plot complex non-linear hypotheses.</html>");
 				kernelTypeCombo.addItem("Gaussian Kernel");
 				kernelTypeCombo.addItem("Linear Kernel");
 				kernelTypeCombo.addActionListener(new ActionListener () {
@@ -353,13 +357,19 @@ public class View extends JFrame {
 						if(kernelTypeCombo.getSelectedItem().toString().equals("Gaussian Kernel")) {
 							regularisationLabel.setEnabled(true);
 							regularisationSpinner.setEnabled(true);
+							regularisationSpinner.setToolTipText("<html>If C is set to a big value, then the SVM classifier would better fit the training set data, but<br>"
+									+ "if C is too big, then the prediction hypothesis would not generalise well to unseen examples.</html>");
 							gammaLabel.setEnabled(true);
 							gammaSpinner.setEnabled(true);
+							gammaSpinner.setToolTipText("<html>If gamma is set to a small value, then the SVM classifier would better fit the training set data, but<br>"
+									+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.</html>");
 						} else {
 							regularisationLabel.setEnabled(false);
 							regularisationSpinner.setEnabled(false);
+							regularisationSpinner.setToolTipText(null);
 							gammaLabel.setEnabled(false);
 							gammaSpinner.setEnabled(false);
+							gammaSpinner.setToolTipText(null);
 						}
 					}
 				});
@@ -379,6 +389,8 @@ public class View extends JFrame {
 				            10.0, //max
 				            0.1); //step
 				regularisationSpinner = new JSpinner(regularisationSpinnerModel);
+				regularisationSpinner.setToolTipText("<html>If C is set to a big value, then the SVM classifier would better fit the training set data, but<br>"
+						+ "if C is too big, then the prediction hypothesis would not generalise well to unseen examples.</html>");
 				regularisationSpinner.setPreferredSize(new Dimension(55, 20));
 				((DefaultEditor) regularisationSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(regularisationSpinner, c);
@@ -396,6 +408,8 @@ public class View extends JFrame {
 				            10.0, //max
 				            0.1); //step
 				gammaSpinner = new JSpinner(gammaSpinnerModel);
+				gammaSpinner.setToolTipText("<html>If gamma is set to a small value, then the SVM classifier would better fit the training set data, but<br>"
+						+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.</html>");
 				gammaSpinner.setPreferredSize(new Dimension(55, 20));
 				((DefaultEditor) gammaSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(gammaSpinner, c);
@@ -438,6 +452,8 @@ public class View extends JFrame {
 				            6.0, //max
 				            0.1); //step
 				outlierFactorSpinner = new JSpinner(outlierFactorSpinnerModel);
+				outlierFactorSpinner.setToolTipText("<html>If set to 0, instances that rank in the bottom and top quartiles will be classified as outliers.<br>"
+						+ "If greater than 0, fewer instances would be classified as outliers.</html>");
 				outlierFactorSpinner.setPreferredSize(new Dimension(55, 20));
 				((DefaultEditor) outlierFactorSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(outlierFactorSpinner, c);
