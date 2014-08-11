@@ -1,3 +1,4 @@
+package gui;
 import java.awt.event.*;
 import java.io.File;
 import java.sql.Connection;
@@ -13,6 +14,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jzy3d.plot3d.rendering.view.modes.ViewPositionMode;
 
+import tools.DatasetLoader;
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;

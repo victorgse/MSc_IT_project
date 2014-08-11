@@ -1,3 +1,6 @@
+import gui.Controller;
+import gui.MainView;
+
 import javax.swing.SwingUtilities;
 
 
