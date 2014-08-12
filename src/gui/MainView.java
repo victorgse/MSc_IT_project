@@ -68,10 +68,14 @@ public class MainView extends JFrame {
 	 * Refreshes the view.
 	 * @param state
 	 */
-	public void updateView(String state) {
-		layoutTop(state);
-		layoutMiddle(state);
-		layoutBottom(state);
+	public void updateView(final String state) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				layoutTop(state);
+				layoutMiddle(state);
+				layoutBottom(state);
+			}
+		});
 	}
 	
 	/**
@@ -528,6 +532,9 @@ public class MainView extends JFrame {
 				break;
 			case "clustering_step1":
 				programStateLabel.setText("Clustering (Step 1 of 3) - Select Features");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "clustering_step2":
 				programStateLabel.setText("Clustering (Step 2 of 3) - Set Algorithm Parameters");
@@ -542,17 +549,24 @@ public class MainView extends JFrame {
 				break;
 			case "classification_step1":
 				programStateLabel.setText("Classification (Step 1 of 5) - Select Features");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "classification_step2":
 				programStateLabel.setText("Classification (Step 2 of 5) - Specify Target Label");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "classification_step3":
 				programStateLabel.setText("Classification (Step 3 of 5) - Set Algorithm Parameters");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "classification_step4":
 				programStateLabel.setText("Classification (Step 4 of 5) - Specify Algorithm Testing Option");
-				startOverButton.setEnabled(true);
-				backButton.setEnabled(true);
 				nextButton.setEnabled(true);
 				break;
 			case "classification_step5":
@@ -562,9 +576,14 @@ public class MainView extends JFrame {
 				break;
 			case "outlierDetection_step1":
 				programStateLabel.setText("Outlier Detection (Step 1 of 3) - Select Features");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "outlierDetection_step2":
 				programStateLabel.setText("Outlier Detection (Step 2 of 3) - Set Algorithm Parameters");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				nextButton.setEnabled(true);
 				break;
 			case "outlierDetection_step3":
@@ -574,15 +593,36 @@ public class MainView extends JFrame {
 		}
 	}
 	
-	public void setProgramStateLabel(String text) {
-		programStateLabel.setText(text);
+	public void setTextOfProgramStateLabel(final String text) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					programStateLabel.setText(text);
+				}
+			});
+		} catch (Exception e) {}
 	}
-
-	/**
-	 * @return the programStateLabel
-	 */
-	public JLabel getProgramStateLabel() {
-		return programStateLabel;
+	
+	public void setTextOfAlgorithmOutputTextArea(final String text) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					algorithmOutputTextArea.setText(text);
+				}
+			});
+		} catch (Exception e) {}
+	}
+	
+	public void toggleNavigationButtons(final boolean startOverButtonEnabled, final boolean backButtonEnabled, final boolean nextButtonEnabled) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					startOverButton.setEnabled(startOverButtonEnabled);
+					backButton.setEnabled(backButtonEnabled);
+					nextButton.setEnabled(nextButtonEnabled);
+				}
+			});
+		} catch (Exception e) {}
 	}
 	
 }
