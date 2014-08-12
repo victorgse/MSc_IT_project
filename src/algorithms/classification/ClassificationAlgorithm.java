@@ -25,6 +25,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	protected Classifier classifier;
 	protected Evaluation eval;
 	protected String evaluationOption;
+	protected Instances reducedTrainingSet;
 	protected Instances testSet;
 	protected AbstractOutput objectForPredictionsPrinting;
 	protected StringBuffer buffer;
@@ -92,9 +93,8 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	public void splitDataset(double trainingPercent) {
 		int trainingSetSize = (int) Math.round(trainingSet.numInstances() * trainingPercent);
 		int testSetSize = trainingSet.numInstances() - trainingSetSize;
-		Instances trainSet = new Instances(trainingSet, 0, trainingSetSize);
+		reducedTrainingSet = new Instances(trainingSet, 0, trainingSetSize);
 		testSet = new Instances(trainingSet, trainingSetSize, testSetSize);
-		trainingSet = trainSet;
 	}
 	
 	/**
@@ -124,7 +124,12 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 */
 	public void train() {
 		try {
-			classifier.buildClassifier(trainingSet);
+			if (reducedTrainingSet != null) {
+				classifier.buildClassifier(reducedTrainingSet);
+				reducedTrainingSet = null;
+			} else {
+				classifier.buildClassifier(trainingSet);
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to train classifier.", 
