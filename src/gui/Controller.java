@@ -2,11 +2,6 @@ package gui;
 
 import java.awt.event.*;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
@@ -19,6 +14,7 @@ import algorithms.classification.SVMClassifier;
 import algorithms.clustering.KMeansClusterer;
 import algorithms.outliers.OutlierDetector;
 import algorithms.outliers.OutlierEvaluation;
+import tools.DatabaseQuery;
 import tools.DatasetDatabaseLoader;
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
@@ -108,19 +104,6 @@ public class Controller implements ActionListener {
 	    } else {
 	    	return null;
 	    }
-	}
-	
-	private ResultSet queryDatabase(String query) {
-		ResultSet RS = null;
-		try {
-			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
-			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			RS = stmt.executeQuery(query);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong when querying the database.");
-		}
-		return RS;
 	}
 
 	/**
@@ -541,50 +524,9 @@ public class Controller implements ActionListener {
 					coordinates[i][2] = 0;
 				}
 			}
-			namesOfInstances = new String[instances.numInstances()];
+			DatabaseQuery dbQuery = new DatabaseQuery();
 			if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-				if (desiredLevelOfAnalysis == 0) {
-					query =  "select * "
-							+ "from MCFC_ANALYTICS_FULL_DATASET";
-					ResultSet RS = queryDatabase(query);
-					try {
-						RS.afterLast(); //move to the end of RS
-						for (int i = instances.numInstances() - 1; i >= 0; i--) {
-							RS.previous(); //move to previous result
-							namesOfInstances[i] = RS.getString("date") + " " + RS.getString("player_forename") + " " + RS.getString("player_surname");
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				} else if (desiredLevelOfAnalysis == 1) {
-					query =  "select DISTINCT player_id, player_forename, player_surname "
-							+ "from MCFC_ANALYTICS_FULL_DATASET "
-							+ "order by player_id ASC";
-					ResultSet RS = queryDatabase(query);
-					try {
-						RS.afterLast(); //move to the end of RS
-						for (int i = instances.numInstances() - 1; i >= 0; i--) {
-							RS.previous(); //move to previous result
-							namesOfInstances[i] = RS.getString("player_forename") + " " + RS.getString("player_surname");
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				} else if (desiredLevelOfAnalysis == 2) {
-					query =  "select DISTINCT team "
-							+ "from MCFC_ANALYTICS_FULL_DATASET "
-							+ "order by team ASC";
-					ResultSet RS = queryDatabase(query);
-					try {
-						RS.afterLast(); //move to the end of RS
-						for (int i = instances.numInstances() - 1; i >= 0; i--) {
-							RS.previous(); //move to previous result
-							namesOfInstances[i] = RS.getString("team");
-						}
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
+				namesOfInstances = dbQuery.getNamesOfFullDatasetInstances(desiredLevelOfAnalysis, instances.numInstances());
 			}
 			plot = new PickablePointsScatter3D(selectedDataset,axeLabels, coordinates, 
 					actualClassAssignments, predictedClassAssignments, 

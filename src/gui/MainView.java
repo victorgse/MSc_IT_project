@@ -5,17 +5,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.border.*;
+
+import tools.DatabaseQuery;
 
 /**
  * Defines a GUI.
@@ -108,7 +105,9 @@ public class MainView extends JFrame {
 							}
 						};
 					} catch (IOException e) {
-						e.printStackTrace();
+						JOptionPane.showMessageDialog(null, 
+				    			"Something went wrong while attempting to set background image.", 
+				    			"Error: IO Exception", JOptionPane.ERROR_MESSAGE);
 					}
 					topPanel.setLayout(new GridBagLayout());
 					topPanel.setPreferredSize(new Dimension(1140, 300));
@@ -269,7 +268,10 @@ public class MainView extends JFrame {
 			case "outlierDetection_step1":
 				JScrollPane featuresPane = new JScrollPane();
 				featuresPane.setPreferredSize(new Dimension(400, 200));
-				numericFieldsOfTableSchema = getFieldsOfDataset(true);
+				DatabaseQuery dbQuery = new DatabaseQuery();
+				String datasetName = controllerObject.getSelectedDataset();
+				boolean numericOnly = true;
+				numericFieldsOfTableSchema = dbQuery.getNamesOfFieldsOfTable(datasetName, numericOnly);
 				features = new JCheckBox[numericFieldsOfTableSchema.size()];
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setToolTipText("You must select at lease 1 feature (preferably 3 or more).");
@@ -570,58 +572,6 @@ public class MainView extends JFrame {
 				nextButton.setEnabled(false);
 				break;
 		}
-	}
-	
-	/**
-	 * A helper method for getting the names of datasets stored in the database.
-	 * @return
-	 */ /*
-	private TreeSet<String> getNamesOfAvailableDatasets() {
-		TreeSet<String> datasetsInDatabase = new TreeSet<String>();
-		try {
-			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
-			Statement stmt = con.createStatement();
-			String query =  "select tablename "
-					+ "from sys.systables "
-					+ "where tabletype = 'T'";
-			ResultSet RS = stmt.executeQuery(query);
-			while (RS.next()) {
-				datasetsInDatabase.add(RS.getString("tablename"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong when fetching the names of available datasets.");
-		}
-		return datasetsInDatabase;
-	} */
-	
-	/**
-	 * A helper method for fetching a table's schema.
-	 * @return
-	 */
-	private TreeSet<String> getFieldsOfDataset(boolean numericOnly) {
-		TreeSet<String> tableFields = new TreeSet<String>();
-		try {
-			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
-			Statement stmt = con.createStatement();
-			String query = "select columnname "
-					+ "from sys.systables t, sys.syscolumns "
-					+ "where TABLEID = REFERENCEID "
-					+ "and tablename = '" + controllerObject.getSelectedDataset() + "'";
-			if (numericOnly) {
-				query += " and CAST(COLUMNDATATYPE AS VARCHAR(128)) = 'NUMERIC(10,2)'";
-			}
-			ResultSet RS = stmt.executeQuery(query);
-			while (RS.next()) {
-				tableFields.add(RS.getString("columnname"));
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, 
-	    			"Something went wrong while querying the database for a list of available features.", 
-	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
-			System.out.println("Something went wrong when reading table schema.");
-		}
-		return tableFields;
 	}
 	
 	public void setProgramStateLabel(String text) {
