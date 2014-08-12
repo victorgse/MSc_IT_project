@@ -1,5 +1,7 @@
 package algorithms.clustering;
 
+import javax.swing.JOptionPane;
+
 import algorithms.Algorithm;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -23,8 +25,9 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 		try {
 			clusterer.buildClusterer(trainingSet);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with training clusterer.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to train clusterer.", 
+	    			"Error: Clusterer Not Trained", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -37,8 +40,9 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 		try {
 			eval.evaluateClusterer(trainingSet);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with evaluating clusterer.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to evaluate clusterer.", 
+	    			"Error: Clusterer Not Evaluated", JOptionPane.ERROR_MESSAGE);
 		}
 		return eval;
 	}

@@ -616,7 +616,9 @@ public class MainView extends JFrame {
 				tableFields.add(RS.getString("columnname"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while querying the database for a list of available features.", 
+	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
 			System.out.println("Something went wrong when reading table schema.");
 		}
 		return tableFields;

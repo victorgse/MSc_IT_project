@@ -1,5 +1,7 @@
 package algorithms.clustering;
 
+import javax.swing.JOptionPane;
+
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 import weka.clusterers.SimpleKMeans;
@@ -20,7 +22,9 @@ public class KMeansClusterer extends ClusteringAlgorithm implements Cloneable {
 			clusterer = new SimpleKMeans();
 			eval = new ClusterEvaluation();
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to instantiate clusterer.", 
+	    			"Error: Clusterer Not Instantiated", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -39,8 +43,9 @@ public class KMeansClusterer extends ClusteringAlgorithm implements Cloneable {
 				testRunClusterer.setSeed(i + 1);
 				testRunClusterer.buildClusterer(trainingSet);
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Something went wrong with training clusterer.");
+				JOptionPane.showMessageDialog(null, 
+		    			"Something went wrong while attempting to train clusterer.", 
+		    			"Error: Clusterer Not Trained", JOptionPane.ERROR_MESSAGE);
 			}
 			double squaredError = testRunClusterer.getSquaredError();
 			if (squaredError < leastSquaredErrorSoFar) {
@@ -59,8 +64,9 @@ public class KMeansClusterer extends ClusteringAlgorithm implements Cloneable {
 			options = weka.core.Utils.splitOptions(algorithmParameters);
 			((SimpleKMeans) clusterer).setOptions(options);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with setting K-Means' options.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to set the clusterer's options.", 
+	    			"Error: Clusterer's Options Not Set", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

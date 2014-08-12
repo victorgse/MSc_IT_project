@@ -2,6 +2,8 @@ package algorithms;
 
 import java.util.TreeSet;
 
+import javax.swing.JOptionPane;
+
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
@@ -35,8 +37,9 @@ public abstract class Algorithm {
 		try {
 			trainingSet = instanceQuery.retrieveInstances();
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with retrieving instances.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to retrieve instances.", 
+	    			"Error: Instances Not Retrieved", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -65,7 +68,9 @@ public abstract class Algorithm {
 			normalizer.setInputFormat(trainingSet);
 			trainingSet = Filter.useFilter(trainingSet, normalizer);
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to scale features.", 
+	    			"Error: Features Not Scaled", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

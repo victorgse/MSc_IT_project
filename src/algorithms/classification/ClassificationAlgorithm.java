@@ -2,6 +2,8 @@ package algorithms.classification;
 
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
 import algorithms.Algorithm;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -51,7 +53,9 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 				numericToNominalConverter.setInputFormat(trainingSet);
 				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
 			} catch (Exception e) {
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, 
+		    			"Something went wrong while attempting to nominalise attributes.", 
+		    			"Error: Attributes Not Nominalised", JOptionPane.ERROR_MESSAGE);
 			}
 			if (newTrainingSet.classAttribute().numValues() <= 5) {
 				trainingSet = newTrainingSet;
@@ -66,7 +70,9 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 					numericToDiscreteNominalConverter.setInputFormat(trainingSet);
 					trainingSet = Filter.useFilter(trainingSet, numericToDiscreteNominalConverter);
 				} catch (Exception e) {
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, 
+			    			"Something went wrong while attempting to discretise attributes.", 
+			    			"Error: Attributes Not Discretised", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -120,8 +126,9 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 		try {
 			classifier.buildClassifier(trainingSet);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with training classifier.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to train classifier.", 
+	    			"Error: Classifier Not Trained", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -159,8 +166,9 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 			}
 			//System.out.println(objectForPredictionsPrinting.getBuffer());
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with evaluating classifier.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to evaluate classifier.", 
+	    			"Error: Classifier Not Evaluated", JOptionPane.ERROR_MESSAGE);
 		}
 		return eval;
 	}

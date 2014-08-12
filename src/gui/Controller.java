@@ -19,7 +19,7 @@ import algorithms.classification.SVMClassifier;
 import algorithms.clustering.KMeansClusterer;
 import algorithms.outliers.OutlierDetector;
 import algorithms.outliers.OutlierEvaluation;
-import tools.DatasetLoader;
+import tools.DatasetDatabaseLoader;
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
@@ -215,7 +215,7 @@ public class Controller implements ActionListener {
 				} else if (viewObject.otherDatasetButton.isSelected()) {
 					File selectedFile = getFile();
 					try {
-						new DatasetLoader(selectedFile);
+						new DatasetDatabaseLoader(selectedFile);
 						state = "startScreen_3";
 					} catch (Exception e) {
 						System.out.println("Error: Dataset could not be loaded");

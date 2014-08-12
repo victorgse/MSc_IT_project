@@ -1,4 +1,5 @@
 package tools;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
@@ -19,7 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * the following video tutorial provided by Oresoft:
  * https://www.youtube.com/watch?v=GYZzkid7nno
  */
-public class DatasetLoader {
+public class DatasetDatabaseLoader {
 	
 	/**
 	 * instance variables
@@ -39,7 +40,7 @@ public class DatasetLoader {
 	 * @param excel
 	 * @throws Exception
 	 */
-	public DatasetLoader(File excel) throws Exception {
+	public DatasetDatabaseLoader(File excel) throws Exception {
 		this.excel = excel;
 		fis = new FileInputStream(excel);
 		wb  = new HSSFWorkbook(fis);

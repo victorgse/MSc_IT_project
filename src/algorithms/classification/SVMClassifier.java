@@ -1,5 +1,7 @@
 package algorithms.classification;
 
+import javax.swing.JOptionPane;
+
 import weka.classifiers.functions.LibSVM;
 import weka.experiment.InstanceQuery;
 
@@ -18,7 +20,9 @@ public class SVMClassifier extends ClassificationAlgorithm {
 			instanceQuery = new InstanceQuery();
 			classifier = new LibSVM();
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to instantiate classifier.", 
+	    			"Error: Classifier Not Instantiated", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -32,8 +36,9 @@ public class SVMClassifier extends ClassificationAlgorithm {
 			((LibSVM) classifier).setOptions(options);
 			//((LibSVM) classifier).setProbabilityEstimates(true);
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with setting the SVM's options.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to set the classifier's options.", 
+	    			"Error: Classifier's Options Not Set", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

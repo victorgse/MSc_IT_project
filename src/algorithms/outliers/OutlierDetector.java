@@ -1,5 +1,7 @@
 package algorithms.outliers;
 
+import javax.swing.JOptionPane;
+
 import algorithms.Algorithm;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
@@ -24,7 +26,9 @@ public class OutlierDetector extends Algorithm {
 			outlierDetector = new InterquartileRange();
 			eval = new OutlierEvaluation();
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to instantiate outlier-detector.", 
+	    			"Error: Outlier-detector Not Instantiated", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -47,7 +51,9 @@ public class OutlierDetector extends Algorithm {
 			outlierDetector.setExtremeValuesAsOutliers(true);
 			outlierDetector.setInputFormat(trainingSet);
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to set the outlier-detector's options.", 
+	    			"Error: Outlier-detector's Options Not Set", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -56,7 +62,9 @@ public class OutlierDetector extends Algorithm {
 		try {
 			filteredTrainingSet = Filter.useFilter(trainingSet, outlierDetector);
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to train outlier-detector.", 
+	    			"Error: Outlier-Detector Not Trained", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
