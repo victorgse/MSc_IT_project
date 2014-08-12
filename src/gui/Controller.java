@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -197,11 +198,10 @@ public class Controller implements ActionListener {
 					state = "startScreen_2";
 				} else if (viewObject.otherDatasetButton.isSelected()) {
 					File selectedFile = getFile();
-					try {
-						new DatasetDatabaseLoader(selectedFile);
+					DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
+					boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
+					if (datasetSuccessfullyInsertedIntoDatabase) {
 						state = "startScreen_3";
-					} catch (Exception e) {
-						System.out.println("Error: Dataset could not be loaded");
 					}
 				}
 				/*
@@ -295,9 +295,7 @@ public class Controller implements ActionListener {
 									viewObject.setProgramStateLabel("Clustering (Step 2 of 3) - Training Clusterer...");
 								}
 							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						} catch (Exception e) {}
 						int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
 						clusterer.train(desiredNumberOfKMeansRuns);
 						try {
@@ -306,9 +304,7 @@ public class Controller implements ActionListener {
 									viewObject.setProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
 								}
 							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						} catch (Exception e) {}
 						clustererEvaluation = clusterer.evaluate();
 						state = "clustering_step3";
 						SwingUtilities.invokeLater(new Runnable() {
@@ -370,9 +366,7 @@ public class Controller implements ActionListener {
 									viewObject.setProgramStateLabel("Classification (Step 3 of 5) - Training Classifier...");
 								}
 							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						} catch (Exception e) {}
 						classifier.train();
 						state = "classification_step4";
 						SwingUtilities.invokeLater(new Runnable() {
@@ -404,9 +398,7 @@ public class Controller implements ActionListener {
 									viewObject.setProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
 								}
 							});
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+						} catch (Exception e) {}
 						classifierEvaluation = classifier.evaluate();
 						state = "classification_step5";
 						SwingUtilities.invokeLater(new Runnable() {
@@ -481,9 +473,7 @@ public class Controller implements ActionListener {
 				    remove.setInvertSelection(false);
 					remove.setInputFormat(instances);
 					instances = Filter.useFilter(instances, remove);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				} catch (Exception e) {}
 				break;
 			case "outlierDetection_step3":
 				instances = outlierDetector.getTrainingSet();

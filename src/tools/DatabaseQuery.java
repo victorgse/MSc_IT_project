@@ -41,8 +41,8 @@ public class DatabaseQuery {
 	} */
 	
 	/**
-	 * A helper method for fetching a table's schema.
-	 * @return
+	 * Fetches the names of a table's fields.
+	 * @return the names of a table's fields
 	 */
 	public TreeSet<String> getNamesOfFieldsOfTable(String tableName, boolean numericOnly) {
 		TreeSet<String> tableFields = new TreeSet<String>();
@@ -66,6 +66,12 @@ public class DatabaseQuery {
 		return tableFields;
 	}
 	
+	/**
+	 * Fetches the identifying names of instances from the Full Dataset.
+	 * @param desiredLevelOfAnalysis
+	 * @param numInstances
+	 * @return the identifying names of instances from the Full Dataset
+	 */
 	public String[] getNamesOfFullDatasetInstances(int desiredLevelOfAnalysis, int numInstances) {
 		String[] namesOfInstances = new String[numInstances];
 		if (desiredLevelOfAnalysis == 0) {
@@ -103,6 +109,11 @@ public class DatabaseQuery {
 		return namesOfInstances;
 	}
 	
+	/**
+	 * Executes a custom database query.
+	 * @param query
+	 * @return the results of the custom database query
+	 */
 	private ResultSet queryDatabase(String query) {
 		ResultSet RS = null;
 		try {

@@ -1,6 +1,5 @@
 package visualisers;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +22,9 @@ import weka.core.Instances;
 
 public class PickablePointsScatter3D extends AbstractAnalysis {
 	
+	/**
+	 * instance variables
+	 */
 	public static final Color[] COLOURS = {Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.CYAN};
 	private List<PickablePoint> points;
 	private String selectedDataset;
@@ -36,30 +38,47 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	private boolean plotInitiated;
 	private InstanceInfoFrame instanceInfoFrame;
 	
+	/**
+	 * Constructor
+	 * @param selectedDataset
+	 * @param axeLabels
+	 * @param coordinates
+	 * @param actualClassAssignments
+	 * @param predictedClassAssignments
+	 * @param instances
+	 * @param namesOfInstances
+	 * @param classLabels
+	 */
 	public PickablePointsScatter3D(String selectedDataset, String[] axeLabels, double[][] coordinates, 
 			double[] actualClassAssignments, double[] predictedClassAssignments, 
 			Instances instances, String[] namesOfInstances, String[] classLabels) {
-		try {
-			this.selectedDataset = selectedDataset;
-			this.axeLabels = axeLabels;
-			this.coordinates = coordinates;
-			this.actualClassAssignments = actualClassAssignments;
-			this.predictedClassAssignments = predictedClassAssignments;
-			this.instances = instances;
-			this.namesOfInstances = namesOfInstances;
-			this.classLabels = classLabels;
-			plotInitiated = false;
-			instanceInfoFrame = null;
-			init();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		points = new ArrayList<>();
+		this.selectedDataset = selectedDataset;
+		this.axeLabels = axeLabels;
+		this.coordinates = coordinates;
+		this.actualClassAssignments = actualClassAssignments;
+		this.predictedClassAssignments = predictedClassAssignments;
+		this.instances = instances;
+		this.namesOfInstances = namesOfInstances;
+		this.classLabels = classLabels;
+		plotInitiated = false;
+		instanceInfoFrame = null;
+		init();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jzy3d.analysis.IAnalysis#init()
+	 * Initiates plot.
+	 */
 	public void init() {
+		// Create chart
 		chart = AWTChartComponentFactory.chart(Quality.Advanced, "awt");
+		
+		// Set chart colours
         chart.getView().setBackgroundColor(Color.BLACK);
         chart.getAxeLayout().setMainColor(Color.WHITE);
+        
+        // Rename axes (so that they have the names of the data attributes they represent)
         renameAxes(axeLabels);
         
         // Enable mouse control
@@ -72,11 +91,16 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
      	// Enable screenshots
      	chart.getCanvas().addKeyController(new AWTScreenshotKeyController(chart, "./screenshots/screenshot.png"));
         
+     	// Insert or replace scatter points
         updatePoints(coordinates);
         
         plotInitiated = true;
     }
 	
+	/**
+	 * Renames the axes.
+	 * @param axeLabels
+	 */
 	public void renameAxes(String[] axeLabels) {
 		switch (axeLabels.length) {
 			case 3:
@@ -90,14 +114,19 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	}
 	
 	AWTMousePickingController<?,?> mousePicker;
+	/**
+	 * Inserts new or replaces old scatter points.
+	 * @param coordinates
+	 */
 	public void updatePoints(double[][] coordinates) {
 		if (plotInitiated) {
+			// remove old points and their event listeners
 			for (PickablePoint point : points) {
 	        	chart.getScene().remove(point);
 			}
 			mousePicker.dispose();
 		}
-		points = new ArrayList<>();
+		// create points
 		for (int i = 0; i < coordinates.length; i++) {
             double x = coordinates[i][0];
             double y = coordinates[i][1];
@@ -117,12 +146,17 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
             PickablePoint point = new PickablePoint(position, colour, width);
             points.add(point);
         }
+		// add created points to the plot
 		for (PickablePoint point : points) {
         	chart.getScene().add(point);
 		}
-		enablePicking(points);
+		enablePicking(points); //add event listeners
 	}
 	
+	/**
+	 * Adds event listeners to points.
+	 * @param points
+	 */
 	private void enablePicking(List<PickablePoint> points) {
 		mousePicker = new AWTMousePickingController<>(chart, 10);
 		PickingSupport picking = mousePicker.getPickingSupport();
@@ -140,10 +174,16 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 		picking.addObjectPickedListener(listener);
 	}
 	
+	/**
+	 * Event handler for picking points.
+	 * Displays information about the last picked instances in an instanceInfoFrame.
+	 * @param picked
+	 */
 	private void processPicked(List<?> picked) {
 		String clickedInstancesInfo = "";
 		if (!picked.isEmpty()) {
-			for (Object p: picked) {
+			for (Object p: picked) {//for each picked instance
+				// add information about the picked instance to an info String about the last picked instances
 				final String[] tokens = p.toString().split("[ :]+");
 				int indexOfClickedInstance = Integer.parseInt(tokens[1]) % instances.numInstances();
 				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
@@ -162,6 +202,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 				}
 			}
 			final String copyOfclickedInstancesInfo = clickedInstancesInfo;
+			// display the info String about the last picked instances in an instanceInfoFrame
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					if (instanceInfoFrame == null) {

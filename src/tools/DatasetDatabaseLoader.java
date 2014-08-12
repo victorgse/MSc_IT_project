@@ -2,10 +2,13 @@ package tools;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.swing.JOptionPane;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -25,7 +28,6 @@ public class DatasetDatabaseLoader {
 	/**
 	 * instance variables
 	 */
-	private File excel; //the excel .xls file
 	private FileInputStream fis; //an input stream for reading data from a file
 	private HSSFWorkbook wb; //an excel workbook
 	private HSSFSheet ws; //an excel worksheet
@@ -35,15 +37,24 @@ public class DatasetDatabaseLoader {
 	private String[] dataTypes; //String array for storing the data types of the fields
 	private String datasetName; //the name of the new dataset
 	
-	/**
-	 * Constructor
-	 * @param excel
-	 * @throws Exception
-	 */
-	public DatasetDatabaseLoader(File excel) throws Exception {
-		this.excel = excel;
-		fis = new FileInputStream(excel);
-		wb  = new HSSFWorkbook(fis);
+	public boolean insertDatasetIntoDatabase(File excel) {
+		boolean datasetSuccessfullyInsertedIntoDatabase = false;
+		try {
+			fis = new FileInputStream(excel);
+		} catch (Exception e) {
+			/*JOptionPane.showMessageDialog(null, 
+	    			"No file was selected.", 
+	    			"Error: File Not Found", JOptionPane.ERROR_MESSAGE);*/
+			return datasetSuccessfullyInsertedIntoDatabase;
+		}
+		try {
+			wb  = new HSSFWorkbook(fis);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to read from the .xls file.", 
+	    			"Error: Dataset Not Loaded Into Database", JOptionPane.ERROR_MESSAGE);
+			return datasetSuccessfullyInsertedIntoDatabase;
+		}
 		ws = wb.getSheetAt(0);
 		rowNum = ws.getLastRowNum() + 1;
 		colNum = ws.getRow(0).getLastCellNum();
@@ -51,7 +62,15 @@ public class DatasetDatabaseLoader {
 		dataTypes = new String[colNum];
 		datasetName = wb.getSheetName(0).replace(" ", "_");
 		readDataFromExcelFile();
-		insertDataIntoDatabase();
+		try {
+			insertDataIntoDatabase();
+			datasetSuccessfullyInsertedIntoDatabase = true;
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to insert the dataset into the database.", 
+	    			"Error: Dataset Not Loaded Into Database", JOptionPane.ERROR_MESSAGE);
+		}
+		return datasetSuccessfullyInsertedIntoDatabase;
 	}
 	
 	/**
