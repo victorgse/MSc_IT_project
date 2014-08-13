@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.event.*;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
@@ -110,12 +111,14 @@ public class Controller implements ActionListener {
 	private void disposeVisualisationView() {
 		new Thread(new Runnable() {
 			public void run() {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						visualisationViewObject.dispose();
-						visualisationViewObject = null;
-					}
-				});
+				try {
+					SwingUtilities.invokeAndWait(new Runnable() {
+						public void run() {
+							visualisationViewObject.dispose();
+							visualisationViewObject = null;
+						}
+					});
+				} catch (Exception e) {}
 				
 			}
 		}).start();
