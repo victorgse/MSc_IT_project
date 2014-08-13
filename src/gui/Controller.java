@@ -198,13 +198,24 @@ public class Controller implements ActionListener {
 				if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
 					selectedDataset = "MCFC_ANALYTICS_FULL_DATASET";
 					state = "startScreen_2";
+					viewObject.updateView(state);
 				} else if (viewObject.otherDatasetButton.isSelected()) {
-					File selectedFile = getFile();
-					DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
-					boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
-					if (datasetSuccessfullyInsertedIntoDatabase) {
-						state = "startScreen_3";
-					}
+					new Thread(new Runnable() {
+						public void run() {
+							File selectedFile = getFile();
+							if (selectedFile != null) {
+								viewObject.toggleNavigationButtons(false, false, false);
+								viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Inserting dataset into the database...");
+								DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
+								boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
+								if (datasetSuccessfullyInsertedIntoDatabase) {
+									state = "startScreen_3";
+									viewObject.updateView(state);
+								}
+								selectedFile = null;
+							}
+						}
+					}).start();
 				}
 				/*
 				for (int i = 0; i < viewObject.availableDatasetsButtons.length; i++) {
@@ -224,7 +235,6 @@ public class Controller implements ActionListener {
 				}
 				state = "startScreen_2";
 				*/
-				viewObject.updateView(state);
 				break;
 			case "startScreen_2":
 				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();

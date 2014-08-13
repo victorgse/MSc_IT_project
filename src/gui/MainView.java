@@ -498,9 +498,8 @@ public class MainView extends JFrame {
 				kernelTypeCombo.addItem("Gaussian Kernel");
 				kernelTypeCombo.addItem("Linear Kernel");
 				kernelTypeCombo.addActionListener(new ActionListener () {
-					@Override
 					public void actionPerformed(ActionEvent ae) {
-						if(kernelTypeCombo.getSelectedItem().toString().equals("Gaussian Kernel")) {
+						if (kernelTypeCombo.getSelectedItem().toString().equals("Gaussian Kernel")) {
 							regularisationLabel.setEnabled(true);
 							regularisationSpinner.setEnabled(true);
 							regularisationSpinner.setToolTipText("<html>If C is set to a big value, then the SVM classifier would better fit the training set data, but<br>"
@@ -594,7 +593,7 @@ public class MainView extends JFrame {
 				c.gridx = 1; //second column
 				c.gridy = 0; //first row
 				SpinnerModel outlierFactorSpinnerModel =
-				         new SpinnerNumberModel(3.0, //initial value
+				         new SpinnerNumberModel(1.5, //initial value
 				            0.0, //min
 				            6.0, //max
 				            0.1); //step
@@ -668,6 +667,9 @@ public class MainView extends JFrame {
 				break;
 			case "startScreen_3":
 				programStateLabel.setText("Initial Setup Screen - Choose a Task to Perform");
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
+				nextButton.setEnabled(true);
 				break;
 			case "clustering_step1":
 				programStateLabel.setText("Clustering (Step 1 of 3) - Select Features");
