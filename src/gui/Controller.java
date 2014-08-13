@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -253,55 +254,56 @@ public class Controller implements ActionListener {
 			case "classification_step1":
 			case "outlierDetection_step1":
 				selectedFeatures = getSelectedFeatures();
-				query = "select ";
-				for (String feature : selectedFeatures) {
-					if ((!selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) 
-							|| (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET") 
-							&& desiredLevelOfAnalysis == 0)) {
-						query += feature + ",";
-					} else if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET") 
-							&& desiredLevelOfAnalysis != 0) {
-						query += "sum(" + feature + "),";
+				if (selectedFeatures.size() < 1) {
+					JOptionPane.showMessageDialog(null, 
+			    			"You must select at least 1 feature.", 
+			    			"Error: No Features Selected", JOptionPane.ERROR_MESSAGE);
+				} else {
+					query = "select ";
+					for (String feature : selectedFeatures) {
+						if ((!selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) 
+								|| (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET") 
+								&& desiredLevelOfAnalysis == 0)) {
+							query += feature + ",";
+						} else if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET") 
+								&& desiredLevelOfAnalysis != 0) {
+							query += "sum(" + feature + "),";
+						}
 					}
-				}
-				if (state.equals("clustering_step1") || state.equals("outlierDetection_step1")) {
-					query = query.substring(0, query.length()-1);
-					query += " from " + selectedDataset;
-					if (desiredLevelOfAnalysis == 1) {
-						query += " group by Player_ID";
-					} else if (desiredLevelOfAnalysis == 2) {
-						query += " group by Team";
-					}
-					if (state.equals("clustering_step1")) {
+					if (state.equals("clustering_step1") || state.equals("outlierDetection_step1")) {
+						query = query.substring(0, query.length()-1);
+						query += " from " + selectedDataset;
+						if (desiredLevelOfAnalysis == 1) {
+							query += " group by Player_ID";
+						} else if (desiredLevelOfAnalysis == 2) {
+							query += " group by Team";
+						}
 						new Thread(new Runnable() {
 							public void run() {
 								viewObject.toggleNavigationButtons(false, false, false);
-								clusterer.setInstanceQuery(query);
-								viewObject.setTextOfProgramStateLabel("Clustering (Step 1 of 3) - Fetching Instances...");
-								clusterer.fetchInstances();
-								clusterer.renameAttributesOfInstances(selectedFeatures);
-								if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
-									clusterer.scaleAndMeanNormaliseFeatures();
+								if (state.equals("clustering_step1")) {
+									clusterer.setInstanceQuery(query);
+									viewObject.setTextOfProgramStateLabel("Clustering (Step 1 of 3) - Fetching Instances...");
+									clusterer.fetchInstances();
+									clusterer.renameAttributesOfInstances(selectedFeatures);
+									if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
+										clusterer.scaleAndMeanNormaliseFeatures();
+									}
+									state = "clustering_step2";
+								} else if (state.equals("outlierDetection_step1")) {
+									outlierDetector.setInstanceQuery(query);
+									viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 1 of 3) - Fetching Instances...");
+									outlierDetector.fetchInstances();
+									outlierDetector.renameAttributesOfInstances(selectedFeatures);
+									state = "outlierDetection_step2";
 								}
-								state = "clustering_step2";
 								viewObject.updateView(state);
 							}
 						}).start();
-					} else if (state.equals("outlierDetection_step1")) {
-						new Thread(new Runnable() {
-							public void run() {
-								viewObject.toggleNavigationButtons(false, false, false);
-								outlierDetector.setInstanceQuery(query);
-								viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 1 of 3) - Fetching Instances...");
-								outlierDetector.fetchInstances();
-								outlierDetector.renameAttributesOfInstances(selectedFeatures);
-								state = "outlierDetection_step2";
-								viewObject.updateView(state);
-							}
-						}).start();
+					} else if (state.equals("classification_step1")) {
+						state = "classification_step2";
+						viewObject.updateView(state);
 					}
-				} else if (state.equals("classification_step1")) {
-					state = "classification_step2";
 				}
 				break;
 			case "clustering_step2":

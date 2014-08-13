@@ -370,7 +370,8 @@ public class MainView extends JFrame {
 							gammaLabel.setEnabled(true);
 							gammaSpinner.setEnabled(true);
 							gammaSpinner.setToolTipText("<html>If gamma is set to a small value, then the SVM classifier would better fit the training set data, but<br>"
-									+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.</html>");
+									+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.<br>"
+									+ "If set to 0, then gamma will be calculated as 1/number_of_features.</html>");
 						} else {
 							regularisationLabel.setEnabled(false);
 							regularisationSpinner.setEnabled(false);
