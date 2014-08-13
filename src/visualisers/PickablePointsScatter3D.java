@@ -52,7 +52,6 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	public PickablePointsScatter3D(String selectedDataset, String[] axeLabels, double[][] coordinates, 
 			double[] actualClassAssignments, double[] predictedClassAssignments, 
 			Instances instances, String[] namesOfInstances, String[] classLabels) {
-		points = new ArrayList<>();
 		this.selectedDataset = selectedDataset;
 		this.axeLabels = axeLabels;
 		this.coordinates = coordinates;
@@ -126,6 +125,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 			}
 			mousePicker.dispose();
 		}
+		points = new ArrayList<>();
 		// create points
 		for (int i = 0; i < coordinates.length; i++) {
             double x = coordinates[i][0];
