@@ -540,9 +540,19 @@ public class Controller implements ActionListener {
 			plot.renameAxes(axeLabels);
 			coordinates = new double[instances.numInstances()][3];
 			for (int i = 0; i < instances.numInstances(); i++) {
-				coordinates[i][0] = instances.get(i).value(visualisationViewObject.xAxisCombo.getSelectedIndex());
-				coordinates[i][1] = instances.get(i).value(visualisationViewObject.yAxisCombo.getSelectedIndex());
-				coordinates[i][2] = instances.get(i).value(visualisationViewObject.zAxisCombo.getSelectedIndex());
+				if (instances.numAttributes() >= 3) {
+					coordinates[i][0] = instances.get(i).value(visualisationViewObject.xAxisCombo.getSelectedIndex());
+					coordinates[i][1] = instances.get(i).value(visualisationViewObject.yAxisCombo.getSelectedIndex());
+					coordinates[i][2] = instances.get(i).value(visualisationViewObject.zAxisCombo.getSelectedIndex());
+				} else if (instances.numAttributes() == 2) {
+					coordinates[i][0] = instances.get(i).value(visualisationViewObject.xAxisCombo.getSelectedIndex());
+					coordinates[i][1] = instances.get(i).value(visualisationViewObject.yAxisCombo.getSelectedIndex());
+					coordinates[i][2] = 0;
+				} else if (instances.numAttributes() == 1) {
+					coordinates[i][0] = instances.get(i).value(visualisationViewObject.xAxisCombo.getSelectedIndex());
+					coordinates[i][1] = 0;
+					coordinates[i][2] = 0;
+				}
 			}
 			plot.updatePoints(coordinates);
 		}
