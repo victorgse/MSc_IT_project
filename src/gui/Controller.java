@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.event.*;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
 
 import javax.swing.JFileChooser;
