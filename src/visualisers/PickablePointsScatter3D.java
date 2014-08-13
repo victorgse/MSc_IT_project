@@ -125,8 +125,8 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 			}
 			mousePicker.dispose();
 		}
-		points = new ArrayList<>();
 		// create points
+		points = new ArrayList<>();
 		for (int i = 0; i < coordinates.length; i++) {
             double x = coordinates[i][0];
             double y = coordinates[i][1];
