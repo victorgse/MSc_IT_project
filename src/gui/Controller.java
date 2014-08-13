@@ -81,9 +81,9 @@ public class Controller implements ActionListener {
 	 */
 	public TreeSet<String> getSelectedFeatures() {
 		TreeSet<String> featuresSelectedByUser = new TreeSet<String>();
-		for (int i = 0; i < viewObject.features.length; i++) {
-			if (viewObject.features[i].isSelected()) {
-				featuresSelectedByUser.add(viewObject.features[i].getText());
+		for (int i = 0; i < viewObject.featureCheckBoxes.size(); i++) {
+			if (viewObject.featureCheckBoxes.get(i).isSelected()) {
+				featuresSelectedByUser.add(viewObject.featureCheckBoxes.get(i).getText());
 			}
 		}
 		return featuresSelectedByUser;

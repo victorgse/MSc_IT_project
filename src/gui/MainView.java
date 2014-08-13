@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -35,8 +35,8 @@ public class MainView extends JFrame {
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
-	TreeSet<String> numericFieldsOfTableSchema; //stores the dataset's numeric fields.
-	JCheckBox[] features; //check boxes allowing the user to select features
+	ArrayList<String> availableFeatures; //stores the dataset's numeric fields.
+	ArrayList<JCheckBox> featureCheckBoxes; //check boxes allowing the user to select features
 	JCheckBox scaleAndMeanNormaliseFeatures; //check box allowing the user to request feature scaling and mean normalisation
 	JComboBox<String> targetLabelCombo; //combo box for selecting a target label for the SVM classifier
 	JSpinner numberOfClustersSpinner, numberOfKMeansRunsSpinner; //spinners for K-Means' options
@@ -270,29 +270,167 @@ public class MainView extends JFrame {
 			case "clustering_step1":
 			case "classification_step1":
 			case "outlierDetection_step1":
-				JScrollPane featuresPane = new JScrollPane();
-				featuresPane.setPreferredSize(new Dimension(400, 200));
 				DatabaseQuery dbQuery = new DatabaseQuery();
+				
 				String datasetName = controllerObject.getSelectedDataset();
 				boolean numericOnly = true;
-				numericFieldsOfTableSchema = dbQuery.getNamesOfFieldsOfTable(datasetName, numericOnly);
-				features = new JCheckBox[numericFieldsOfTableSchema.size()];
+				availableFeatures = dbQuery.getNamesOfFieldsOfTable(datasetName, numericOnly);
+				featureCheckBoxes = new ArrayList<JCheckBox>();
+				
+				JScrollPane featuresPane = new JScrollPane();
+				featuresPane.setPreferredSize(new Dimension(400, 200));
 				JPanel featuresPanel = new JPanel();
 				featuresPanel.setToolTipText("You must select at lease 1 feature (preferably 3 or more).");
 				featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.PAGE_AXIS));
 				int i = 0;
-				for (String field : numericFieldsOfTableSchema) {
-					features[i] = new JCheckBox(field);
-					featuresPanel.add(features[i]);
+				for (String field : availableFeatures) {
+					featureCheckBoxes.add(new JCheckBox(field));
+					featuresPanel.add(featureCheckBoxes.get(i));
 					i++;
 				}
 				featuresPane.getViewport().add(featuresPanel);
 				c.gridx = 1; //second column
 				c.gridy = 0; //first row
 				middlePanel.add(featuresPane, c);
-				if (!controllerObject.getState().equals("outlierDetection_step1")) {
+				
+				if (datasetName.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					JPanel examplesPanel = new JPanel();
+					examplesPanel.setLayout(new BoxLayout(examplesPanel, BoxLayout.PAGE_AXIS));
+					examplesPanel.add(new JLabel("Build your own feature vector on the right,"));
+					examplesPanel.add(new JLabel("or select from one of the examples below:"));
+					examplesPanel.add(Box.createRigidArea(new Dimension(0,10)));
+					
+					final JRadioButton buildOwnFeatureVectorButton = new JRadioButton("Build own feature vector");
+					buildOwnFeatureVectorButton.setSelected(true);
+					buildOwnFeatureVectorButton.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (buildOwnFeatureVectorButton.isSelected()) {
+								for (JCheckBox feature : featureCheckBoxes) {
+									feature.setSelected(false);
+									feature.setEnabled(true);
+								}
+							}
+						}
+					});
+					examplesPanel.add(buildOwnFeatureVectorButton);
+					
+					final String copyOfState = state;
+					
+					final JRadioButton example1Button = new JRadioButton();
+					if (state.equals("clustering_step1")) {
+						example1Button.setText("clustering");
+					} else if (state.equals("classification_step1")) {
+						example1Button.setText("classification");
+					} else if (state.equals("outlierDetection_step1")) {
+						example1Button.setText("outlier detection");
+					}
+					example1Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example1Button.isSelected()) {
+								for (JCheckBox feature : featureCheckBoxes) {
+									feature.setSelected(false);
+									feature.setEnabled(false);
+								}
+								if (copyOfState.equals("clustering_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("classification_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("outlierDetection_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								}
+							}
+						}
+					});
+					examplesPanel.add(example1Button);
+					
+					final JRadioButton example2Button = new JRadioButton();
+					if (state.equals("clustering_step1")) {
+						example2Button.setText("clustering");
+					} else if (state.equals("classification_step1")) {
+						example2Button.setText("classification");
+					} else if (state.equals("outlierDetection_step1")) {
+						example2Button.setText("outlier detection");
+					}
+					example2Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example2Button.isSelected()) {
+								for (JCheckBox feature : featureCheckBoxes) {
+									feature.setSelected(false);
+									feature.setEnabled(false);
+								}
+								if (copyOfState.equals("clustering_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("classification_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("outlierDetection_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								}
+							}
+						}
+					});
+					examplesPanel.add(example2Button);
+					
+					final JRadioButton example3Button = new JRadioButton();
+					if (state.equals("clustering_step1")) {
+						example3Button.setText("clustering");
+					} else if (state.equals("classification_step1")) {
+						example3Button.setText("classification");
+					} else if (state.equals("outlierDetection_step1")) {
+						example3Button.setText("outlier detection");
+					}
+					example3Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example3Button.isSelected()) {
+								for (JCheckBox feature : featureCheckBoxes) {
+									feature.setSelected(false);
+									feature.setEnabled(false);
+								}
+								if (copyOfState.equals("clustering_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("classification_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								} else if (copyOfState.equals("outlierDetection_step1")) {
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+								}
+							}
+						}
+					});
+					examplesPanel.add(example3Button);
+					
+					ButtonGroup examplesButtonGroup = new ButtonGroup();
+					examplesButtonGroup.add(buildOwnFeatureVectorButton);
+					examplesButtonGroup.add(example1Button);
+					examplesButtonGroup.add(example2Button);
+					examplesButtonGroup.add(example3Button);
+					
+					c.insets = new Insets(0,0,0,30); //right padding
+					c.gridx = 0; //first column
+					c.gridy = 0; //first row
+					middlePanel.add(examplesPanel, c);
+				}
+				
+				if (!state.equals("outlierDetection_step1")) {
 					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
 					scaleAndMeanNormaliseFeatures.setToolTipText("This option would bring all selected features on a [0, 1] scale.");
+					c.insets = new Insets(0,30,0,0); //right padding
 					c.gridx = 2; //third column
 					c.gridy = 0; //first row
 					middlePanel.add(scaleAndMeanNormaliseFeatures, c);
@@ -338,7 +476,7 @@ public class MainView extends JFrame {
 				break;
 			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
-				TreeSet<String> targetLabelOptions = numericFieldsOfTableSchema;
+				ArrayList<String> targetLabelOptions = availableFeatures;
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
 				for (String option : targetLabelOptions) {
 					targetLabelCombo.addItem(option);

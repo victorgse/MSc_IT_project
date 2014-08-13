@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -44,8 +44,8 @@ public class DatabaseQuery {
 	 * Fetches the names of a table's fields.
 	 * @return the names of a table's fields
 	 */
-	public TreeSet<String> getNamesOfFieldsOfTable(String tableName, boolean numericOnly) {
-		TreeSet<String> tableFields = new TreeSet<String>();
+	public ArrayList<String> getNamesOfFieldsOfTable(String tableName, boolean numericOnly) {
+		ArrayList<String> tableFields = new ArrayList<String>();
 		query = "select columnname "
 				+ "from sys.systables t, sys.syscolumns "
 				+ "where TABLEID = REFERENCEID "
