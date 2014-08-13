@@ -476,7 +476,16 @@ public class MainView extends JFrame {
 				break;
 			case "classification_step2":
 				targetLabelCombo = new JComboBox<String>();
-				ArrayList<String> targetLabelOptions = availableFeatures;
+				ArrayList<String> targetLabelOptions;
+				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					targetLabelOptions = availableFeatures;
+				} else {
+					DatabaseQuery dbQuery2 = new DatabaseQuery();
+					boolean justNumeric = false;
+					String nameOfDataset = controllerObject.getSelectedDataset();
+					ArrayList<String> tableSchema = dbQuery2.getNamesOfFieldsOfTable(nameOfDataset, justNumeric);
+					targetLabelOptions = tableSchema;
+				}
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
 				for (String option : targetLabelOptions) {
 					targetLabelCombo.addItem(option);
