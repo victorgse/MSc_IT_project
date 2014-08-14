@@ -37,6 +37,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	private String[] classLabels;
 	private boolean plotInitiated;
 	private InstanceInfoFrame instanceInfoFrame;
+	private ArrayList<Integer> pickingIDs;
 	
 	/**
 	 * Constructor
@@ -160,9 +161,11 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	private void enablePicking(List<PickablePoint> points) {
 		mousePicker = new AWTMousePickingController<>(chart, 10);
 		PickingSupport picking = mousePicker.getPickingSupport();
-
+		
+		pickingIDs = new ArrayList<Integer>();
 		for (PickablePoint point : points) {
 			picking.registerPickableObject(point, point);
+			pickingIDs.add(point.getPickingId());
 		}
 		
 		IObjectPickedListener listener = new IObjectPickedListener() {
@@ -185,7 +188,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 			for (Object p: picked) {//for each picked instance
 				// add information about the picked instance to an info String about the last picked instances
 				final String[] tokens = p.toString().split("[ :]+");
-				int indexOfClickedInstance = Integer.parseInt(tokens[1]) % instances.numInstances();
+				int indexOfClickedInstance = pickingIDs.indexOf(Integer.parseInt(tokens[1]));
 				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
 					clickedInstancesInfo += "Instance: " + namesOfInstances[indexOfClickedInstance] + "\n";
 				} else {
