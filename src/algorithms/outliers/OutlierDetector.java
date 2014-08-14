@@ -2,13 +2,12 @@ package algorithms.outliers;
 
 import javax.swing.JOptionPane;
 
-import algorithms.Algorithm;
 import weka.core.Instances;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.InterquartileRange;
 
-public class OutlierDetector extends Algorithm {
+public class OutlierDetector extends OutlierDetectionAlgorithm {
 	
 	/**
 	 * instance variables

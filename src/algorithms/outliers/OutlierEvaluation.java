@@ -21,4 +21,10 @@ public class OutlierEvaluation {
 		this.classAssignments = classAssignments;
 	}
 	
+	public String resultsToString() {
+		String results = null;
+		
+		return results;
+	}
+	
 }
