@@ -75,10 +75,10 @@ public class DatasetDatabaseLoader {
 	
 	/**
 	 * @return the datasetName
-	 */
+	 */ /*
 	public String getDatasetName() {
 		return datasetName;
-	}
+	}*/
 
 	/**
 	 * Method which reads the .xls dataset and inserts it into the matrix data.
