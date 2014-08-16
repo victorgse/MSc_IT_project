@@ -14,31 +14,30 @@ public class DatabaseQuery {
 	/**
 	 * instance variables
 	 */
-	String query;
-	ResultSet RS;
+	private String query;
+	private ResultSet RS;
 	
 	/**
 	 * A helper method for getting the names of datasets stored in the database.
-	 * @return
-	 */ /*
-	private TreeSet<String> getNamesOfAvailableDatasets() {
-		TreeSet<String> datasetsInDatabase = new TreeSet<String>();
+	 * @return the names of datasets stored in the database
+	 */
+	public ArrayList<String> getNamesOfAvailableDatasets() {
+		ArrayList<String> datasetsInDatabase = new ArrayList<String>();
 		try {
-			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
-			Statement stmt = con.createStatement();
 			String query =  "select tablename "
 					+ "from sys.systables "
 					+ "where tabletype = 'T'";
-			ResultSet RS = stmt.executeQuery(query);
+			RS = queryDatabase(query);
 			while (RS.next()) {
 				datasetsInDatabase.add(RS.getString("tablename"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong when fetching the names of available datasets.");
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while querying the database.", 
+	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
 		}
 		return datasetsInDatabase;
-	} */
+	}
 	
 	/**
 	 * Fetches the names of a table's fields.
@@ -115,16 +114,16 @@ public class DatabaseQuery {
 	 * @return the results of the custom database query
 	 */
 	private ResultSet queryDatabase(String query) {
-		ResultSet RS = null;
+		ResultSet tempRS = null;
 		try {
 			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
 			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			RS = stmt.executeQuery(query);
+			tempRS = stmt.executeQuery(query);
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while querying the database.", 
 	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
 		}
-		return RS;
+		return tempRS;
 	}
 }
