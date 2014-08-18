@@ -31,7 +31,7 @@ public class InstanceInfoFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	public void setTextOfInstanceInfoTextArea (String text) {
+	public void setTextOfInstanceInfoTextArea(String text) {
 		instanceInfoTextArea.setText(text);
 	}
 	
