@@ -10,8 +10,8 @@ import javax.swing.JTextArea;
 @SuppressWarnings("serial")
 public class InstanceInfoFrame extends JFrame {
 	
-	JScrollPane instanceInfoPane;
-	JTextArea instanceInfoTextArea;
+	private JScrollPane instanceInfoPane;
+	private JTextArea instanceInfoTextArea;
 	
 	public InstanceInfoFrame() {
 		setTitle("Selected Instances Info");

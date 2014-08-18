@@ -17,10 +17,10 @@ public class VisualisationView extends JFrame{
 	private Controller controllerObject; //a reference to the controller object
 	private PickablePointsScatter3D scatterPlot; //a reference to the scatter plot object
 	private Instances instances; //the dataset instances
-	String[] classLabels;
+	private String[] classLabels;
+	private JLabel xAxisLabel, yAxisLabel, zAxisLabel;
 	private JPanel leftPanel, rightPanel;
 	private JPanel axeSelectionPanel, controlsPanel, visualisationPanel, legendPanel;
-	JLabel xAxisLabel, yAxisLabel, zAxisLabel;
 	JComboBox<String> xAxisCombo, yAxisCombo, zAxisCombo;
 	JButton actualisePlotButton;
 	
