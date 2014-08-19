@@ -117,8 +117,7 @@ public class Controller implements ActionListener {
 				public void run() {
 					visualisationViewObject.dispose();
 					visualisationViewObject = null;
-					plot.instanceInfoFrame.dispose();
-					plot.instanceInfoFrame = null;
+					plot.getInstanceInfoFrame().dispose();
 				}
 			});
 		} catch (Exception e) {}
@@ -205,6 +204,7 @@ public class Controller implements ActionListener {
 					File selectedFile = getFile();
 					if (selectedFile != null) {
 						viewObject.toggleNavigationButtons(false, false, false);
+						viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 						viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Inserting dataset into the database...");
 						DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
 						boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
@@ -239,6 +239,7 @@ public class Controller implements ActionListener {
 					state = "outlierDetection_step1";
 				}
 				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 				viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Fetching a List of Available Features...");
 				break;
 			case "clustering_step1":
@@ -270,6 +271,7 @@ public class Controller implements ActionListener {
 							query += " group by Team";
 						}
 						viewObject.toggleNavigationButtons(false, false, false);
+						viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 						if (state.equals("clustering_step1")) {
 							clusterer.setInstanceQuery(query);
 							viewObject.setTextOfProgramStateLabel("Clustering (Step 1 of 3) - Fetching Instances...");
@@ -296,6 +298,7 @@ public class Controller implements ActionListener {
 				String KMeansClustererParameters = "-N " + desiredNumberOfClusters;
 				clusterer.setOptions(KMeansClustererParameters);
 				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Training Clusterer...");
 				int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
 				clusterer.train(desiredNumberOfKMeansRuns);
@@ -320,8 +323,9 @@ public class Controller implements ActionListener {
 					query += " from " + selectedDataset;
 					query += " group by Team";
 				}
-				viewObject.toggleNavigationButtons(false, false, false);
 				classifier.setInstanceQuery(query);
+				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 				viewObject.setTextOfProgramStateLabel("Classification (Step 2 of 5) - Fetching Instances...");
 				classifier.fetchInstances();
 				classifier.renameAttributesOfInstances(selectedFeatures);
@@ -358,6 +362,7 @@ public class Controller implements ActionListener {
 					classifier.splitDataset(0.70);
 				}
 				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 				viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Training Classifier...");
 				classifier.train();
 				classifier.setEvaluationOption(classifierEvaluationMethod);
@@ -375,6 +380,7 @@ public class Controller implements ActionListener {
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
 				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Training Outlier-detector...");
 				outlierDetector.train();
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");

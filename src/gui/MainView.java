@@ -25,10 +25,10 @@ public class MainView extends JFrame {
 	 */
 	private Controller controllerObject; //a reference to the controller object
 	private DatabaseAccess dbAccess; //object used for querying the database
-	private JPanel topPanel, middlePanel, bottomPanel; //the panels for the three areas of the GUI
-	private JPanel programStatePanel; //the panel that holds the programState label
-	private JLabel infoLabel, programStateLabel; //the info and programState labels
-	private boolean topInitiated, middleInitiated, bottomInitiated; //have the JPanels been initialised?
+	private boolean topInitiated, middleInitiated, bottomInitiated; //have the main JPanels been initialised?
+	JPanel topPanel, middlePanel, bottomPanel; //the panels for the three areas of the GUI
+	JPanel programStatePanel; //the panel that holds the programState label
+	JLabel infoLabel, programStateLabel; //the info and programState labels
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //radio buttons for selecting a dataset
 	JRadioButton[] otherAvailableDatasetsButtons; //radio buttons for selecting a dataset
@@ -702,7 +702,6 @@ public class MainView extends JFrame {
 					backButton.addActionListener(controllerObject);
 					nextButton = new JButton("Next");
 					nextButton.addActionListener(controllerObject);
-					
 
 					programStatePanel = new JPanel();
 					programStatePanel.setBorder(new TitledBorder(new EtchedBorder(), "Program State"));
@@ -833,6 +832,21 @@ public class MainView extends JFrame {
 				}
 			});
 		} catch (Exception e) {}
+	}
+	
+	public void disableAllComponentsOfContainer(Container container) {
+		Component[] components = container.getComponents();
+        for (Component component : components) {
+        	final Component referenceToComponent = component;
+        	SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					referenceToComponent.setEnabled(false);
+				}
+			});
+        	if (component instanceof Container) {
+        		disableAllComponentsOfContainer((Container)component);
+            }
+        }
 	}
 	
 }

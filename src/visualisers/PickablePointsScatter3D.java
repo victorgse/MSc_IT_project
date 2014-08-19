@@ -35,9 +35,9 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	private Instances instances;
 	private String[] namesOfInstances;
 	private String[] classLabels;
+	private ArrayList<Integer> pickingIDs;
 	private boolean plotInitiated;
 	private InstanceInfoFrame instanceInfoFrame;
-	private ArrayList<Integer> pickingIDs;
 	
 	/**
 	 * Constructor
@@ -64,6 +64,14 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 		plotInitiated = false;
 		instanceInfoFrame = null;
 		init();
+	}
+
+	/**
+	 * Getter for the instanceInfoFrame object.
+	 * @return the instanceInfoFrame
+	 */
+	public InstanceInfoFrame getInstanceInfoFrame() {
+		return instanceInfoFrame;
 	}
 
 	/* (non-Javadoc)
