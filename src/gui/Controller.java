@@ -53,7 +53,7 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * viewObject Setter
+	 * Setter of viewObject.
 	 * @param view
 	 */
 	public void setView(MainView view) {
@@ -61,7 +61,7 @@ public class Controller implements ActionListener {
 	}
 
 	/**
-	 * state Getter
+	 * Getter for the state of the application.
 	 * @return the state
 	 */
 	public String getState() {
@@ -69,7 +69,7 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * selectedDataset Getter
+	 * Getter for the name of the selected dataset.
 	 * @return the selectedDataset
 	 */
 	public String getSelectedDataset() {
@@ -77,6 +77,7 @@ public class Controller implements ActionListener {
 	}
 
 	/**
+	 * Getter for the features selected by user.
 	 * @return the selectedFeatures
 	 */
 	public TreeSet<String> getSelectedFeatures() {
@@ -107,6 +108,9 @@ public class Controller implements ActionListener {
 	    }
 	}
 	
+	/**
+	 * Disposes the visualisationView object.
+	 */
 	private void disposeVisualisationView() {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -119,7 +123,7 @@ public class Controller implements ActionListener {
 	}
 
 	/**
-	 * Processes clicks of the "Start Over" button.
+	 * Processes clicks on the "Start Over" button.
 	 */
 	private void processStartOverButtonClick() {
 		if (visualisationViewObject != null) {
@@ -130,7 +134,7 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * Processes clicks of the "Back" button.
+	 * Processes clicks on the "Back" button.
 	 */
 	private void processBackButtonClick() {
 		switch (state) {
@@ -187,7 +191,7 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * Processes clicks of the "Next" button.
+	 * Processes clicks on the "Next" button.
 	 */
 	private void processNextButtonClick() {
 		switch (state) {
@@ -381,6 +385,9 @@ public class Controller implements ActionListener {
 		viewObject.updateView(state);
 	}
 	
+	/**
+	 * Processes clicks on the "Delete Dataset" button.
+	 */
 	private void processDeleteDatasetButtonClick() {
 		DatabaseAccess dbAccess = new DatabaseAccess();
 		String nameOfDatasetToDelete = viewObject.datasetToDeleteCombo.getSelectedItem().toString();
@@ -389,7 +396,7 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * Processes clicks of the "Actualise Plot" button.
+	 * Processes clicks on the "Actualise Plot" button.
 	 */
 	private void processActualisePlotButtonClick() {
 		Instances instances = null;
