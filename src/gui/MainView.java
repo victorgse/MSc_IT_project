@@ -711,7 +711,6 @@ public class MainView extends JFrame {
 					bottomPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 					bottomPanel.add(programStatePanel);
 					bottomPanel.add(Box.createRigidArea(new Dimension(50, 0)));
-					//bottomPanel.add(Box.createHorizontalGlue());
 					bottomPanel.add(startOverButton);
 					bottomPanel.add(Box.createRigidArea(new Dimension(50, 0)));
 					bottomPanel.add(backButton);
