@@ -378,11 +378,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example1Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example1Button.setText("clustering");
+						example1Button.setText("(assists, goals, touches)");
 					} else if (state.equals("classification_step1")) {
 						example1Button.setText("classification");
 					} else if (state.equals("outlierDetection_step1")) {
-						example1Button.setText("outlier detection");
+						example1Button.setText("(assists, goals, touches)");
 					}
 					example1Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -392,16 +392,16 @@ public class MainView extends JFrame {
 									feature.setEnabled(false);
 								}
 								if (copyOfState.equals("clustering_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								}
 							}
@@ -411,11 +411,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example2Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example2Button.setText("clustering");
+						example2Button.setText("(blocks, interceptions, recoveries)");
 					} else if (state.equals("classification_step1")) {
 						example2Button.setText("classification");
 					} else if (state.equals("outlierDetection_step1")) {
-						example2Button.setText("outlier detection");
+						example2Button.setText("(blocks, interceptions, recoveries)");
 					}
 					example2Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -425,17 +425,17 @@ public class MainView extends JFrame {
 									feature.setEnabled(false);
 								}
 								if (copyOfState.equals("clustering_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BLOCKS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("INTERCEPTIONS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("RECOVERIES")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BLOCKS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("INTERCEPTIONS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("RECOVERIES")).setSelected(true);
 								}
 							}
 						}
@@ -444,11 +444,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example3Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example3Button.setText("clustering");
+						example3Button.setText("(offsides, pass forward, successful passes final third)");
 					} else if (state.equals("classification_step1")) {
 						example3Button.setText("classification");
 					} else if (state.equals("outlierDetection_step1")) {
-						example3Button.setText("outlier detection");
+						example3Button.setText("(red cards, total fouls conceded, yellow cards)");
 					}
 					example3Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -458,17 +458,17 @@ public class MainView extends JFrame {
 									feature.setEnabled(false);
 								}
 								if (copyOfState.equals("clustering_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("OFFSIDES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("PASS_FORWARD")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("SUCCESSFUL_PASSES_FINAL_THIRD")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("RED_CARDS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TOTAL_FOULS_CONCEDED")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("YELLOW_CARDS")).setSelected(true);
 								}
 							}
 						}
@@ -481,7 +481,7 @@ public class MainView extends JFrame {
 					examplesButtonGroup.add(example2Button);
 					examplesButtonGroup.add(example3Button);
 					
-					c.insets = new Insets(0,0,0,30); //right padding
+					c.insets = new Insets(0,0,0,40); //right padding
 					c.gridx = 0; //first column
 					c.gridy = 0; //first row
 					middlePanel.add(examplesPanel, c);
