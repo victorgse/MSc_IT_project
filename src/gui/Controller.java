@@ -108,19 +108,14 @@ public class Controller implements ActionListener {
 	}
 	
 	private void disposeVisualisationView() {
-		new Thread(new Runnable() {
-			public void run() {
-				try {
-					SwingUtilities.invokeAndWait(new Runnable() {
-						public void run() {
-							visualisationViewObject.dispose();
-							visualisationViewObject = null;
-						}
-					});
-				} catch (Exception e) {}
-				
-			}
-		}).start();
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					visualisationViewObject.dispose();
+					visualisationViewObject = null;
+				}
+			});
+		} catch (Exception e) {}
 	}
 
 	/**
@@ -200,31 +195,24 @@ public class Controller implements ActionListener {
 				if (viewObject.mcfcAnalyticsFullDatasetButton.isSelected()) {
 					selectedDataset = "MCFC_ANALYTICS_FULL_DATASET";
 					state = "startScreen_2";
-					viewObject.updateView(state);
 				} else if (viewObject.otherDatasetButton.isSelected()) {
-					new Thread(new Runnable() {
-						public void run() {
-							File selectedFile = getFile();
-							if (selectedFile != null) {
-								viewObject.toggleNavigationButtons(false, false, false);
-								viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Inserting dataset into the database...");
-								DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
-								boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
-								if (datasetSuccessfullyInsertedIntoDatabase) {
-									selectedDataset = datasetDatabaseLoader.getNameOfDataset();
-									state = "startScreen_3";
-								}
-								selectedFile = null;
-								viewObject.updateView(state);
-							}
+					File selectedFile = getFile();
+					if (selectedFile != null) {
+						viewObject.toggleNavigationButtons(false, false, false);
+						viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Inserting dataset into the database...");
+						DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
+						boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
+						if (datasetSuccessfullyInsertedIntoDatabase) {
+							selectedDataset = datasetDatabaseLoader.getNameOfDataset();
+							state = "startScreen_3";
 						}
-					}).start();
+						selectedFile = null;
+					}
 				} else {
 					for (int i = 0; i < viewObject.otherAvailableDatasetsButtons.length; i++) {
 						if (viewObject.otherAvailableDatasetsButtons[i].isSelected()) {
 							selectedDataset = viewObject.otherAvailableDatasetsButtons[i].getText();
 							state = "startScreen_3";
-							viewObject.updateView(state);
 						}
 					}
 				}
@@ -232,7 +220,6 @@ public class Controller implements ActionListener {
 			case "startScreen_2":
 				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();
 				state = "startScreen_3";
-				viewObject.updateView(state);
 				break;
 			case "startScreen_3":
 				if (viewObject.clusteringButton.isSelected()) {
@@ -245,13 +232,8 @@ public class Controller implements ActionListener {
 					outlierDetector = new OutlierDetector();
 					state = "outlierDetection_step1";
 				}
-				new Thread(new Runnable() {
-					public void run() {
-						viewObject.toggleNavigationButtons(false, false, false);
-						viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Fetching a List of Available Features...");
-						viewObject.updateView(state);
-					}
-				}).start();
+				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.setTextOfProgramStateLabel("Initial Setup Screen - Fetching a List of Available Features...");
 				break;
 			case "clustering_step1":
 			case "classification_step1":
@@ -281,31 +263,25 @@ public class Controller implements ActionListener {
 						} else if (desiredLevelOfAnalysis == 2) {
 							query += " group by Team";
 						}
-						new Thread(new Runnable() {
-							public void run() {
-								viewObject.toggleNavigationButtons(false, false, false);
-								if (state.equals("clustering_step1")) {
-									clusterer.setInstanceQuery(query);
-									viewObject.setTextOfProgramStateLabel("Clustering (Step 1 of 3) - Fetching Instances...");
-									clusterer.fetchInstances();
-									clusterer.renameAttributesOfInstances(selectedFeatures);
-									if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
-										clusterer.scaleAndMeanNormaliseFeatures();
-									}
-									state = "clustering_step2";
-								} else if (state.equals("outlierDetection_step1")) {
-									outlierDetector.setInstanceQuery(query);
-									viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 1 of 3) - Fetching Instances...");
-									outlierDetector.fetchInstances();
-									outlierDetector.renameAttributesOfInstances(selectedFeatures);
-									state = "outlierDetection_step2";
-								}
-								viewObject.updateView(state);
+						viewObject.toggleNavigationButtons(false, false, false);
+						if (state.equals("clustering_step1")) {
+							clusterer.setInstanceQuery(query);
+							viewObject.setTextOfProgramStateLabel("Clustering (Step 1 of 3) - Fetching Instances...");
+							clusterer.fetchInstances();
+							clusterer.renameAttributesOfInstances(selectedFeatures);
+							if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
+								clusterer.scaleAndMeanNormaliseFeatures();
 							}
-						}).start();
+							state = "clustering_step2";
+						} else if (state.equals("outlierDetection_step1")) {
+							outlierDetector.setInstanceQuery(query);
+							viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 1 of 3) - Fetching Instances...");
+							outlierDetector.fetchInstances();
+							outlierDetector.renameAttributesOfInstances(selectedFeatures);
+							state = "outlierDetection_step2";
+						}
 					} else if (state.equals("classification_step1")) {
 						state = "classification_step2";
-						viewObject.updateView(state);
 					}
 				}
 				break;
@@ -313,21 +289,16 @@ public class Controller implements ActionListener {
 				int desiredNumberOfClusters = (int) viewObject.numberOfClustersSpinner.getValue();
 				String KMeansClustererParameters = "-N " + desiredNumberOfClusters;
 				clusterer.setOptions(KMeansClustererParameters);
-				new Thread(new Runnable() {
-					public void run() {
-						viewObject.toggleNavigationButtons(false, false, false);
-						viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Training Clusterer...");
-						int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
-						clusterer.train(desiredNumberOfKMeansRuns);
-						viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
-						clustererEvaluation = clusterer.evaluate();
-						state = "clustering_step3";
-						viewObject.setTextOfAlgorithmOutputTextArea(clustererEvaluation.clusterResultsToString());
-						viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Generating Visualisation...");
-						processActualisePlotButtonClick();
-						viewObject.updateView(state);
-					}
-				}).start();
+				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Training Clusterer...");
+				int desiredNumberOfKMeansRuns = (int) viewObject.numberOfKMeansRunsSpinner.getValue();
+				clusterer.train(desiredNumberOfKMeansRuns);
+				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
+				clustererEvaluation = clusterer.evaluate();
+				state = "clustering_step3";
+				viewObject.setTextOfAlgorithmOutputTextArea(clustererEvaluation.clusterResultsToString());
+				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Generating Visualisation...");
+				processActualisePlotButtonClick();
 				break;
 			case "classification_step2":
 				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
@@ -343,21 +314,16 @@ public class Controller implements ActionListener {
 					query += " from " + selectedDataset;
 					query += " group by Team";
 				}
-				new Thread(new Runnable() {
-					public void run() {
-						viewObject.toggleNavigationButtons(false, false, false);
-						classifier.setInstanceQuery(query);
-						viewObject.setTextOfProgramStateLabel("Classification (Step 2 of 5) - Fetching Instances...");
-						classifier.fetchInstances();
-						classifier.renameAttributesOfInstances(selectedFeatures);
-						classifier.setTargetLabel(selectedFeatures.size() - 1);
-						if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
-							classifier.scaleAndMeanNormaliseFeatures();
-						}
-						state = "classification_step3";
-						viewObject.updateView(state);
-					}
-				}).start();
+				viewObject.toggleNavigationButtons(false, false, false);
+				classifier.setInstanceQuery(query);
+				viewObject.setTextOfProgramStateLabel("Classification (Step 2 of 5) - Fetching Instances...");
+				classifier.fetchInstances();
+				classifier.renameAttributesOfInstances(selectedFeatures);
+				classifier.setTargetLabel(selectedFeatures.size() - 1);
+				if (viewObject.scaleAndMeanNormaliseFeatures.isSelected()) {
+					classifier.scaleAndMeanNormaliseFeatures();
+				}
+				state = "classification_step3";
 				break;
 			case "classification_step3":
 				String selectedKernel = (String) viewObject.kernelTypeCombo.getSelectedItem();
@@ -375,7 +341,6 @@ public class Controller implements ActionListener {
 				}
 				classifier.setOptions(SVMClassifierParameters);
 				state = "classification_step4";
-				viewObject.updateView(state);
 				break;
 			case "classification_step4":
 				if (viewObject.trainingSetButton.isSelected()) {
@@ -386,43 +351,34 @@ public class Controller implements ActionListener {
 					classifierEvaluationMethod = "testSet";
 					classifier.splitDataset(0.70);
 				}
-				new Thread(new Runnable() {
-					public void run() {
-						viewObject.toggleNavigationButtons(false, false, false);
-						viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Training Classifier...");
-						classifier.train();
-						classifier.setEvaluationOption(classifierEvaluationMethod);
-						viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
-						classifierEvaluation = classifier.evaluate();
-						viewObject.setTextOfAlgorithmOutputTextArea(classifierEvaluation.toSummaryString());
-						state = "classification_step5";
-						if (!classifierEvaluationMethod.equals("CV")) {
-							viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Generating Visualisation...");
-							processActualisePlotButtonClick();
-						}
-						viewObject.updateView(state);
-					}
-				}).start();
+				viewObject.toggleNavigationButtons(false, false, false);
+				viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Training Classifier...");
+				classifier.train();
+				classifier.setEvaluationOption(classifierEvaluationMethod);
+				viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
+				classifierEvaluation = classifier.evaluate();
+				viewObject.setTextOfAlgorithmOutputTextArea(classifierEvaluation.toSummaryString());
+				state = "classification_step5";
+				if (!classifierEvaluationMethod.equals("CV")) {
+					viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Generating Visualisation...");
+					processActualisePlotButtonClick();
+				}
 				break;
 			case "outlierDetection_step2":
 				double outlierFactor = (double) viewObject.outlierFactorSpinner.getValue();
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
-				new Thread(new Runnable() {
-					public void run() {
-						viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Training Outlier-detector...");
-						outlierDetector.train();
-						viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");
-						outlierDetectorEvaluation = outlierDetector.evaluate();
-						//viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
-						state = "outlierDetection_step3";
-						viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Generating Visualisation...");
-						processActualisePlotButtonClick();
-						viewObject.updateView(state);
-					}
-				}).start();
+				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Training Outlier-detector...");
+				outlierDetector.train();
+				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");
+				outlierDetectorEvaluation = outlierDetector.evaluate();
+				//viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
+				state = "outlierDetection_step3";
+				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Generating Visualisation...");
+				processActualisePlotButtonClick();
 				break;
 		}
+		viewObject.updateView(state);
 	}
 	
 	private void processDeleteDatasetButtonClick() {
@@ -560,17 +516,22 @@ public class Controller implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource() == viewObject.startOverButton) {
-			processStartOverButtonClick();
-		} else if (ae.getSource() == viewObject.backButton) {
-			processBackButtonClick();
-		} else if (ae.getSource() == viewObject.nextButton) {
-			processNextButtonClick();
-		} else if (ae.getSource() == viewObject.deleteDatasetButton) {
-			processDeleteDatasetButtonClick();
-		} else if (ae.getSource() == visualisationViewObject.actualisePlotButton) {
-			processActualisePlotButtonClick();
-		}
+		final ActionEvent AE = ae;
+		new Thread(new Runnable() {
+			public void run() {
+				if (AE.getSource() == viewObject.startOverButton) {
+					processStartOverButtonClick();
+				} else if (AE.getSource() == viewObject.backButton) {
+					processBackButtonClick();
+				} else if (AE.getSource() == viewObject.nextButton) {
+					processNextButtonClick();
+				} else if (AE.getSource() == viewObject.deleteDatasetButton) {
+					processDeleteDatasetButtonClick();
+				} else if (AE.getSource() == visualisationViewObject.actualisePlotButton) {
+					processActualisePlotButtonClick();
+				}
+			}
+		}).start();
 	}
 
 }

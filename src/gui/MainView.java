@@ -57,14 +57,33 @@ public class MainView extends JFrame {
 		dbAccess = new DatabaseAccess();
 		topInitiated = middleInitiated = bottomInitiated = false;
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1120, 630); //the size of the JFrame window
-		setResizable(false); //disables resizing of the JFrame window
-		setLocation(40, 40); //the initial location of the JFrame window on the screen
-		setTitle("Machine Learning the Premier League"); //sets the title of the JFrame window
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					setSize(1120, 630); //the size of the JFrame window
+					setResizable(false); //disables resizing of the JFrame window
+					setLocation(40, 40); //the initial location of the JFrame window on the screen
+					setTitle("Machine Learning the Premier League"); //sets the title of the JFrame window
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		layoutMenu();
 		updateView(controllerObject.getState());
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					setVisible(true);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**
@@ -72,27 +91,39 @@ public class MainView extends JFrame {
 	 * @param state
 	 */
 	public void updateView(final String state) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				layoutTop(state);
-				layoutMiddle(state);
-				layoutBottom(state);
-			}
-		});
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					layoutTop(state);
+					layoutMiddle(state);
+					layoutBottom(state);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Adds components to the menu.
 	 */
 	private void layoutMenu() {
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-		
-		JMenu helpMenu = new JMenu("Help");
-		menuBar.add(helpMenu);
-		
-		JMenuItem aboutItem = new JMenuItem("About");
-		helpMenu.add(aboutItem);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					JMenuBar menuBar = new JMenuBar();
+					setJMenuBar(menuBar);
+					
+					JMenu helpMenu = new JMenu("Help");
+					menuBar.add(helpMenu);
+					
+					JMenuItem aboutItem = new JMenuItem("About");
+					helpMenu.add(aboutItem);
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -204,7 +235,7 @@ public class MainView extends JFrame {
 					chooseDatasetToDeletePanel.add(Box.createVerticalGlue());
 					
 					datasetToDeleteCombo = new JComboBox<String>();
-					datasetToDeleteCombo.setMaximumSize(new Dimension(350, 50));
+					datasetToDeleteCombo.setMaximumSize(new Dimension(320, 40));
 					datasetToDeleteCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
 					for (String dataset : otherAvailableDatasets) {
 						datasetToDeleteCombo.addItem(dataset);
@@ -303,7 +334,6 @@ public class MainView extends JFrame {
 			case "outlierDetection_step1":
 				String datasetName = controllerObject.getSelectedDataset();
 				boolean numericOnly = true;
-				System.out.println(datasetName);
 				availableFeatures = dbAccess.getNamesOfFieldsOfTable(datasetName, numericOnly);
 				featureCheckBoxes = new ArrayList<JCheckBox>();
 				
