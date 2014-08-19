@@ -797,7 +797,8 @@ public class MainView extends JFrame {
 				break;
 			case "outlierDetection_step3":
 				programStateLabel.setText("Outlier Detection (Step 3 of 3) - Displaying Results");
-				nextButton.setEnabled(false);
+				startOverButton.setEnabled(true);
+				backButton.setEnabled(true);
 				break;
 		}
 	}

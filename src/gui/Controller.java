@@ -117,6 +117,8 @@ public class Controller implements ActionListener {
 				public void run() {
 					visualisationViewObject.dispose();
 					visualisationViewObject = null;
+					plot.instanceInfoFrame.dispose();
+					plot.instanceInfoFrame = null;
 				}
 			});
 		} catch (Exception e) {}
@@ -372,6 +374,7 @@ public class Controller implements ActionListener {
 				double outlierFactor = (double) viewObject.outlierFactorSpinner.getValue();
 				String OutlierDetectorParameters = "-O " + outlierFactor;
 				outlierDetector.setOptions(OutlierDetectorParameters);
+				viewObject.toggleNavigationButtons(false, false, false);
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Training Outlier-detector...");
 				outlierDetector.train();
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");

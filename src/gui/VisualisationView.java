@@ -22,7 +22,7 @@ public class VisualisationView extends JFrame{
 	private JPanel leftPanel, rightPanel; //panels for the left and right areas of the frame
 	private JPanel axeSelectionPanel, controlsPanel, visualisationPanel, legendPanel; //panels for the different areas
 	JComboBox<String> xAxisCombo, yAxisCombo, zAxisCombo; //combo boxes for assigning attributes to axes
-	JButton actualisePlotButton; //button for acctualising the plot
+	JButton actualisePlotButton; //button for actualising the plot
 	
 	/**
 	 * Constructor
