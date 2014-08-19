@@ -15,8 +15,8 @@ import algorithms.classification.SVMClassifier;
 import algorithms.clustering.KMeansClusterer;
 import algorithms.outliers.OutlierDetector;
 import algorithms.outliers.OutlierEvaluation;
-import tools.DatabaseQuery;
-import tools.DatasetDatabaseLoader;
+import dbtools.DatabaseAccess;
+import dbtools.DatasetDatabaseLoader;
 import visualisers.PickablePointsScatter3D;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
@@ -211,32 +211,23 @@ public class Controller implements ActionListener {
 								DatasetDatabaseLoader datasetDatabaseLoader = new DatasetDatabaseLoader();
 								boolean datasetSuccessfullyInsertedIntoDatabase = datasetDatabaseLoader.insertDatasetIntoDatabase(selectedFile);
 								if (datasetSuccessfullyInsertedIntoDatabase) {
+									selectedDataset = datasetDatabaseLoader.getNameOfDataset();
 									state = "startScreen_3";
-									viewObject.updateView(state);
 								}
 								selectedFile = null;
+								viewObject.updateView(state);
 							}
 						}
 					}).start();
-				}
-				/*
-				for (int i = 0; i < viewObject.availableDatasetsButtons.length; i++) {
-					if (viewObject.availableDatasetsButtons[i].isSelected()) {
-						selectedDataset = viewObject.availableDatasetsButtons[i].getText();
+				} else {
+					for (int i = 0; i < viewObject.otherAvailableDatasetsButtons.length; i++) {
+						if (viewObject.otherAvailableDatasetsButtons[i].isSelected()) {
+							selectedDataset = viewObject.otherAvailableDatasetsButtons[i].getText();
+							state = "startScreen_3";
+							viewObject.updateView(state);
+						}
 					}
 				}
-				if (viewObject.otherDatasetButton.isSelected()) {
-					File selectedFile = getFile();
-					try {
-						DatasetLoader datasetLoader = new DatasetLoader(selectedFile);
-						selectedDataset = datasetLoader.getDatasetName();
-						state = "startScreen_2";
-					} catch (Exception e) {
-						System.out.println("Error: Dataset could not be loaded");
-					}
-				}
-				state = "startScreen_2";
-				*/
 				break;
 			case "startScreen_2":
 				desiredLevelOfAnalysis = viewObject.levelOfAnalysisCombo.getSelectedIndex();
@@ -423,7 +414,7 @@ public class Controller implements ActionListener {
 						outlierDetector.train();
 						viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");
 						outlierDetectorEvaluation = outlierDetector.evaluate();
-						//setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
+						//viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
 						state = "outlierDetection_step3";
 						viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Generating Visualisation...");
 						processActualisePlotButtonClick();
@@ -432,6 +423,13 @@ public class Controller implements ActionListener {
 				}).start();
 				break;
 		}
+	}
+	
+	private void processDeleteDatasetButtonClick() {
+		DatabaseAccess dbAccess = new DatabaseAccess();
+		String nameOfDatasetToDelete = viewObject.datasetToDeleteCombo.getSelectedItem().toString();
+		dbAccess.deleteDatasetFromDatabase(nameOfDatasetToDelete);
+		viewObject.updateView(state);
 	}
 	
 	/**
@@ -520,9 +518,9 @@ public class Controller implements ActionListener {
 					coordinates[i][2] = 0;
 				}
 			}
-			DatabaseQuery dbQuery = new DatabaseQuery();
+			DatabaseAccess dbAccess = new DatabaseAccess();
 			if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-				namesOfInstances = dbQuery.getNamesOfFullDatasetInstances(desiredLevelOfAnalysis, instances.numInstances());
+				namesOfInstances = dbAccess.getNamesOfFullDatasetInstances(desiredLevelOfAnalysis, instances.numInstances());
 			}
 			plot = new PickablePointsScatter3D(selectedDataset,axeLabels, coordinates, 
 					actualClassAssignments, predictedClassAssignments, 
@@ -568,6 +566,8 @@ public class Controller implements ActionListener {
 			processBackButtonClick();
 		} else if (ae.getSource() == viewObject.nextButton) {
 			processNextButtonClick();
+		} else if (ae.getSource() == viewObject.deleteDatasetButton) {
+			processDeleteDatasetButtonClick();
 		} else if (ae.getSource() == visualisationViewObject.actualisePlotButton) {
 			processActualisePlotButtonClick();
 		}

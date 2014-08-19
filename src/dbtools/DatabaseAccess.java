@@ -1,4 +1,4 @@
-package tools;
+package dbtools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,12 +9,13 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-public class DatabaseQuery {
+public class DatabaseAccess {
 	
 	/**
 	 * instance variables
 	 */
 	private String query;
+	private String update;
 	private ResultSet RS;
 	
 	/**
@@ -109,6 +110,15 @@ public class DatabaseQuery {
 	}
 	
 	/**
+	 * Deletes a dataset table from the database.
+	 * @param nameOfDatasetToDelete
+	 */
+	public void deleteDatasetFromDatabase(String nameOfDatasetToDelete) {
+		update =  "DROP TABLE " + nameOfDatasetToDelete;
+		updateDatabase(update);
+	}
+	
+	/**
 	 * Executes a custom database query.
 	 * @param query
 	 * @return the results of the custom database query
@@ -125,5 +135,21 @@ public class DatabaseQuery {
 	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
 		}
 		return tempRS;
+	}
+	
+	/**
+	 * Executes a custom database update.
+	 * @param update
+	 */
+	private void updateDatabase(String update) {
+		try {
+			Connection con = DriverManager.getConnection("jdbc:derby:datasetsDB");
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(update);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while updating the database.", 
+	    			"Error: SQL Exception", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

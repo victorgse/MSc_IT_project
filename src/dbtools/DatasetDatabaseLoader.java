@@ -1,4 +1,4 @@
-package tools;
+package dbtools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +60,7 @@ public class DatasetDatabaseLoader {
 		colNum = ws.getRow(0).getLastCellNum();
 		data = new String[rowNum][colNum];
 		dataTypes = new String[colNum];
-		datasetName = wb.getSheetName(0).replace(" ", "_");
+		datasetName = wb.getSheetName(0).toUpperCase().replace(" ", "_");
 		readDataFromExcelFile();
 		try {
 			insertDataIntoDatabase();
@@ -75,10 +75,10 @@ public class DatasetDatabaseLoader {
 	
 	/**
 	 * @return the datasetName
-	 */ /*
-	public String getDatasetName() {
+	 */
+	public String getNameOfDataset() {
 		return datasetName;
-	}*/
+	}
 
 	/**
 	 * Method which reads the .xls dataset and inserts it into the matrix data.

@@ -12,7 +12,7 @@ import javax.swing.*;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.border.*;
 
-import tools.DatabaseQuery;
+import dbtools.DatabaseAccess;
 
 /**
  * Defines a GUI.
@@ -24,14 +24,16 @@ public class MainView extends JFrame {
 	 * instance variables
 	 */
 	private Controller controllerObject; //a reference to the controller object
+	private DatabaseAccess dbAccess; //object used for querying the database
 	private JPanel topPanel, middlePanel, bottomPanel; //the panels for the three areas of the GUI
-	JPanel programStatePanel; //the panel that holds the programState label
+	private JPanel programStatePanel; //the panel that holds the programState label
 	private JLabel infoLabel, programStateLabel; //the info and programState labels
 	private boolean topInitiated, middleInitiated, bottomInitiated; //have the JPanels been initialised?
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
-	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //the radio buttons for selecting a dataset
-	//JRadioButton[] availableDatasetsButtons; //the radio buttons for selecting a dataset
-	//JRadioButton otherDatasetButton; //the radio button for opting to insert a new dataset
+	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //radio buttons for selecting a dataset
+	JRadioButton[] otherAvailableDatasetsButtons; //radio buttons for selecting a dataset
+	JComboBox<String> datasetToDeleteCombo;
+	JButton deleteDatasetButton;
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
@@ -52,6 +54,7 @@ public class MainView extends JFrame {
 	 */
 	public MainView(Controller controller) {
 		controllerObject = controller;
+		dbAccess = new DatabaseAccess();
 		topInitiated = middleInitiated = bottomInitiated = false;
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -189,49 +192,77 @@ public class MainView extends JFrame {
 					middleInitiated = true;
 				}
 				
+				ArrayList<String> otherAvailableDatasets = dbAccess.getNamesOfAvailableDatasets();
+				otherAvailableDatasets.remove("MCFC_ANALYTICS_FULL_DATASET");
+				
+				if (otherAvailableDatasets.size() > 0) {
+					JPanel chooseDatasetToDeletePanel = new JPanel();
+					chooseDatasetToDeletePanel.setLayout(new BoxLayout(chooseDatasetToDeletePanel, BoxLayout.PAGE_AXIS));
+					chooseDatasetToDeletePanel.setPreferredSize(new Dimension(400, 200));
+					chooseDatasetToDeletePanel.setBorder(new TitledBorder(new EtchedBorder(), "Delete a Dataset from the Database (optional)"));
+					
+					chooseDatasetToDeletePanel.add(Box.createVerticalGlue());
+					
+					datasetToDeleteCombo = new JComboBox<String>();
+					datasetToDeleteCombo.setMaximumSize(new Dimension(350, 50));
+					datasetToDeleteCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
+					for (String dataset : otherAvailableDatasets) {
+						datasetToDeleteCombo.addItem(dataset);
+					}
+					chooseDatasetToDeletePanel.add(datasetToDeleteCombo);
+					
+					chooseDatasetToDeletePanel.add(Box.createVerticalGlue());
+					
+					deleteDatasetButton = new JButton("Delete");
+					deleteDatasetButton.addActionListener(controllerObject);
+					deleteDatasetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+					chooseDatasetToDeletePanel.add(deleteDatasetButton);
+					
+					chooseDatasetToDeletePanel.add(Box.createVerticalGlue());
+					
+					c.insets = new Insets(0,0,0,20); //right padding
+					c.gridx = 0; //first column
+					c.gridy = 0; //first row
+					middlePanel.add(chooseDatasetToDeletePanel, c);
+				}
+				
+				JScrollPane chooseDatasetToAnalysePane = new JScrollPane();
+				chooseDatasetToAnalysePane.setPreferredSize(new Dimension(400, 200));
+				chooseDatasetToAnalysePane.setBorder(new TitledBorder(new EtchedBorder(), "Choose a Dataset to Analyse"));
+				
+				JPanel chooseDatasetToAnalysePanel = new JPanel();
+				chooseDatasetToAnalysePanel.setLayout(new BoxLayout(chooseDatasetToAnalysePanel, BoxLayout.PAGE_AXIS));
+				
+				ButtonGroup group = new ButtonGroup();
+				
 				mcfcAnalyticsFullDatasetButton = new JRadioButton("MCFC Analytics Full Dataset");
 				mcfcAnalyticsFullDatasetButton.setToolTipText("Analyse the MCFC Analytics Full Dataset.");
 				mcfcAnalyticsFullDatasetButton.setSelected(true);
-				otherDatasetButton = new JRadioButton("Other");
-				otherDatasetButton.setToolTipText("Load a new .xls dataset into the database.");
-				
-				ButtonGroup group = new ButtonGroup();
 				group.add(mcfcAnalyticsFullDatasetButton);
+				chooseDatasetToAnalysePanel.add(mcfcAnalyticsFullDatasetButton);
+				
+				otherAvailableDatasetsButtons = new JRadioButton[otherAvailableDatasets.size()];
+				for (int i = 0; i < otherAvailableDatasets.size(); i++) {
+					otherAvailableDatasetsButtons[i] = new JRadioButton(otherAvailableDatasets.get(i));
+					otherAvailableDatasetsButtons[i].setToolTipText("Analyse \"" + otherAvailableDatasets.get(i) + "\".");
+					group.add(otherAvailableDatasetsButtons[i]);
+					chooseDatasetToAnalysePanel.add(otherAvailableDatasetsButtons[i]);
+				}
+				
+				otherDatasetButton = new JRadioButton("Other");
+				otherDatasetButton.setToolTipText("Load a new .xls dataset into the database, and analyse it after that.");
 				group.add(otherDatasetButton);
-
-				c.fill = GridBagConstraints.HORIZONTAL;
-				c.gridx = 0;
-				c.gridy = 0;
-				middlePanel.add(mcfcAnalyticsFullDatasetButton, c);
-				c.gridx = 0;
-				c.gridy = 1;
-				middlePanel.add(otherDatasetButton, c);
+				chooseDatasetToAnalysePanel.add(otherDatasetButton);
+				
+				
+				chooseDatasetToAnalysePane.getViewport().add(chooseDatasetToAnalysePanel);
+				c.gridx = 1; //second column
+				c.gridy = 0; //first row
+				middlePanel.add(chooseDatasetToAnalysePane, c);
 				
 				middlePanel.setVisible(false);
 				middlePanel.setVisible(true);
-				
-				/*
-				TreeSet<String> availableDatasets = getNamesOfAvailableDatasets();
-				
-				ButtonGroup group = new ButtonGroup();
-				availableDatasetsButtons = new JRadioButton[availableDatasets.size()];
-				
-				int k = 0;
-				for (String dataset : availableDatasets) {
-					availableDatasetsButtons[k] = new JRadioButton(dataset);
-					group.add(availableDatasetsButtons[k]);
-					c.gridy = k;
-					middlePanel.add(availableDatasetsButtons[k], c);
-					k++;
-				}
-				
-				availableDatasetsButtons[0].setSelected(true);
-				
-				otherDatasetButton = new JRadioButton("Other");
-				group.add(otherDatasetButton);
-				c.gridy = k;
-				middlePanel.add(otherDatasetButton, c);
-				*/
+
 				break;
 			case "startScreen_2":
 				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
@@ -270,11 +301,10 @@ public class MainView extends JFrame {
 			case "clustering_step1":
 			case "classification_step1":
 			case "outlierDetection_step1":
-				DatabaseQuery dbQuery = new DatabaseQuery();
-				
 				String datasetName = controllerObject.getSelectedDataset();
 				boolean numericOnly = true;
-				availableFeatures = dbQuery.getNamesOfFieldsOfTable(datasetName, numericOnly);
+				System.out.println(datasetName);
+				availableFeatures = dbAccess.getNamesOfFieldsOfTable(datasetName, numericOnly);
 				featureCheckBoxes = new ArrayList<JCheckBox>();
 				
 				JScrollPane featuresPane = new JScrollPane();
@@ -430,7 +460,7 @@ public class MainView extends JFrame {
 				if (!state.equals("outlierDetection_step1")) {
 					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
 					scaleAndMeanNormaliseFeatures.setToolTipText("This option would bring all selected features on a [0, 1] scale.");
-					c.insets = new Insets(0,30,0,0); //right padding
+					c.insets = new Insets(0,30,0,0); //left padding
 					c.gridx = 2; //third column
 					c.gridy = 0; //first row
 					middlePanel.add(scaleAndMeanNormaliseFeatures, c);
@@ -480,10 +510,9 @@ public class MainView extends JFrame {
 				if (controllerObject.getSelectedDataset().equals("MCFC_ANALYTICS_FULL_DATASET")) {
 					targetLabelOptions = availableFeatures;
 				} else {
-					DatabaseQuery dbQuery2 = new DatabaseQuery();
 					boolean justNumeric = false;
 					String nameOfDataset = controllerObject.getSelectedDataset();
-					ArrayList<String> tableSchema = dbQuery2.getNamesOfFieldsOfTable(nameOfDataset, justNumeric);
+					ArrayList<String> tableSchema = dbAccess.getNamesOfFieldsOfTable(nameOfDataset, justNumeric);
 					targetLabelOptions = tableSchema;
 				}
 				targetLabelOptions.removeAll(controllerObject.getSelectedFeatures());
