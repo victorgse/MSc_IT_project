@@ -20,7 +20,7 @@ import org.jzy3d.plot3d.rendering.canvas.Quality;
 
 import weka.core.Instances;
 
-public class PickablePointsScatter3D extends AbstractAnalysis {
+public class Interactive3dScatterPlot extends AbstractAnalysis {
 	
 	/**
 	 * instance variables
@@ -50,7 +50,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	 * @param namesOfInstances
 	 * @param classLabels
 	 */
-	public PickablePointsScatter3D(String selectedDataset, String[] axeLabels, double[][] coordinates, 
+	public Interactive3dScatterPlot(String selectedDataset, String[] axeLabels, double[][] coordinates, 
 			double[] actualClassAssignments, double[] predictedClassAssignments, 
 			Instances instances, String[] namesOfInstances, String[] classLabels) {
 		this.selectedDataset = selectedDataset;
@@ -80,7 +80,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 	 */
 	public void init() {
 		// Create chart
-		chart = AWTChartComponentFactory.chart(Quality.Advanced, "awt");
+		chart = AWTChartComponentFactory.chart(Quality.Nicest, "awt");
 		
 		// Set chart colours
         chart.getView().setBackgroundColor(Color.BLACK);
@@ -145,12 +145,12 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
             float width;
             if (predictedClassAssignments != null) { //is it a classification algorithm?
             	if (actualClassAssignments[i] == predictedClassAssignments[i]) { //classified correctly
-                	width = 3;
-                } else { //classified incorrectly
                 	width = 5;
+                } else { //classified incorrectly
+                	width = 6;
                 }
             } else { //non-classification algorithm
-            	width = 5;
+            	width = 6;
             }
             PickablePoint point = new PickablePoint(position, colour, width);
             points.add(point);
@@ -207,7 +207,7 @@ public class PickablePointsScatter3D extends AbstractAnalysis {
 				}
 				if (predictedClassAssignments != null) {
 					clickedInstancesInfo += "Actual Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n";
-					clickedInstancesInfo += "Predicted Class: " + classLabels[(int) predictedClassAssignments[indexOfClickedInstance] - 1] + "\n";
+					clickedInstancesInfo += "Predicted Class: " + classLabels[(int) predictedClassAssignments[indexOfClickedInstance] - 1] + "\n\n";
 				} else {
 					clickedInstancesInfo += "Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n\n";
 				}

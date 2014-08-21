@@ -17,7 +17,7 @@ import algorithms.outliers.OutlierDetector;
 import algorithms.outliers.OutlierEvaluation;
 import dbtools.DatabaseAccess;
 import dbtools.DatasetDatabaseLoader;
-import visualisers.PickablePointsScatter3D;
+import visualisers.Interactive3dScatterPlot;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
 import weka.core.Instances;
@@ -31,7 +31,7 @@ public class Controller implements ActionListener {
 	 */
 	private MainView viewObject; //the main view object
 	private VisualisationView visualisationViewObject; //the visualisation view object
-	private PickablePointsScatter3D plot; //the plot object
+	private Interactive3dScatterPlot plot; //the plot object
 	private String state; //keeps track of what state the program is in
 	private String selectedDataset; //the name of the dataset that has been selected by user
 	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
@@ -426,7 +426,7 @@ public class Controller implements ActionListener {
 				}
 				classLabels = new String[clustererEvaluation.getNumClusters()];
 				for (int i = 0; i < clustererEvaluation.getNumClusters(); i++) {
-					int clusterNumber = i + 1;
+					int clusterNumber = i;
 					classLabels[i] = "Cluster " + clusterNumber;
 				}
 				break;
@@ -494,7 +494,7 @@ public class Controller implements ActionListener {
 			if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
 				namesOfInstances = dbAccess.getNamesOfFullDatasetInstances(desiredLevelOfAnalysis, instances.numInstances());
 			}
-			plot = new PickablePointsScatter3D(selectedDataset,axeLabels, coordinates, 
+			plot = new Interactive3dScatterPlot(selectedDataset,axeLabels, coordinates, 
 					actualClassAssignments, predictedClassAssignments, 
 					instances, namesOfInstances, classLabels);
 			if (instances.numAttributes() < 3) {

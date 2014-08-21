@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import visualisers.PickablePointsScatter3D;
+import visualisers.Interactive3dScatterPlot;
 import weka.core.Instances;
 
 @SuppressWarnings("serial")
@@ -15,7 +15,7 @@ public class VisualisationView extends JFrame{
 	 * instance variables
 	 */
 	private Controller controllerObject; //a reference to the controller object
-	private PickablePointsScatter3D scatterPlot; //a reference to the scatter plot object
+	private Interactive3dScatterPlot scatterPlot; //a reference to the scatter plot object
 	private Instances instances; //the dataset instances
 	private String[] classLabels; //the names of the different classes
 	private JLabel xAxisLabel, yAxisLabel, zAxisLabel; //the names of the different axes
@@ -29,7 +29,7 @@ public class VisualisationView extends JFrame{
 	 * @param controllerObject
 	 * @param instances 
 	 */
-	public VisualisationView(Controller controllerObject, PickablePointsScatter3D scatterPlot, Instances instances, String[] classLabels) {
+	public VisualisationView(Controller controllerObject, Interactive3dScatterPlot scatterPlot, Instances instances, String[] classLabels) {
 		this.controllerObject = controllerObject;
 		this.scatterPlot = scatterPlot;
 		this.instances = instances;
@@ -153,9 +153,9 @@ public class VisualisationView extends JFrame{
 			for (int i = 0; i < classLabels.length; i++) {
 				tokens = classLabels[i].split(" ");
 				JLabel nextClassLabel = new JLabel(tokens[0]);
-				Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
-						PickablePointsScatter3D.COLOURS[i].g, 
-						PickablePointsScatter3D.COLOURS[i].b);
+				Color color = new Color(Interactive3dScatterPlot.COLOURS[i].r, 
+						Interactive3dScatterPlot.COLOURS[i].g, 
+						Interactive3dScatterPlot.COLOURS[i].b);
 				nextClassLabel.setForeground(color);
 				legendCenterPanel.add(nextClassLabel);
 			}
@@ -164,9 +164,9 @@ public class VisualisationView extends JFrame{
 			JPanel legendCenterPanel = new JPanel();
 			for (int i = 0; i < classLabels.length; i++) {
 				JLabel nextClassLabel = new JLabel(classLabels[i]);
-				Color color = new Color(PickablePointsScatter3D.COLOURS[i].r, 
-						PickablePointsScatter3D.COLOURS[i].g, 
-						PickablePointsScatter3D.COLOURS[i].b);
+				Color color = new Color(Interactive3dScatterPlot.COLOURS[i].r, 
+						Interactive3dScatterPlot.COLOURS[i].g, 
+						Interactive3dScatterPlot.COLOURS[i].b);
 				nextClassLabel.setForeground(color);
 				legendCenterPanel.add(nextClassLabel);
 			}
