@@ -134,6 +134,7 @@ public class MainView extends JFrame {
 		switch (state) {
 			case "startScreen_1":
 				if (!topInitiated) {
+					topPanel = new JPanel();
 					try {
 						topPanel = new JPanel() {
 							Image img = ImageIO.read(new File("MWC.png"));
@@ -149,7 +150,6 @@ public class MainView extends JFrame {
 					}
 					topPanel.setLayout(new GridBagLayout());
 					topPanel.setPreferredSize(new Dimension(1140, 300));
-					topPanel.setBackground(Color.YELLOW);
 					
 					infoLabel = new JLabel();
 					infoLabel.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 48));
