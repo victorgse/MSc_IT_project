@@ -136,7 +136,7 @@ public class MainView extends JFrame {
 				if (!topInitiated) {
 					try {
 						topPanel = new JPanel() {
-							Image img = ImageIO.read(new File("MWC.png"));
+							Image img = ImageIO.read(getClass().getResource("/MWC.png"));
 							protected void paintComponent(Graphics g) {
 								super.paintComponent(g);
 								g.drawImage(img, 0, 0, null);
