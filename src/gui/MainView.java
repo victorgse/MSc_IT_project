@@ -484,6 +484,9 @@ public class MainView extends JFrame {
 					c.gridx = 0; //first column
 					c.gridy = 0; //first row
 					middlePanel.add(examplesPanel, c);
+					
+					middlePanel.setVisible(false);
+					middlePanel.setVisible(true);
 				}
 				
 				if (!state.equals("outlierDetection_step1")) {
