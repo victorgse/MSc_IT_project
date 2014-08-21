@@ -140,9 +140,9 @@ public class VisualisationView extends JFrame{
 		legendPanel.setLayout(new BorderLayout());
 		if (controllerObject.getState().equals("classification_step5")) {
 			JPanel legendNorthPanel = new JPanel();
-			JLabel smallLabel = new JLabel("Small ==> correctly classified     ");
+			JLabel smallLabel = new JLabel("Small ==> incorrectly classified     ");
 			legendNorthPanel.add(smallLabel);
-			JLabel bigLabel = new JLabel("Big ==> incorrectly classified");
+			JLabel bigLabel = new JLabel("Big ==> correctly classified");
 			legendNorthPanel.add(bigLabel);
 			legendPanel.add(legendNorthPanel, BorderLayout.NORTH);
 			

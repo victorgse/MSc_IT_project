@@ -433,9 +433,11 @@ public class Controller implements ActionListener {
 				}
 				actualClassAssignments = classifier.getActualClassAssignments();
 				predictedClassAssignments = classifier.getPredictedClassAssignments();
-				for (int i = 0; i < instances.numInstances(); i++) { //so that the clustering, classification, and outlier detection classes are all on the same scale
-					actualClassAssignments[i] -= 1;
-					predictedClassAssignments[i] -= 1;
+				if (visualisationViewObject == null) {
+					for (int i = 0; i < instances.numInstances(); i++) { //so that the clustering, classification, and outlier detection classes are all on the same scale
+						actualClassAssignments[i] -= 1;
+						predictedClassAssignments[i] -= 1;
+					}
 				}
 				classLabels = new String[instances.numClasses()];
 				for (int i = 0; i < instances.numClasses(); i++) {

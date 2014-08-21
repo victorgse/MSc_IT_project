@@ -143,14 +143,11 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
             Coord3d position = new Coord3d(x, y, z);
             Color colour = COLOURS[(int) actualClassAssignments[i]];
             float width;
-            if (predictedClassAssignments != null) { //is it a classification algorithm?
-            	if (actualClassAssignments[i] == predictedClassAssignments[i]) { //classified correctly
-                	width = 5;
-                } else { //classified incorrectly
-                	width = 6;
-                }
-            } else { //non-classification algorithm
-            	width = 6;
+            if ((predictedClassAssignments != null) 
+            		&& (actualClassAssignments[i] != predictedClassAssignments[i])) {
+            	width = 5; //incorrectly classified
+            } else {
+            	width = 7.5f;
             }
             PickablePoint point = new PickablePoint(position, colour, width);
             points.add(point);
