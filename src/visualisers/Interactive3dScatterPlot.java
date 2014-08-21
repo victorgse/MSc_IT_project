@@ -141,7 +141,7 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
             double y = coordinates[i][1];
             double z = coordinates[i][2];
             Coord3d position = new Coord3d(x, y, z);
-            Color colour = COLOURS[(int) actualClassAssignments[i] - 1];
+            Color colour = COLOURS[(int) actualClassAssignments[i]];
             float width;
             if (predictedClassAssignments != null) { //is it a classification algorithm?
             	if (actualClassAssignments[i] == predictedClassAssignments[i]) { //classified correctly
@@ -206,10 +206,10 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
 					clickedInstancesInfo += instances.attribute(i).name() + ": " + instances.get(indexOfClickedInstance).value(i) + "\n";
 				}
 				if (predictedClassAssignments != null) {
-					clickedInstancesInfo += "Actual Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n";
-					clickedInstancesInfo += "Predicted Class: " + classLabels[(int) predictedClassAssignments[indexOfClickedInstance] - 1] + "\n\n";
+					clickedInstancesInfo += "Actual Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance]] + "\n";
+					clickedInstancesInfo += "Predicted Class: " + classLabels[(int) predictedClassAssignments[indexOfClickedInstance]] + "\n\n";
 				} else {
-					clickedInstancesInfo += "Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance] - 1] + "\n\n";
+					clickedInstancesInfo += "Class: " + classLabels[(int) actualClassAssignments[indexOfClickedInstance]] + "\n\n";
 				}
 			}
 			final String copyOfclickedInstancesInfo = clickedInstancesInfo;

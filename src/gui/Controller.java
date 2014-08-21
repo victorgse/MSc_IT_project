@@ -419,11 +419,6 @@ public class Controller implements ActionListener {
 			case "clustering_step3":
 				instances = clusterer.getTrainingSet();
 				actualClassAssignments = clustererEvaluation.getClusterAssignments();
-				if (visualisationViewObject == null) {
-					for (int i = 0; i < instances.numInstances(); i++) {
-						actualClassAssignments[i] += 1;
-					}
-				}
 				classLabels = new String[clustererEvaluation.getNumClusters()];
 				for (int i = 0; i < clustererEvaluation.getNumClusters(); i++) {
 					int clusterNumber = i;
@@ -438,6 +433,10 @@ public class Controller implements ActionListener {
 				}
 				actualClassAssignments = classifier.getActualClassAssignments();
 				predictedClassAssignments = classifier.getPredictedClassAssignments();
+				for (int i = 0; i < instances.numInstances(); i++) { //so that the clustering, classification, and outlier detection classes are all on the same scale
+					actualClassAssignments[i] -= 1;
+					predictedClassAssignments[i] -= 1;
+				}
 				classLabels = new String[instances.numClasses()];
 				for (int i = 0; i < instances.numClasses(); i++) {
 					classLabels[i] = instances.classAttribute().value(i) + " " + instances.classAttribute().name();
@@ -454,9 +453,6 @@ public class Controller implements ActionListener {
 			case "outlierDetection_step3":
 				instances = outlierDetector.getTrainingSet();
 				actualClassAssignments = outlierDetectorEvaluation.getClassAssignments();
-				for (int i = 0; i < instances.numInstances(); i++) {
-					actualClassAssignments[i] += 1;
-				}
 				classLabels = new String[2];
 				classLabels[0] = "Normal";
 				classLabels[1] = "Outlier";
