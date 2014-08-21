@@ -352,11 +352,11 @@ public class MainView extends JFrame {
 				middlePanel.add(featuresPane, c);
 				
 				if (datasetName.equals("MCFC_ANALYTICS_FULL_DATASET")) {
-					JPanel examplesPanel = new JPanel();
-					examplesPanel.setLayout(new BoxLayout(examplesPanel, BoxLayout.PAGE_AXIS));
-					examplesPanel.add(new JLabel("Build your own feature vector on the right,"));
-					examplesPanel.add(new JLabel("or select from one of the examples below:"));
-					examplesPanel.add(Box.createRigidArea(new Dimension(0,10)));
+					JPanel featureVectorExamplesPanel = new JPanel();
+					featureVectorExamplesPanel.setLayout(new BoxLayout(featureVectorExamplesPanel, BoxLayout.PAGE_AXIS));
+					featureVectorExamplesPanel.add(new JLabel("Build your own feature vector on the right,"));
+					featureVectorExamplesPanel.add(new JLabel("or select from one of the examples below:"));
+					featureVectorExamplesPanel.add(Box.createRigidArea(new Dimension(0,10)));
 					
 					final JRadioButton buildOwnFeatureVectorButton = new JRadioButton("Build own feature vector");
 					buildOwnFeatureVectorButton.setSelected(true);
@@ -370,17 +370,17 @@ public class MainView extends JFrame {
 							}
 						}
 					});
-					examplesPanel.add(buildOwnFeatureVectorButton);
+					featureVectorExamplesPanel.add(buildOwnFeatureVectorButton);
 					
 					final String copyOfState = state;
 					
 					final JRadioButton example1Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example1Button.setText("(assists, goals, touches)");
+						example1Button.setText("(big chances, goals, touches)");
 					} else if (state.equals("classification_step1")) {
-						example1Button.setText("classification");
+						example1Button.setText("(big chances, duels won, key passes)");
 					} else if (state.equals("outlierDetection_step1")) {
-						example1Button.setText("(assists, goals, touches)");
+						example1Button.setText("(big chances, goals, touches)");
 					}
 					example1Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -390,28 +390,28 @@ public class MainView extends JFrame {
 									feature.setEnabled(false);
 								}
 								if (copyOfState.equals("clustering_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BIG_CHANCES")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BIG_CHANCES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("DUELS_WON")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("KEY_PASSES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BIG_CHANCES")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								}
 							}
 						}
 					});
-					examplesPanel.add(example1Button);
+					featureVectorExamplesPanel.add(example1Button);
 					
 					final JRadioButton example2Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
 						example2Button.setText("(blocks, interceptions, recoveries)");
 					} else if (state.equals("classification_step1")) {
-						example2Button.setText("classification");
+						example2Button.setText("(duels lost, tackles lost, turnovers)");
 					} else if (state.equals("outlierDetection_step1")) {
 						example2Button.setText("(blocks, interceptions, recoveries)");
 					}
@@ -427,9 +427,9 @@ public class MainView extends JFrame {
 									featureCheckBoxes.get(availableFeatures.indexOf("INTERCEPTIONS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("RECOVERIES")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("DUELS_LOST")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TACKLES_LOST")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("TURNOVERS")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("BLOCKS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("INTERCEPTIONS")).setSelected(true);
@@ -438,13 +438,13 @@ public class MainView extends JFrame {
 							}
 						}
 					});
-					examplesPanel.add(example2Button);
+					featureVectorExamplesPanel.add(example2Button);
 					
 					final JRadioButton example3Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
 						example3Button.setText("(offsides, pass forward, successful passes final third)");
 					} else if (state.equals("classification_step1")) {
-						example3Button.setText("classification");
+						example3Button.setText("(blocks, interceptions, recoveries)");
 					} else if (state.equals("outlierDetection_step1")) {
 						example3Button.setText("(red cards, total fouls conceded, yellow cards)");
 					}
@@ -460,9 +460,9 @@ public class MainView extends JFrame {
 									featureCheckBoxes.get(availableFeatures.indexOf("PASS_FORWARD")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("SUCCESSFUL_PASSES_FINAL_THIRD")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
-									featureCheckBoxes.get(availableFeatures.indexOf("GOALS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("ASSISTS")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("BLOCKS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("INTERCEPTIONS")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("RECOVERIES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("RED_CARDS")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("TOTAL_FOULS_CONCEDED")).setSelected(true);
@@ -471,7 +471,7 @@ public class MainView extends JFrame {
 							}
 						}
 					});
-					examplesPanel.add(example3Button);
+					featureVectorExamplesPanel.add(example3Button);
 					
 					ButtonGroup examplesButtonGroup = new ButtonGroup();
 					examplesButtonGroup.add(buildOwnFeatureVectorButton);
@@ -482,7 +482,7 @@ public class MainView extends JFrame {
 					c.insets = new Insets(0,0,0,40); //right padding
 					c.gridx = 0; //first column
 					c.gridy = 0; //first row
-					middlePanel.add(examplesPanel, c);
+					middlePanel.add(featureVectorExamplesPanel, c);
 					
 					middlePanel.setVisible(false);
 					middlePanel.setVisible(true);
@@ -550,7 +550,74 @@ public class MainView extends JFrame {
 				for (String option : targetLabelOptions) {
 					targetLabelCombo.addItem(option);
 				}
-				middlePanel.add(targetLabelCombo);
+				c.gridx = 1; //second column
+				c.gridy = 0; //first row
+				middlePanel.add(targetLabelCombo, c);
+				
+				String nameOfSelectedDataset = controllerObject.getSelectedDataset();
+				
+				if (nameOfSelectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					JPanel targetLabelExamplesPanel = new JPanel();
+					targetLabelExamplesPanel.setLayout(new BoxLayout(targetLabelExamplesPanel, BoxLayout.PAGE_AXIS));
+					targetLabelExamplesPanel.add(new JLabel("Select your own target label on the right,"));
+					targetLabelExamplesPanel.add(new JLabel("or choose from one of the examples below:"));
+					targetLabelExamplesPanel.add(Box.createRigidArea(new Dimension(0,10)));
+					
+					final JRadioButton selectOwnTargetLabelButton = new JRadioButton("Select own target label");
+					selectOwnTargetLabelButton.setSelected(true);
+					selectOwnTargetLabelButton.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (selectOwnTargetLabelButton.isSelected()) {
+								targetLabelCombo.setSelectedIndex(0);
+							}
+						}
+					});
+					targetLabelExamplesPanel.add(selectOwnTargetLabelButton);
+					
+					final JRadioButton example1Button = new JRadioButton();
+					example1Button.setText("goals");
+					example1Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example1Button.isSelected()) {
+								targetLabelCombo.setSelectedItem("GOALS");
+							}
+						}
+					});
+					targetLabelExamplesPanel.add(example1Button);
+					
+					final JRadioButton example2Button = new JRadioButton();
+					example2Button.setText("goals conceded");
+					example2Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example2Button.isSelected()) {
+								targetLabelCombo.setSelectedItem("GOALS_CONCEDED");
+							}
+						}
+					});
+					targetLabelExamplesPanel.add(example2Button);
+					
+					final JRadioButton example3Button = new JRadioButton();
+					example3Button.setText("clean sheets");
+					example3Button.addActionListener(new ActionListener () {
+						public void actionPerformed(ActionEvent ae) {
+							if (example3Button.isSelected()) {
+								targetLabelCombo.setSelectedItem("CLEAN_SHEETS");
+							}
+						}
+					});
+					targetLabelExamplesPanel.add(example3Button);
+					
+					ButtonGroup examplesButtonGroup = new ButtonGroup();
+					examplesButtonGroup.add(selectOwnTargetLabelButton);
+					examplesButtonGroup.add(example1Button);
+					examplesButtonGroup.add(example2Button);
+					examplesButtonGroup.add(example3Button);
+					
+					c.insets = new Insets(0,0,0,100); //right padding
+					c.gridx = 0; //first column
+					c.gridy = 0; //first row
+					middlePanel.add(targetLabelExamplesPanel, c);
+				}
 				break;
 			case "classification_step3":
 				c.fill = GridBagConstraints.HORIZONTAL;

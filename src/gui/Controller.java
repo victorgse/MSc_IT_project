@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.event.*;
 import java.io.File;
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -42,7 +42,7 @@ public class Controller implements ActionListener {
 	private String classifierEvaluationMethod; //the desired classifier evaluation method
 	private OutlierDetector outlierDetector; //the outlierDetector object
 	private OutlierEvaluation outlierDetectorEvaluation; //the outlierDetector evaluation object
-	private TreeSet<String> selectedFeatures; //a list of the features selected by user
+	private ArrayList<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
 	
 	/**
@@ -80,8 +80,8 @@ public class Controller implements ActionListener {
 	 * Getter for the features selected by user.
 	 * @return the selectedFeatures
 	 */
-	public TreeSet<String> getSelectedFeatures() {
-		TreeSet<String> featuresSelectedByUser = new TreeSet<String>();
+	public ArrayList<String> getSelectedFeatures() {
+		ArrayList<String> featuresSelectedByUser = new ArrayList<String>();
 		for (int i = 0; i < viewObject.featureCheckBoxes.size(); i++) {
 			if (viewObject.featureCheckBoxes.get(i).isSelected()) {
 				featuresSelectedByUser.add(viewObject.featureCheckBoxes.get(i).getText());

@@ -1,6 +1,6 @@
 package algorithms;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -47,7 +47,7 @@ public abstract class Algorithm {
 	 * Method for renaming the attributes of instances.
 	 * @param attributesOfInstances
 	 */
-	public void renameAttributesOfInstances(TreeSet<String> namesOfAttributesOfInstances) {
+	public void renameAttributesOfInstances(ArrayList<String> namesOfAttributesOfInstances) {
 		int i = 0;
 		for (String name : namesOfAttributesOfInstances) {
 			trainingSet.renameAttribute(i, name);
