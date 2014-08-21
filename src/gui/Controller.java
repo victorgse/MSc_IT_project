@@ -310,16 +310,17 @@ public class Controller implements ActionListener {
 				processActualisePlotButtonClick();
 				break;
 			case "classification_step2":
-				selectedFeatures.add(viewObject.targetLabelCombo.getSelectedItem().toString());
+				String targetLabel = viewObject.targetLabelCombo.getSelectedItem().toString();
+				selectedFeatures.add(targetLabel);
 				if (desiredLevelOfAnalysis == 0) {
-					query += viewObject.targetLabelCombo.getSelectedItem().toString();
+					query += targetLabel;
 					query += " from " + selectedDataset;
 				} else if (desiredLevelOfAnalysis == 1) {
-					query += "sum(" + viewObject.targetLabelCombo.getSelectedItem().toString() + ")";
+					query += "sum(" + targetLabel + ")";
 					query += " from " + selectedDataset;
 					query += " group by Player_ID";
 				} else if (desiredLevelOfAnalysis == 2) {
-					query += "sum(" + viewObject.targetLabelCombo.getSelectedItem().toString() + ")";
+					query += "sum(" + targetLabel + ")";
 					query += " from " + selectedDataset;
 					query += " group by Team";
 				}
