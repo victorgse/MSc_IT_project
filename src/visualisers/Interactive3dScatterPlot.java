@@ -145,7 +145,7 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
             float width;
             if ((predictedClassAssignments != null) 
             		&& (actualClassAssignments[i] != predictedClassAssignments[i])) {
-            	width = 5; //incorrectly classified
+            	width = 5; //incorrectly classified instance
             } else {
             	width = 7.5f;
             }
