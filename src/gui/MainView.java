@@ -134,7 +134,6 @@ public class MainView extends JFrame {
 		switch (state) {
 			case "startScreen_1":
 				if (!topInitiated) {
-					topPanel = new JPanel();
 					try {
 						topPanel = new JPanel() {
 							Image img = ImageIO.read(new File("MWC.png"));
