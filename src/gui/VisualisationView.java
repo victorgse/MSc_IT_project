@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -29,20 +31,31 @@ public class VisualisationView extends JFrame{
 	 * @param controllerObject
 	 * @param instances 
 	 */
-	public VisualisationView(Controller controllerObject, Interactive3dScatterPlot scatterPlot, Instances instances, String[] classLabels) {
+	public VisualisationView(final Controller controllerObject, Interactive3dScatterPlot scatterPlot, Instances instances, String[] classLabels) {
 		this.controllerObject = controllerObject;
 		this.scatterPlot = scatterPlot;
 		this.instances = instances;
 		this.classLabels = classLabels;
-		
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setSize(960, 540); //the size of the JFrame window
-		//setResizable(false); //disables resizing of the JFrame window
-		setLocation(80, 80); //the initial location of the JFrame window on the screen
-		setTitle("Visualisation of Algortihm Results"); //sets the title of the JFrame window
-		
-		layoutLeft();
-		layoutRight();
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					addWindowListener(new WindowAdapter() {
+						public void windowClosed(WindowEvent we) {
+							controllerObject.processVisualisationViewClosed();
+						}
+					});
+					setSize(960, 540); //the size of the JFrame window
+					setLocation(80, 80); //the initial location of the JFrame window on the screen
+					setTitle("Visualisation of Algortihm Results"); //sets the title of the JFrame window
+					
+					layoutLeft();
+					layoutRight();
+					
+					setVisible(true);
+				}
+			});
+		} catch (Exception e) {}
 	}
 	
 	private void layoutLeft() {

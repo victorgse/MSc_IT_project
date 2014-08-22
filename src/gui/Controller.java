@@ -18,6 +18,7 @@ import algorithms.outliers.OutlierEvaluation;
 import dbtools.DatabaseAccess;
 import dbtools.DatasetDatabaseLoader;
 import visualisers.Interactive3dScatterPlot;
+import visualisers.ROCcurvePlotter;
 import weka.classifiers.Evaluation;
 import weka.clusterers.ClusterEvaluation;
 import weka.core.Instances;
@@ -90,6 +91,22 @@ public class Controller implements ActionListener {
 		}
 		return featuresSelectedByUser;
 	}
+	
+	/**
+	 * @return the classifier
+	 */
+	public SVMClassifier getClassifier() {
+		return classifier;
+	}
+	
+	public void processVisualisationViewClosed() {
+		new Thread(new Runnable() {
+			public void run() {
+				disposeVisualisationView();
+				viewObject.toggleEndButtons(true, true, true);
+			}
+		}).start();
+	}
 
 	/**
 	 * Fetches an .xls file selected by user.
@@ -108,7 +125,7 @@ public class Controller implements ActionListener {
 	    	return null;
 	    }
 	}
-	
+
 	/**
 	 * Disposes the visualisationView object.
 	 */
@@ -308,8 +325,6 @@ public class Controller implements ActionListener {
 				algorithmResults = clustererEvaluation.clusterResultsToString();
 				viewObject.setTextOfAlgorithmOutputTextArea(algorithmResults);
 				state = "clustering_step3";
-				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Generating Visualisation...");
-				processActualisePlotButtonClick();
 				break;
 			case "classification_step2":
 				String targetLabel = viewObject.targetLabelCombo.getSelectedItem().toString();
@@ -378,9 +393,8 @@ public class Controller implements ActionListener {
 				} catch (Exception e) {}
 				viewObject.setTextOfAlgorithmOutputTextArea(algorithmResults);
 				state = "classification_step5";
-				if (!classifierEvaluationMethod.equals("CV")) {
-					viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Generating Visualisation...");
-					processActualisePlotButtonClick();
+				if (classifierEvaluationMethod.equals("CV")) {
+					viewObject.toggleEndButtons(false, true, true);
 				}
 				break;
 			case "outlierDetection_step2":
@@ -395,8 +409,6 @@ public class Controller implements ActionListener {
 				outlierDetectorEvaluation = outlierDetector.evaluate();
 				viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
 				state = "outlierDetection_step3";
-				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Generating Visualisation...");
-				processActualisePlotButtonClick();
 				break;
 		}
 		viewObject.updateView(state);
@@ -410,6 +422,54 @@ public class Controller implements ActionListener {
 		String nameOfDatasetToDelete = viewObject.datasetToDeleteCombo.getSelectedItem().toString();
 		dbAccess.deleteDatasetFromDatabase(nameOfDatasetToDelete);
 		viewObject.updateView(state);
+	}
+	
+	/**
+	 * Processes clicks on the "Visualise Results" button.
+	 */
+	private void processVisualiseResultsButtonClick() {
+		viewObject.toggleEndButtons(false, false, false);
+		viewObject.toggleNavigationButtons(false, false, false);
+		switch (state) {
+			case "clustering_step3":
+				viewObject.setTextOfProgramStateLabel("Clustering (Step 3 of 3) - Generating Visualisation...");
+				break;
+			case "classification_step5":
+				viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Generating Visualisation...");
+				break;
+			case "outlierDetection_step3":
+				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 3 of 3) - Generating Visualisation...");
+				break;
+		}
+		processActualisePlotButtonClick();
+		viewObject.toggleEndButtons(false, false, true);
+		viewObject.toggleNavigationButtons(true, true, false);
+		switch (state) {
+			case "clustering_step3":
+				viewObject.setTextOfProgramStateLabel("Clustering (Step 3 of 3) - Displaying Results");
+				break;
+			case "classification_step5":
+				viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Displaying Results");
+				break;
+			case "outlierDetection_step3":
+				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 3 of 3) - Displaying Results");
+				break;
+		}
+	}
+	
+	/**
+	 * Processes clicks on the "Plot ROC curve" button.
+	 */
+	private void processPlotROCcurveButtonClick() {
+		ROCcurvePlotter plotter = new ROCcurvePlotter();
+		plotter.plotROCcurve(classifierEvaluation);
+	}
+	
+	/**
+	 * Processes clicks on the "Plot ROC curve" button.
+	 */
+	private void processSaveResultsButtonClick() {
+		
 	}
 	
 	/**
@@ -507,7 +567,6 @@ public class Controller implements ActionListener {
 				plot.getChart().getView().setViewPositionMode(ViewPositionMode.TOP);
 			}
 			visualisationViewObject = new VisualisationView(this, plot, instances, classLabels);
-			visualisationViewObject.setVisible(true);
 		} else {
 			axeLabels = new String[3];
 			axeLabels[0] = (String) visualisationViewObject.xAxisCombo.getSelectedItem();
@@ -549,6 +608,12 @@ public class Controller implements ActionListener {
 					processNextButtonClick();
 				} else if (AE.getSource() == viewObject.deleteDatasetButton) {
 					processDeleteDatasetButtonClick();
+				} else if (AE.getSource() == viewObject.visualiseResultsButton) {
+					processVisualiseResultsButtonClick();
+				} else if (AE.getSource() == viewObject.plotROCcurveButton) {
+					processPlotROCcurveButtonClick();
+				} else if (AE.getSource() == viewObject.saveResultsButton) {
+					processSaveResultsButtonClick();
 				} else if (AE.getSource() == visualisationViewObject.actualisePlotButton) {
 					processActualisePlotButtonClick();
 				}

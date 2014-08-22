@@ -46,6 +46,9 @@ public class MainView extends JFrame {
 	JLabel regularisationLabel, gammaLabel; //labels describing the regularisation and gamma spinners
 	JSpinner outlierFactorSpinner; //spinner for setting the outlierFactor parameter of the outlier detector
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
+	JButton visualiseResultsButton;
+	JButton saveResultsButton;
+	JButton plotROCcurveButton;
 	
 	/**
 	 * Constructor
@@ -376,11 +379,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example1Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example1Button.setText("(big chances, goals, touches)");
+						example1Button.setText("[Big Chances, Goals, Touches]");
 					} else if (state.equals("classification_step1")) {
-						example1Button.setText("(big chances, duels won, key passes)");
+						example1Button.setText("[Big Chances, Successful Passes Final Third, Key Passes]");
 					} else if (state.equals("outlierDetection_step1")) {
-						example1Button.setText("(big chances, goals, touches)");
+						example1Button.setText("[Big Chances, Goals, Touches]");
 					}
 					example1Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -395,7 +398,7 @@ public class MainView extends JFrame {
 									featureCheckBoxes.get(availableFeatures.indexOf("TOUCHES")).setSelected(true);
 								} else if (copyOfState.equals("classification_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("BIG_CHANCES")).setSelected(true);
-									featureCheckBoxes.get(availableFeatures.indexOf("DUELS_WON")).setSelected(true);
+									featureCheckBoxes.get(availableFeatures.indexOf("SUCCESSFUL_PASSES_FINAL_THIRD")).setSelected(true);
 									featureCheckBoxes.get(availableFeatures.indexOf("KEY_PASSES")).setSelected(true);
 								} else if (copyOfState.equals("outlierDetection_step1")) {
 									featureCheckBoxes.get(availableFeatures.indexOf("BIG_CHANCES")).setSelected(true);
@@ -409,11 +412,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example2Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example2Button.setText("(blocks, interceptions, recoveries)");
+						example2Button.setText("[Blocks, Interceptions, Recoveries]");
 					} else if (state.equals("classification_step1")) {
-						example2Button.setText("(duels lost, tackles lost, turnovers)");
+						example2Button.setText("[Duels Lost, Tackles Lost, Turnovers]");
 					} else if (state.equals("outlierDetection_step1")) {
-						example2Button.setText("(blocks, interceptions, recoveries)");
+						example2Button.setText("[Blocks, Interceptions, Recoveries]");
 					}
 					example2Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -442,11 +445,11 @@ public class MainView extends JFrame {
 					
 					final JRadioButton example3Button = new JRadioButton();
 					if (state.equals("clustering_step1")) {
-						example3Button.setText("(offsides, pass forward, successful passes final third)");
+						example3Button.setText("[Offsides, Pass Forward, Successful Passes Final Third]");
 					} else if (state.equals("classification_step1")) {
-						example3Button.setText("(blocks, interceptions, recoveries)");
+						example3Button.setText("[Blocks, Interceptions, Recoveries]");
 					} else if (state.equals("outlierDetection_step1")) {
-						example3Button.setText("(red cards, total fouls conceded, yellow cards)");
+						example3Button.setText("[Red Cards, Total Fouls Conceded, Yellow Cards]");
 					}
 					example3Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
@@ -492,7 +495,7 @@ public class MainView extends JFrame {
 					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
 					scaleAndMeanNormaliseFeatures.setSelected(true);
 					scaleAndMeanNormaliseFeatures.setToolTipText("This option would bring all selected features on a [0, 1] scale.");
-					c.insets = new Insets(0,30,0,0); //left padding
+					c.insets = new Insets(0,40,0,0); //left padding
 					c.gridx = 2; //third column
 					c.gridy = 0; //first row
 					middlePanel.add(scaleAndMeanNormaliseFeatures, c);
@@ -576,7 +579,7 @@ public class MainView extends JFrame {
 					targetLabelExamplesPanel.add(selectOwnTargetLabelButton);
 					
 					final JRadioButton example1Button = new JRadioButton();
-					example1Button.setText("goals");
+					example1Button.setText("Goals");
 					example1Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
 							if (example1Button.isSelected()) {
@@ -587,7 +590,7 @@ public class MainView extends JFrame {
 					targetLabelExamplesPanel.add(example1Button);
 					
 					final JRadioButton example2Button = new JRadioButton();
-					example2Button.setText("goals conceded");
+					example2Button.setText("Goals Conceded");
 					example2Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
 							if (example2Button.isSelected()) {
@@ -598,7 +601,7 @@ public class MainView extends JFrame {
 					targetLabelExamplesPanel.add(example2Button);
 					
 					final JRadioButton example3Button = new JRadioButton();
-					example3Button.setText("clean sheets");
+					example3Button.setText("Clean Sheets");
 					example3Button.addActionListener(new ActionListener () {
 						public void actionPerformed(ActionEvent ae) {
 							if (example3Button.isSelected()) {
@@ -751,7 +754,45 @@ public class MainView extends JFrame {
 				JScrollPane resultsPane = new JScrollPane(algorithmOutputTextArea);
 				resultsPane.setMinimumSize(new Dimension(600, 200));
 				resultsPane.setPreferredSize(new Dimension(dimensionOfAlgorithmOutputTextArea.width + 25, 200));
-				middlePanel.add(resultsPane);
+				c.gridx = 0; //first column
+				c.gridy = 0; //first row
+				middlePanel.add(resultsPane, c);
+				
+				JPanel endButtonsPanel = new JPanel();
+				endButtonsPanel.setLayout(new BoxLayout(endButtonsPanel, BoxLayout.PAGE_AXIS));
+				
+				visualiseResultsButton = new JButton("Visualise Results");
+				visualiseResultsButton.addActionListener(controllerObject);
+				visualiseResultsButton.setMaximumSize(new Dimension(135, 25));
+				visualiseResultsButton.setToolTipText("<html>This will generate an interactive 3-D scatter plot visualisation<br>"
+						+ "of the algorithm's results (in a new window).</html>");
+				endButtonsPanel.add(Box.createVerticalGlue());
+				endButtonsPanel.add(visualiseResultsButton);
+				endButtonsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+				
+				
+				if (state.equals("classification_step5") && controllerObject.getClassifier().getTrainingSet().numClasses() == 2) {
+					plotROCcurveButton = new JButton("Plot ROC curve");
+					plotROCcurveButton.addActionListener(controllerObject);
+					plotROCcurveButton.setMaximumSize(new Dimension(135, 25));
+					plotROCcurveButton.setToolTipText("<html>This will generate an ROC curve (in a new window), which<br>"
+							+ "is used as a measure of the classifier's performance.</html>");
+					endButtonsPanel.add(plotROCcurveButton);
+					endButtonsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+				}
+				
+				saveResultsButton = new JButton("Save Results");
+				saveResultsButton.addActionListener(controllerObject);
+				saveResultsButton.setMaximumSize(new Dimension(135, 25));
+				saveResultsButton.setToolTipText("<html>This will save the results of the algorithm to the<br>"
+						+ "results.txt file in the application's home directory.</html>");
+				endButtonsPanel.add(saveResultsButton);
+				endButtonsPanel.add(Box.createVerticalGlue());
+				
+				c.insets = new Insets(0,30,0,0); //left padding
+				c.gridx = 1; //second column
+				c.gridy = 0; //first row
+				middlePanel.add(endButtonsPanel, c);
 				break;
 		}
 	}
@@ -901,6 +942,26 @@ public class MainView extends JFrame {
 					startOverButton.setEnabled(startOverButtonEnabled);
 					backButton.setEnabled(backButtonEnabled);
 					nextButton.setEnabled(nextButtonEnabled);
+				}
+			});
+		} catch (Exception e) {}
+	}
+	
+	public void toggleEndButtons(final boolean visualiseResultsButtonEnabled, final boolean plotROCcurveButtonEnabled, final boolean saveResultsButtonEnabled) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					visualiseResultsButton.setEnabled(visualiseResultsButtonEnabled);
+					if (visualiseResultsButton.isEnabled()) {
+						visualiseResultsButton.setToolTipText("<html>This will generate an interactive 3-D scatter plot visualisation<br>"
+								+ "of the algorithm's results (in a new window).</html>");
+					} else {
+						visualiseResultsButton.setToolTipText(null);
+					}
+					if (plotROCcurveButton != null) {
+						plotROCcurveButton.setEnabled(plotROCcurveButtonEnabled);
+					}
+					saveResultsButton.setEnabled(saveResultsButtonEnabled);
 				}
 			});
 		} catch (Exception e) {}
