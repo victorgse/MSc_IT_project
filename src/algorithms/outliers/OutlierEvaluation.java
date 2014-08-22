@@ -42,7 +42,8 @@ public class OutlierEvaluation {
 		int totalNumberOfInstances = numOutliers + numNormals;
 		double percentOutliers = ((double) numOutliers / (double) totalNumberOfInstances);
 		double percentNormals = 1.00 - percentOutliers;
-		results = "===Interquartile Range Outlier Detector===\n\n";
+		results = "Interquartile Range Outlier Detector\n"
+				+ "====================================\n\n";
 		results += String.format("Number of Outliers: %d/%d (%4.2f%%)\n", numOutliers, totalNumberOfInstances, percentOutliers * 100);
 		results += String.format("Number of Normals: %d/%d (%4.2f%%)", numNormals, totalNumberOfInstances, percentNormals * 100);
 		return results;

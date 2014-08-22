@@ -47,7 +47,7 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 		try {
 			outlierDetector.setAttributeIndices("first-last");
 			outlierDetector.setOutlierFactor(outlierFactor);
-			outlierDetector.setExtremeValuesFactor(6);
+			outlierDetector.setExtremeValuesFactor(6.01);
 			outlierDetector.setExtremeValuesAsOutliers(true);
 			outlierDetector.setInputFormat(trainingSet);
 		} catch (Exception e) {

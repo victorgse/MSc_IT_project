@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
@@ -386,7 +388,7 @@ public class Controller implements ActionListener {
 				classifier.setEvaluationOption(classifierEvaluationMethod);
 				viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
 				classifierEvaluation = classifier.evaluate();
-				algorithmResults = classifierEvaluation.toSummaryString("===SVM===\n", false);
+				algorithmResults = classifierEvaluation.toSummaryString("SVM\n===\n", false);
 				try {
 					algorithmResults += "\n" + classifierEvaluation.toClassDetailsString();
 					algorithmResults += "\n" + classifierEvaluation.toMatrixString();
@@ -407,7 +409,8 @@ public class Controller implements ActionListener {
 				outlierDetector.train();
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");
 				outlierDetectorEvaluation = outlierDetector.evaluate();
-				viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
+				algorithmResults = outlierDetectorEvaluation.resultsToString(); 
+				viewObject.setTextOfAlgorithmOutputTextArea(algorithmResults);
 				state = "outlierDetection_step3";
 				break;
 		}
@@ -469,7 +472,18 @@ public class Controller implements ActionListener {
 	 * Processes clicks on the "Plot ROC curve" button.
 	 */
 	private void processSaveResultsButtonClick() {
-		
+		try {
+			PrintWriter resultsWriter = new PrintWriter("results.txt");
+			try {
+				resultsWriter.print(viewObject.algorithmOutputTextArea.getText());
+			} finally {
+				if (resultsWriter != null) resultsWriter.close();
+			}
+		} catch (IOException x) {
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to save the results to the results.txt file.", 
+	    			"Error: Results Not Saved", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	/**

@@ -2,7 +2,6 @@ package algorithms.clustering;
 
 import javax.swing.JOptionPane;
 
-import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.experiment.InstanceQuery;
@@ -20,7 +19,6 @@ public class KMeansClusterer extends ClusteringAlgorithm implements Cloneable {
 		try {
 			instanceQuery = new InstanceQuery();
 			clusterer = new SimpleKMeans();
-			eval = new ClusterEvaluation();
 			featuresScaledAndMeanNormalised = false;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 

@@ -36,6 +36,7 @@ public abstract class ClusteringAlgorithm extends Algorithm {
 	 * Evaluates a clusterer.
 	 */
 	public ClusterEvaluation evaluate() {
+		eval = new ClusterEvaluation();
 		eval.setClusterer(clusterer);
 		try {
 			eval.evaluateClusterer(trainingSet);
