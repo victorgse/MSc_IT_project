@@ -490,6 +490,7 @@ public class MainView extends JFrame {
 				
 				if (!state.equals("outlierDetection_step1")) {
 					scaleAndMeanNormaliseFeatures = new JCheckBox("Scale and Mean-normalise Features");
+					scaleAndMeanNormaliseFeatures.setSelected(true);
 					scaleAndMeanNormaliseFeatures.setToolTipText("This option would bring all selected features on a [0, 1] scale.");
 					c.insets = new Insets(0,30,0,0); //left padding
 					c.gridx = 2; //third column
