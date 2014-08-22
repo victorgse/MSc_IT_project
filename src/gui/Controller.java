@@ -445,7 +445,7 @@ public class Controller implements ActionListener {
 				break;
 		}
 		processActualisePlotButtonClick();
-		viewObject.toggleEndButtons(false, false, true);
+		viewObject.toggleEndButtons(false, true, true);
 		viewObject.toggleNavigationButtons(true, true, false);
 		switch (state) {
 			case "clustering_step3":
@@ -476,6 +476,9 @@ public class Controller implements ActionListener {
 			PrintWriter resultsWriter = new PrintWriter("results.txt");
 			try {
 				resultsWriter.print(viewObject.algorithmOutputTextArea.getText());
+				JOptionPane.showMessageDialog(null, 
+		    			"The results have been saved to the results.txt file in the application's home directory.", 
+		    			"Results Saved", JOptionPane.INFORMATION_MESSAGE);
 			} finally {
 				if (resultsWriter != null) resultsWriter.close();
 			}
