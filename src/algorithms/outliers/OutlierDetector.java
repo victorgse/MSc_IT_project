@@ -71,14 +71,20 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 	@Override
 	public OutlierEvaluation evaluate() {
 		double[] classAssignments = new double[filteredTrainingSet.numInstances()]; //1 --> outlier, 0 otherwise
+		int numberOfOutliers = 0;
+		int numberOfNormals = 0;
 		for (int i = 0; i < filteredTrainingSet.numInstances(); i++) {
 			if (filteredTrainingSet.get(i).value(filteredTrainingSet.attribute("Outlier")) == 1) {
 				classAssignments[i] = 1;
+				numberOfOutliers++;
 			} else {
 				classAssignments[i] = 0;
+				numberOfNormals++;
 			}
 		}
 		eval.setClassAssignments(classAssignments);
+		eval.setNumOutliers(numberOfOutliers);
+		eval.setNumNormals(numberOfNormals);
 		return eval;
 	}
 

@@ -393,7 +393,7 @@ public class Controller implements ActionListener {
 				outlierDetector.train();
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Evaluating Outlier-detector...");
 				outlierDetectorEvaluation = outlierDetector.evaluate();
-				//viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
+				viewObject.setTextOfAlgorithmOutputTextArea(outlierDetectorEvaluation.resultsToString());
 				state = "outlierDetection_step3";
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 2 of 3) - Generating Visualisation...");
 				processActualisePlotButtonClick();
