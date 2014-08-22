@@ -170,10 +170,10 @@ public class MainView extends JFrame {
 				infoLabel.setText("What features do you wish to cluster by?");
 				break;
 			case "clustering_step2":
-				infoLabel.setText("Please specify parameters for the K-Means algorithm.");
+				infoLabel.setText("Please specify parameters for the K-Means clusterer.");
 				break;
 			case "clustering_step3":
-				infoLabel.setText("Results of the K-Means clustering algorithm");
+				infoLabel.setText("Results of the K-Means clusterer");
 				break;
 			case "classification_step1":
 				infoLabel.setText("What features do you wish to use to make predictions?");
@@ -182,22 +182,22 @@ public class MainView extends JFrame {
 				infoLabel.setText("What feature would you like to predict?");
 				break;
 			case "classification_step3":
-				infoLabel.setText("Please specify parameters for the SVM algorithm.");
+				infoLabel.setText("Please specify parameters for the SVM classifier.");
 				break;
 			case "classification_step4":
 				infoLabel.setText("How should the classifier's performance be evaluated?");
 				break;
 			case "classification_step5":
-				infoLabel.setText("Results of the SVM classification algorithm");
+				infoLabel.setText("Results of the SVM classifier");
 				break;
 			case "outlierDetection_step1":
 				infoLabel.setText("What features do you wish to use to identify outliers?");
 				break;
 			case "outlierDetection_step2":
-				infoLabel.setText("Please specify parameters for the Outlier Detector.");
+				infoLabel.setText("Please specify parameters for the IQR outlier detector.");
 				break;
 			case "outlierDetection_step3":
-				infoLabel.setText("Results of the Outlier Detection algorithm");
+				infoLabel.setText("Results of the IQR outlier detector");
 				break;
 		}
 	}
