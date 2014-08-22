@@ -24,6 +24,7 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 			instanceQuery = new InstanceQuery();
 			outlierDetector = new InterquartileRange();
 			eval = new OutlierEvaluation();
+			featuresScaledAndMeanNormalised = false;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to instantiate outlier-detector.", 

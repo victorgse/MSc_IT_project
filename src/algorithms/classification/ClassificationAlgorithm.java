@@ -26,6 +26,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	protected Evaluation eval;
 	protected String evaluationOption;
 	protected Instances reducedTrainingSet;
+	protected Instances originalTestSet;
 	protected Instances testSet;
 	protected AbstractOutput objectForPredictionsPrinting;
 	protected StringBuffer buffer;
@@ -95,13 +96,18 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 		int testSetSize = trainingSet.numInstances() - trainingSetSize;
 		reducedTrainingSet = new Instances(trainingSet, 0, trainingSetSize);
 		testSet = new Instances(trainingSet, trainingSetSize, testSetSize);
+		originalTestSet = new Instances(originalTrainingSet, trainingSetSize, testSetSize);
 	}
 	
 	/**
 	 * @return the testSet
 	 */
 	public Instances getTestSet() {
-		return testSet;
+		if (!featuresScaledAndMeanNormalised) {
+			return testSet;
+		} else {
+			return originalTestSet;
+		}
 	}
 	
 	/**
@@ -170,6 +176,47 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 				}
 			}
 			//System.out.println(objectForPredictionsPrinting.getBuffer());
+			
+			/*
+			// Weka code for ROC curve plotting ====================================================
+			
+			// generate curve
+		     ThresholdCurve tc = new ThresholdCurve();
+		     int classIndex = 0;
+		     Instances result = tc.getCurve(eval.predictions(), classIndex);
+		 
+		     // plot curve
+		     ThresholdVisualizePanel vmc = new ThresholdVisualizePanel();
+		     vmc.setROCString("(Area under ROC = " + 
+		         Utils.doubleToString(tc.getROCArea(result), 4) + ")");
+		     vmc.setName(result.relationName());
+		     PlotData2D tempd = new PlotData2D(result);
+		     tempd.setPlotName(result.relationName());
+		     tempd.addInstanceNumberAttribute();
+		     // specify which points are connected
+		     boolean[] cp = new boolean[result.numInstances()];
+		     for (int n = 1; n < cp.length; n++)
+		       cp[n] = true;
+		     tempd.setConnectPoints(cp);
+		     // add plot
+		     vmc.addPlot(tempd);
+		 
+		     // display curve
+		     String plotName = vmc.getName(); 
+		     final javax.swing.JFrame jf = 
+		       new javax.swing.JFrame("Weka Classifier Visualize: "+plotName);
+		     jf.setSize(500,400);
+		     jf.getContentPane().setLayout(new BorderLayout());
+		     jf.getContentPane().add(vmc, BorderLayout.CENTER);
+		     jf.addWindowListener(new java.awt.event.WindowAdapter() {
+		       public void windowClosing(java.awt.event.WindowEvent e) {
+		       jf.dispose();
+		       }
+		     });
+		     jf.setVisible(true);
+		     
+		  // End of Weka code for ROC curve plotting ====================================================
+		   */
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to evaluate classifier.", 

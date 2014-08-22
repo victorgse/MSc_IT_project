@@ -19,6 +19,7 @@ public class SVMClassifier extends ClassificationAlgorithm {
 		try {
 			instanceQuery = new InstanceQuery();
 			classifier = new LibSVM();
+			featuresScaledAndMeanNormalised = false;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to instantiate classifier.", 

@@ -18,6 +18,8 @@ public abstract class Algorithm {
 	 * instance variables
 	 */
 	protected InstanceQuery instanceQuery; //SQL query for fetching instances
+	protected boolean featuresScaledAndMeanNormalised;
+	protected Instances originalTrainingSet;
 	protected Instances trainingSet; //dataset instances
 	protected String[] options; //algorithm options
 	
@@ -59,14 +61,20 @@ public abstract class Algorithm {
 	 * @return the trainingSet
 	 */
 	public Instances getTrainingSet() {
-		return trainingSet;
+		if (!featuresScaledAndMeanNormalised) {
+			return trainingSet;
+		} else {
+			return originalTrainingSet;
+		}
 	}
 	
 	public void scaleAndMeanNormaliseFeatures() {
+		originalTrainingSet = new Instances(trainingSet, 0, trainingSet.size());
 		Normalize normalizer = new Normalize();
 		try {
 			normalizer.setInputFormat(trainingSet);
 			trainingSet = Filter.useFilter(trainingSet, normalizer);
+			featuresScaledAndMeanNormalised = true;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to scale features.", 

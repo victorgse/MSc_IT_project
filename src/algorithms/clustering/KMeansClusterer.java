@@ -21,6 +21,7 @@ public class KMeansClusterer extends ClusteringAlgorithm implements Cloneable {
 			instanceQuery = new InstanceQuery();
 			clusterer = new SimpleKMeans();
 			eval = new ClusterEvaluation();
+			featuresScaledAndMeanNormalised = false;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to instantiate clusterer.", 

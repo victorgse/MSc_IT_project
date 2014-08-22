@@ -887,6 +887,7 @@ public class MainView extends JFrame {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
+					algorithmOutputTextArea.setText("");
 					algorithmOutputTextArea.setText(text);
 				}
 			});
