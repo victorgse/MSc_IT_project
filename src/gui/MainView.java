@@ -745,8 +745,11 @@ public class MainView extends JFrame {
 			case "classification_step5":
 			case "outlierDetection_step3":
 				algorithmOutputTextArea.setEditable(false);
+				algorithmOutputTextArea.setFont(new Font("Monospaced",Font.PLAIN,13));
+				Dimension dimensionOfAlgorithmOutputTextArea = algorithmOutputTextArea.getPreferredScrollableViewportSize();
 				JScrollPane resultsPane = new JScrollPane(algorithmOutputTextArea);
-				resultsPane.setPreferredSize(new Dimension(600, 200));
+				resultsPane.setMinimumSize(new Dimension(600, 200));
+				resultsPane.setPreferredSize(new Dimension(dimensionOfAlgorithmOutputTextArea.width + 25, 200));
 				middlePanel.add(resultsPane);
 				break;
 		}

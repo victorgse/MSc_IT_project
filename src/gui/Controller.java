@@ -304,7 +304,8 @@ public class Controller implements ActionListener {
 				clusterer.train(desiredNumberOfKMeansRuns);
 				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
 				clustererEvaluation = clusterer.evaluate();
-				viewObject.setTextOfAlgorithmOutputTextArea(clustererEvaluation.clusterResultsToString());
+				String clustererResults = clustererEvaluation.clusterResultsToString();
+				viewObject.setTextOfAlgorithmOutputTextArea(clustererResults);
 				state = "clustering_step3";
 				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Generating Visualisation...");
 				processActualisePlotButtonClick();
@@ -369,7 +370,14 @@ public class Controller implements ActionListener {
 				classifier.setEvaluationOption(classifierEvaluationMethod);
 				viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Evaluating Classifier...");
 				classifierEvaluation = classifier.evaluate();
-				viewObject.setTextOfAlgorithmOutputTextArea(classifierEvaluation.toSummaryString());
+				String classifierResults = classifierEvaluation.toSummaryString("===Summary===", false);
+				try {
+					classifierResults += "\n\n" + classifierEvaluation.toClassDetailsString();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				viewObject.setTextOfAlgorithmOutputTextArea(classifierResults);
 				state = "classification_step5";
 				if (!classifierEvaluationMethod.equals("CV")) {
 					viewObject.setTextOfProgramStateLabel("Classification (Step 4 of 5) - Generating Visualisation...");
