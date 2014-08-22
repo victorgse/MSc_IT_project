@@ -304,8 +304,8 @@ public class Controller implements ActionListener {
 				clusterer.train(desiredNumberOfKMeansRuns);
 				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Evaluating Clusterer...");
 				clustererEvaluation = clusterer.evaluate();
-				state = "clustering_step3";
 				viewObject.setTextOfAlgorithmOutputTextArea(clustererEvaluation.clusterResultsToString());
+				state = "clustering_step3";
 				viewObject.setTextOfProgramStateLabel("Clustering (Step 2 of 3) - Generating Visualisation...");
 				processActualisePlotButtonClick();
 				break;
