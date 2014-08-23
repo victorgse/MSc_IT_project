@@ -104,8 +104,19 @@ public class Controller implements ActionListener {
 	public void processVisualisationViewClosed() {
 		new Thread(new Runnable() {
 			public void run() {
-				disposeVisualisationView();
-				viewObject.toggleEndButtons(true, true, true);
+				try {
+					SwingUtilities.invokeAndWait(new Runnable() {
+						public void run() {
+							visualisationViewObject = null;
+							if (plot.getInstanceInfoFrame() != null) {
+								plot.getInstanceInfoFrame().dispose();
+							}
+						}
+					});
+					viewObject.toggleEndButtons(true, true, true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}).start();
 	}
@@ -137,10 +148,14 @@ public class Controller implements ActionListener {
 				public void run() {
 					visualisationViewObject.dispose();
 					visualisationViewObject = null;
-					plot.getInstanceInfoFrame().dispose();
+					if (plot.getInstanceInfoFrame() != null) {
+						plot.getInstanceInfoFrame().dispose();
+					}
 				}
 			});
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -431,6 +446,10 @@ public class Controller implements ActionListener {
 	 * Processes clicks on the "Visualise Results" button.
 	 */
 	private void processVisualiseResultsButtonClick() {
+		boolean plotROCcurveButtonIsEnabled = false;
+		if (viewObject.plotROCcurveButton != null) {
+			plotROCcurveButtonIsEnabled = viewObject.plotROCcurveButton.isEnabled();
+		}
 		viewObject.toggleEndButtons(false, false, false);
 		viewObject.toggleNavigationButtons(false, false, false);
 		switch (state) {
@@ -445,7 +464,7 @@ public class Controller implements ActionListener {
 				break;
 		}
 		processActualisePlotButtonClick();
-		viewObject.toggleEndButtons(false, true, true);
+		viewObject.toggleEndButtons(false, plotROCcurveButtonIsEnabled, true);
 		viewObject.toggleNavigationButtons(true, true, false);
 		switch (state) {
 			case "clustering_step3":
@@ -464,8 +483,18 @@ public class Controller implements ActionListener {
 	 * Processes clicks on the "Plot ROC curve" button.
 	 */
 	private void processPlotROCcurveButtonClick() {
+		viewObject.toggleEndButtons(false, false, false);
+		viewObject.toggleNavigationButtons(false, false, false);
+		viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Plotting ROC Curve...");
 		ROCcurvePlotter plotter = new ROCcurvePlotter();
 		plotter.plotROCcurve(classifierEvaluation);
+		viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Displaying Results");
+		if (classifierEvaluationMethod.equals("CV")) {
+			viewObject.toggleEndButtons(false, false, true);
+		} else {
+			viewObject.toggleEndButtons(true, false, true);
+		}
+		viewObject.toggleNavigationButtons(true, true, false);
 	}
 	
 	/**
@@ -516,13 +545,11 @@ public class Controller implements ActionListener {
 				} else if (classifierEvaluationMethod.equals("testSet")) {
 					instances = classifier.getTestSet();
 				}
-				actualClassAssignments = classifier.getActualClassAssignments();
-				predictedClassAssignments = classifier.getPredictedClassAssignments();
-				if (visualisationViewObject == null) {
-					for (int i = 0; i < instances.numInstances(); i++) { //so that the clustering, classification, and outlier detection classes are all on the same scale
-						actualClassAssignments[i] -= 1;
-						predictedClassAssignments[i] -= 1;
-					}
+				actualClassAssignments = classifier.getActualClassAssignments().clone();
+				predictedClassAssignments = classifier.getPredictedClassAssignments().clone();
+				for (int i = 0; i < instances.numInstances(); i++) { //so that the clustering, classification, and outlier detection classes are all on the same scale
+					actualClassAssignments[i] -= 1;
+					predictedClassAssignments[i] -= 1;
 				}
 				classLabels = new String[instances.numClasses()];
 				for (int i = 0; i < instances.numClasses(); i++) {
