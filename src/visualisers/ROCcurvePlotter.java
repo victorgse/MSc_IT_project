@@ -13,7 +13,13 @@ import weka.core.Utils;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.ThresholdVisualizePanel;
 
-// the code in this class was copied in its entirety from ...
+/**
+ * Generates an ROC curve of a classifier's performance in a new window.
+ * ======================================================================
+ * The code in the plotROCcurve method of this class was copied in its
+ * entirety from the following tutorial on generating ROC curves in Weka:
+ * http://weka.wikispaces.com/Generating+ROC+curve
+ */
 public class ROCcurvePlotter {
 	
 	/**
@@ -37,6 +43,14 @@ public class ROCcurvePlotter {
 		return jf;
 	}
 
+	/**
+	 * Plots an ROC curve of a classifier's evaluation in a new window.
+	 * ====================================================================
+	 * The code inside this method was copied in its entirety from the
+	 * following tutorial on generating ROC curves in Weka:
+	 * http://weka.wikispaces.com/Generating+ROC+curve
+	 * @param eval
+	 */
 	@SuppressWarnings("static-access")
 	public void plotROCcurve(Evaluation eval) {
 		// generate curve
