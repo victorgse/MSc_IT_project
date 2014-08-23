@@ -105,7 +105,7 @@ public class MainView extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+	JMenuItem aboutItem;
 	/**
 	 * Adds components to the menu.
 	 */
@@ -119,7 +119,8 @@ public class MainView extends JFrame {
 					JMenu helpMenu = new JMenu("Help");
 					menuBar.add(helpMenu);
 					
-					JMenuItem aboutItem = new JMenuItem("About");
+					aboutItem = new JMenuItem("About");
+					aboutItem.addActionListener(controllerObject);
 					helpMenu.add(aboutItem);
 				}
 			});

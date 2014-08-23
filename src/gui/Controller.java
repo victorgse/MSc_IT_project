@@ -48,6 +48,8 @@ public class Controller implements ActionListener {
 	private ArrayList<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
 	private String algorithmResults;
+	private ROCcurvePlotter plotterOfROCcurves;
+	private static AboutFrame aboutFrame;
 	
 	/**
 	 * Constructor
@@ -101,6 +103,10 @@ public class Controller implements ActionListener {
 		return classifier;
 	}
 	
+	public void processAboutFrameClosed() {
+		aboutFrame = null;
+	}
+	
 	public void processVisualisationViewClosed() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -113,30 +119,25 @@ public class Controller implements ActionListener {
 							}
 						}
 					});
-					viewObject.toggleEndButtons(true, true, true);
+					boolean plotROCcurveButtonIsEnabled = false;
+					if (viewObject.plotROCcurveButton != null) {
+						plotROCcurveButtonIsEnabled = viewObject.plotROCcurveButton.isEnabled();
+					}
+					viewObject.toggleEndButtons(true, plotROCcurveButtonIsEnabled, true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}).start();
 	}
-
-	/**
-	 * Fetches an .xls file selected by user.
-	 * @return
-	 */
-	private File getFile() {
-		JFileChooser fileChooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	        "Excel .xls files", "xls");
-	    fileChooser.setFileFilter(filter);
-	    fileChooser.setAcceptAllFileFilterUsed(false);
-	    int returnVal = fileChooser.showOpenDialog(viewObject);
-	    if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    	return fileChooser.getSelectedFile();
-	    } else {
-	    	return null;
-	    }
+	
+	public void processROCcurveClosed() {
+		new Thread(new Runnable() {
+			public void run() {
+				boolean visualiseResultsButtonIsEnabled = viewObject.visualiseResultsButton.isEnabled();
+				viewObject.toggleEndButtons(visualiseResultsButtonIsEnabled, true, true);
+			}
+		}).start();
 	}
 
 	/**
@@ -157,6 +158,23 @@ public class Controller implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Disposes the visualisationView object.
+	 */
+	private void disposeROCcurveFrame() {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					if (plotterOfROCcurves.getJf() != null) {
+						plotterOfROCcurves.getJf().dispose();
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Processes clicks on the "Start Over" button.
@@ -164,6 +182,9 @@ public class Controller implements ActionListener {
 	private void processStartOverButtonClick() {
 		if (visualisationViewObject != null) {
 			disposeVisualisationView();
+		}
+		if (plotterOfROCcurves != null) {
+			disposeROCcurveFrame();
 		}
 		state = "startScreen_1";
 		viewObject.updateView(state);
@@ -196,6 +217,9 @@ public class Controller implements ActionListener {
 				if (visualisationViewObject != null) {
 					disposeVisualisationView();
 				}
+				if (plotterOfROCcurves != null) {
+					disposeROCcurveFrame();
+				}
 				state = "clustering_step2";
 				break;
 			case "classification_step2":
@@ -211,6 +235,9 @@ public class Controller implements ActionListener {
 				if (visualisationViewObject != null) {
 					disposeVisualisationView();
 				}
+				if (plotterOfROCcurves != null) {
+					disposeROCcurveFrame();
+				}
 				state = "classification_step4";
 				break;
 			case "outlierDetection_step2":
@@ -219,6 +246,9 @@ public class Controller implements ActionListener {
 			case "outlierDetection_step3":
 				if (visualisationViewObject != null) {
 					disposeVisualisationView();
+				}
+				if (plotterOfROCcurves != null) {
+					disposeROCcurveFrame();
 				}
 				state = "outlierDetection_step2";
 				break;
@@ -483,17 +513,14 @@ public class Controller implements ActionListener {
 	 * Processes clicks on the "Plot ROC curve" button.
 	 */
 	private void processPlotROCcurveButtonClick() {
+		boolean visualiseResultsButtonIsEnabled = viewObject.visualiseResultsButton.isEnabled();
 		viewObject.toggleEndButtons(false, false, false);
 		viewObject.toggleNavigationButtons(false, false, false);
 		viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Plotting ROC Curve...");
-		ROCcurvePlotter plotter = new ROCcurvePlotter();
-		plotter.plotROCcurve(classifierEvaluation);
+		plotterOfROCcurves = new ROCcurvePlotter(this);
+		plotterOfROCcurves.plotROCcurve(classifierEvaluation);
 		viewObject.setTextOfProgramStateLabel("Classification (Step 5 of 5) - Displaying Results");
-		if (classifierEvaluationMethod.equals("CV")) {
-			viewObject.toggleEndButtons(false, false, true);
-		} else {
-			viewObject.toggleEndButtons(true, false, true);
-		}
+		viewObject.toggleEndButtons(visualiseResultsButtonIsEnabled, false, true);
 		viewObject.toggleNavigationButtons(true, true, false);
 	}
 	
@@ -637,6 +664,42 @@ public class Controller implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Processes clicks on the "About" menu item
+	 */
+	private void processAboutMenuItemClick() {
+		final Controller referenceToController = this;
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					if (aboutFrame == null) {
+						aboutFrame = new AboutFrame(referenceToController);
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Fetches an .xls file selected by user.
+	 * @return
+	 */
+	private File getFile() {
+		JFileChooser fileChooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	        "Excel .xls files", "xls");
+	    fileChooser.setFileFilter(filter);
+	    fileChooser.setAcceptAllFileFilterUsed(false);
+	    int returnVal = fileChooser.showOpenDialog(viewObject);
+	    if (returnVal == JFileChooser.APPROVE_OPTION) {
+	    	return fileChooser.getSelectedFile();
+	    } else {
+	    	return null;
+	    }
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -650,6 +713,8 @@ public class Controller implements ActionListener {
 					processBackButtonClick();
 				} else if (AE.getSource() == viewObject.nextButton) {
 					processNextButtonClick();
+				} else if (AE.getSource() == viewObject.aboutItem) {
+					processAboutMenuItemClick();
 				} else if (AE.getSource() == viewObject.deleteDatasetButton) {
 					processDeleteDatasetButtonClick();
 				} else if (AE.getSource() == viewObject.visualiseResultsButton) {
