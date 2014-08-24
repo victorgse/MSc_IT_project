@@ -5,7 +5,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jzy3d.analysis.AbstractAnalysis;
 import org.jzy3d.chart.controllers.keyboard.camera.AWTCameraKeyController;
@@ -109,7 +111,19 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
 	     		    	try {
 	     		    		TextureData screenshot = chart.screenshot();
 	         		    	screenshot.setMustFlipVertically(false);
-							TextureIO.write(screenshot, new File("./screenshots/screenshot.png"));
+	         		    	JFileChooser fileChooser = new JFileChooser();
+	         			    FileNameExtensionFilter filter = new FileNameExtensionFilter("Choose a .png file to overwrite, or name a new one.", "png");
+	         			    fileChooser.setFileFilter(filter);
+	         			    fileChooser.setAcceptAllFileFilterUsed(false);
+	         			    int returnVal = fileChooser.showSaveDialog(null);
+	         			    if (returnVal == JFileChooser.APPROVE_OPTION) {
+	         			    	String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+	         			    	if (filePath.endsWith(".png")) {
+	         			    		TextureIO.write(screenshot, new File(filePath));
+	         			    	} else {
+	         			    		TextureIO.write(screenshot, new File(filePath + ".png"));
+	         			    	}
+	         			    }
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

@@ -785,8 +785,8 @@ public class MainView extends JFrame {
 				saveResultsButton = new JButton("Save Results");
 				saveResultsButton.addActionListener(controllerObject);
 				saveResultsButton.setMaximumSize(new Dimension(135, 25));
-				saveResultsButton.setToolTipText("<html>This will save the results of the algorithm to the<br>"
-						+ "results.txt file in the application's home directory.</html>");
+				saveResultsButton.setToolTipText("<html>This will save the results of the algorithm<br>"
+						+ " to a location of your choosing</html>");
 				endButtonsPanel.add(saveResultsButton);
 				endButtonsPanel.add(Box.createVerticalGlue());
 				

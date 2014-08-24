@@ -529,15 +529,28 @@ public class Controller implements ActionListener {
 	 */
 	private void processSaveResultsButtonClick() {
 		try {
-			PrintWriter resultsWriter = new PrintWriter("results.txt");
-			try {
-				resultsWriter.print(viewObject.algorithmOutputTextArea.getText());
-				JOptionPane.showMessageDialog(null, 
-		    			"The results have been saved to the results.txt file in the application's home directory.", 
-		    			"Results Saved", JOptionPane.INFORMATION_MESSAGE);
-			} finally {
-				if (resultsWriter != null) resultsWriter.close();
-			}
+			JFileChooser fileChooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Choose a .txt file to overwrite, or name a new one.", "txt");
+		    fileChooser.setFileFilter(filter);
+		    fileChooser.setAcceptAllFileFilterUsed(false);
+		    int returnVal = fileChooser.showSaveDialog(viewObject);
+		    if (returnVal == JFileChooser.APPROVE_OPTION) {
+		    	PrintWriter resultsWriter;
+		    	String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+		    	if (filePath.endsWith(".txt")) {
+		    		resultsWriter = new PrintWriter(filePath);
+		    	} else {
+		    		resultsWriter = new PrintWriter(filePath + ".txt");
+		    	}
+		    	try {
+					resultsWriter.print(viewObject.algorithmOutputTextArea.getText());
+					JOptionPane.showMessageDialog(null, 
+			    			"The results have been saved to the location of your choosing.", 
+			    			"Results Saved", JOptionPane.INFORMATION_MESSAGE);
+				} finally {
+					if (resultsWriter != null) resultsWriter.close();
+				}
+		    }
 		} catch (IOException x) {
 			JOptionPane.showMessageDialog(null, 
 	    			"Something went wrong while attempting to save the results to the results.txt file.", 
