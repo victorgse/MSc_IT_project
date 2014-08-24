@@ -9,14 +9,17 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Provides interactive access to the application's database.
+ */
 public class DatabaseAccess {
 	
 	/**
 	 * instance variables
 	 */
-	private String query;
-	private String update;
-	private ResultSet RS;
+	private String update; //stores an SQL Update Statement
+	private String query; //stores an SQL Query Statement
+	private ResultSet RS; //stores results that have been returned from the application's database
 	
 	/**
 	 * A helper method for getting the names of datasets stored in the database.
