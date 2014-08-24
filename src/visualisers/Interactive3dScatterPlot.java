@@ -1,12 +1,14 @@
 package visualisers;
 
+import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
 import org.jzy3d.analysis.AbstractAnalysis;
-import org.jzy3d.chart.controllers.keyboard.screenshot.AWTScreenshotKeyController;
+import org.jzy3d.chart.controllers.keyboard.camera.AWTCameraKeyController;
 import org.jzy3d.chart.controllers.mouse.camera.AWTCameraMouseController;
 import org.jzy3d.chart.controllers.mouse.picking.AWTMousePickingController;
 import org.jzy3d.chart.controllers.thread.camera.CameraThreadController;
@@ -17,6 +19,9 @@ import org.jzy3d.picking.IObjectPickedListener;
 import org.jzy3d.picking.PickingSupport;
 import org.jzy3d.plot3d.primitives.pickable.PickablePoint;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
+
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import weka.core.Instances;
 
@@ -97,7 +102,21 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
      	chart.addController(thread);
      	
      	// Enable screenshots
-     	chart.getCanvas().addKeyController(new AWTScreenshotKeyController(chart, "./screenshots/screenshot.png"));
+     	AWTCameraKeyController keyboard = new AWTCameraKeyController() {
+     		public void keyTyped(KeyEvent ke) {
+     			switch (ke.getKeyChar()) {
+     				case 's':
+	     		    	try {
+	     		    		TextureData screenshot = chart.screenshot();
+	         		    	screenshot.setMustFlipVertically(false);
+							TextureIO.write(screenshot, new File("./screenshots/screenshot.png"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+     		    }
+     		}
+     	};
+     	chart.addController(keyboard);
         
      	// Insert or replace scatter points
         updatePoints(coordinates);
