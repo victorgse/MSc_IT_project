@@ -46,7 +46,7 @@ public class DatasetDatabaseLoader {
 	
 	/**
 	 * @param excel
-	 * @return
+	 * @return whether the .xls dataset was inserted successfully into the application's database
 	 */
 	public boolean insertDatasetIntoDatabase(File excel) {
 		boolean datasetSuccessfullyInsertedIntoDatabase = false;
@@ -65,7 +65,7 @@ public class DatasetDatabaseLoader {
 	 * of the following video tutorial provided by Oresoft:
 	 * https://www.youtube.com/watch?v=GYZzkid7nno
 	 * @param excel
-	 * @return
+	 * @return whether the Excel file was successfully read into primary memory
 	 */
 	private boolean readDataFromExcelFile(File excel) {
 		boolean datasetReadSuccessfully = false;
@@ -109,7 +109,7 @@ public class DatasetDatabaseLoader {
 	/**
 	 * Method that inserts the data that was read from
 	 * the .xls dataset into the application's database.
-	 * @throws SQLException
+	 * @return whether the dataset was successfully inserted into the application's database
 	 */
 	private boolean insertDataIntoDatabase() {
 		boolean dataSuccessfullyInsertedIntoDatabase = false;
