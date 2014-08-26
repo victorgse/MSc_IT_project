@@ -28,24 +28,27 @@ import com.jogamp.opengl.util.texture.TextureIO;
 
 import weka.core.Instances;
 
+/**
+ * This class utilises the Jzy3d library to define an interactive 3-D scatter plot.
+ */
 public class Interactive3dScatterPlot extends AbstractAnalysis {
 	
 	/**
 	 * instance variables
 	 */
-	public static final Color[] COLOURS = {Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.CYAN};
-	private List<PickablePoint> points;
-	private String selectedDataset;
-	private String[] axeLabels;
-	private double[][] coordinates;
-	private double[] actualClassAssignments;
-	private double[] predictedClassAssignments;
-	private Instances instances;
-	private String[] namesOfInstances;
-	private String[] classLabels;
-	private ArrayList<Integer> pickingIDs;
-	private boolean plotInitiated;
-	private InstanceInfoFrame instanceInfoFrame;
+	public static final Color[] COLOURS = {Color.GREEN, Color.RED, Color.BLUE, Color.YELLOW, Color.CYAN}; //the colours for the different classes
+	private List<PickablePoint> points; //the pickable points on the plot
+	private String selectedDataset; //the name of the dataset to visualise
+	private String[] axeLabels; //the names of the attributes that are measured on the Cartesian axes of the plot
+	private double[][] coordinates; //the coordinates of the scatter points
+	private double[] actualClassAssignments; //the actual class assignments of the data instances
+	private double[] predictedClassAssignments; //the classifier-predicted class assignments of the data instances
+	private Instances instances; //the data instances to be visualised
+	private String[] namesOfInstances; //the names of the data instances to be visualised
+	private String[] classLabels; //the names of the classes
+	private ArrayList<Integer> pickingIDs; //the picking ids of the pickable points on the scatter plot
+	private boolean plotInitiated; //signifies whether the plot has been initiated (or not)
+	private InstanceInfoFrame instanceInfoFrame; //the instanceInfoFrame object
 	
 	/**
 	 * Constructor
@@ -197,7 +200,7 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
 	}
 	
 	/**
-	 * Adds event listeners to points.
+	 * Adds event listeners to the pickable points.
 	 * @param points
 	 */
 	private void enablePicking(List<PickablePoint> points) {

@@ -27,14 +27,18 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
+/**
+ * A controller class in the MVC architectural design pattern. This class is the logic and control unit of the application.
+ * It consists mainly of event handlers for various GUI components. It controls the application's state.
+ */
 public class Controller implements ActionListener {
 	
 	/**
 	 * instance variables
 	 */
-	private MainView viewObject; //the main view object
-	private VisualisationView visualisationViewObject; //the visualisation view object
-	private Interactive3dScatterPlot plot; //the plot object
+	private MainView viewObject; //a reference to the mainView object
+	private VisualisationView visualisationViewObject; //a reference to the visualisationView object
+	private Interactive3dScatterPlot plot; //a reference to the plot object
 	private String state; //keeps track of what state the program is in
 	private String selectedDataset; //the name of the dataset that has been selected by user
 	private int desiredLevelOfAnalysis; //tracks the desired level of analysis for the MCFC Analytics Full Dataset
@@ -47,9 +51,9 @@ public class Controller implements ActionListener {
 	private OutlierEvaluation outlierDetectorEvaluation; //the outlierDetector evaluation object
 	private ArrayList<String> selectedFeatures; //a list of the features selected by user
 	private String query; //builds and stores the query with which instances will be requested
-	private String algorithmResults;
-	private ROCcurvePlotter plotterOfROCcurves;
-	private static AboutFrame aboutFrame;
+	private String algorithmResults; //stores a summary of the results of an algorithm's evaluation
+	private ROCcurvePlotter plotterOfROCcurves; //a reference to the ROCcurvePlotter object
+	private static AboutFrame aboutFrame; //a reference to the AboutFrame object
 	
 	/**
 	 * Constructor
@@ -103,10 +107,17 @@ public class Controller implements ActionListener {
 		return classifier;
 	}
 	
+	/**
+	 * Sets the reference to the aboutFrame object to null when the aboutFrame object has been disposed.
+	 */
 	public void processAboutFrameClosed() {
 		aboutFrame = null;
 	}
 	
+	/**
+	 * Updates the three end buttons appropriately and disposes the
+	 * plot object when the visualisation view frame has been disposed.
+	 */
 	public void processVisualisationViewClosed() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -131,6 +142,9 @@ public class Controller implements ActionListener {
 		}).start();
 	}
 	
+	/**
+	 * Updates the three end buttons appropriately when the ROC curve frame has been disposed.
+	 */
 	public void processROCcurveClosed() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -687,6 +701,8 @@ public class Controller implements ActionListener {
 				public void run() {
 					if (aboutFrame == null) {
 						aboutFrame = new AboutFrame(referenceToController);
+					} else {
+						aboutFrame.toFront();
 					}
 				}
 			});

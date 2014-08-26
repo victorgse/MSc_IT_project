@@ -1,13 +1,18 @@
 package algorithms.outliers;
 
+/**
+ * This class stores and provides access to statistical
+ * information about the results of an outlierDetector.
+ *
+ */
 public class OutlierEvaluation {
 	
 	/**
 	 * instance variables
 	 */
 	private double[] classAssignments; //1 --> outlier, 0 otherwise
-	private int numOutliers;
-	private int numNormals;
+	private int numOutliers; //the number of identified outliers
+	private int numNormals; //the number of non-outliers
 
 	/**
 	 * @return the classAssignments
@@ -37,6 +42,10 @@ public class OutlierEvaluation {
 		this.numNormals = numNormals;
 	}
 
+	/**
+	 * Method that returns a String of information about the results of an outlierDetector.
+	 * @return a String of information about the results of an outlierDetector.
+	 */
 	public String resultsToString() {
 		String results = null;
 		int totalNumberOfInstances = numOutliers + numNormals;

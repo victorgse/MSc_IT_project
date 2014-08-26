@@ -10,7 +10,8 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
 /**
- * An abstract superclass which contains members that are common to all inheriting algorithms.
+ * An abstract superclass which contains members that
+ * are common to all algorithms that inherit from it.
  */
 public abstract class Algorithm {
 	
@@ -18,13 +19,13 @@ public abstract class Algorithm {
 	 * instance variables
 	 */
 	protected InstanceQuery instanceQuery; //SQL query for fetching instances
-	protected boolean featuresScaledAndMeanNormalised;
-	protected Instances originalTrainingSet;
-	protected Instances trainingSet; //dataset instances
+	protected boolean featuresScaledAndMeanNormalised; //indicated whether the features have been scaled and mean-normalised
+	protected Instances originalTrainingSet; //the original training set, whose features have not been scaled and mean-normalised
+	protected Instances trainingSet; //the dataset instances that are used for training a learning algorithm
 	protected String[] options; //algorithm options
 	
 	/**
-	 * Method which sets the SQL query for fetching instances.
+	 * Method that sets the SQL query for fetching instances.
 	 * @param query
 	 */
 	public void setInstanceQuery(String query) {
@@ -32,7 +33,7 @@ public abstract class Algorithm {
 	}
 	
 	/**
-	 * Method which executes the SQL query for fetching instances
+	 * Method that executes the SQL query for fetching instances
 	 * and stores the returned instances in data.
 	 */
 	public void fetchInstances() {
@@ -68,6 +69,9 @@ public abstract class Algorithm {
 		}
 	}
 	
+	/**
+	 * Method that scales and mean-normalised the features of the training set.
+	 */
 	public void scaleAndMeanNormaliseFeatures() {
 		originalTrainingSet = new Instances(trainingSet, 0, trainingSet.size());
 		Normalize normalizer = new Normalize();

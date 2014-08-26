@@ -26,7 +26,7 @@ public class ROCcurvePlotter {
 	 * instance variables
 	 */
 	private Controller controllerObject;
-	private JFrame jf;
+	private JFrame jf; //the JFrame window that the ROC plot is displayed in
 	
 	/**
 	 * Constructor

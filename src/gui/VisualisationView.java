@@ -10,6 +10,9 @@ import javax.swing.border.*;
 import visualisers.Interactive3dScatterPlot;
 import weka.core.Instances;
 
+/**
+ * Defines a visualisation view frame.
+ */
 @SuppressWarnings("serial")
 public class VisualisationView extends JFrame{
 	
@@ -18,7 +21,7 @@ public class VisualisationView extends JFrame{
 	 */
 	private Controller controllerObject; //a reference to the controller object
 	private Interactive3dScatterPlot scatterPlot; //a reference to the scatter plot object
-	private Instances instances; //the dataset instances
+	private Instances instances; //the dataset instances that are being visualised
 	private String[] classLabels; //the names of the different classes
 	private JLabel xAxisLabel, yAxisLabel, zAxisLabel; //the names of the different axes
 	private JPanel leftPanel, rightPanel; //panels for the left and right areas of the frame
@@ -58,6 +61,9 @@ public class VisualisationView extends JFrame{
 		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Adds components to the left part of the VisualisationView frame.
+	 */
 	private void layoutLeft() {
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new BorderLayout());
@@ -139,6 +145,9 @@ public class VisualisationView extends JFrame{
 		this.add(leftPanel, BorderLayout.WEST);
 	}
 	
+	/**
+	 * Adds components to the right part of the VisualisationView frame.
+	 */
 	private void layoutRight() {
 		rightPanel = new JPanel();
 		rightPanel.setLayout(new BorderLayout());

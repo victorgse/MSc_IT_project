@@ -18,10 +18,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 /**
  * Reads an .xls file dataset and inputs it into the embedded Apache Derby database.
  * Makes use of the Apache POI library for reading the .xls file.
- * =============================================================================================
- * The code for reading an .xls file into memory (the code in the readDataFromExcelFile method)
- * was developed with the help of the following video tutorial provided by Oresoft:
- * https://www.youtube.com/watch?v=GYZzkid7nno
  */
 public class DatasetDatabaseLoader {
 	
@@ -62,7 +58,7 @@ public class DatasetDatabaseLoader {
 	 * Method that reads an .xls file and inserts its content it into the matrix data.
 	 * ===============================================================================
 	 * The code for this method was developed with the help
-	 * of the following video tutorial provided by Oresoft:
+	 * of the following tutorial provided by Oresoft:
 	 * https://www.youtube.com/watch?v=GYZzkid7nno
 	 * @param excel
 	 * @return whether the Excel file was successfully read into primary memory

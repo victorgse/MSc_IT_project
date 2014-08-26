@@ -7,12 +7,22 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * This class defines a JFrame window that is used to display information
+ * about the instances that were clicked on the interactive 3-D scatter plot.
+ */
 @SuppressWarnings("serial")
 public class InstanceInfoFrame extends JFrame {
 	
-	private JScrollPane instanceInfoPane;
-	private JTextArea instanceInfoTextArea;
+	/**
+	 * instance variables
+	 */
+	private JScrollPane instanceInfoPane; //scrollable area, which makes the instanceInfoTextArea scrollable if neeeded
+	private JTextArea instanceInfoTextArea; //text area for displaying information about clicked instances
 	
+	/**
+	 * Constructor
+	 */
 	public InstanceInfoFrame() {
 		setTitle("Selected Instances Info");
 		setLocation(120, 120);
@@ -31,6 +41,10 @@ public class InstanceInfoFrame extends JFrame {
 		setVisible(true);
 	}
 	
+	/**
+	 * Setter for the text of the instanceInfoTextArea.
+	 * @param text
+	 */
 	public void setTextOfInstanceInfoTextArea(String text) {
 		instanceInfoTextArea.setText(text);
 	}

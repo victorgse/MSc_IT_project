@@ -7,14 +7,18 @@ import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.InterquartileRange;
 
+/**
+ * This class provides access to the Interquartile Range Outlier Detection
+ * filter through the use of the Weka API.
+ */
 public class OutlierDetector extends OutlierDetectionAlgorithm {
 	
 	/**
 	 * instance variables
 	 */
-	private InterquartileRange outlierDetector;
-	private OutlierEvaluation eval;
-	private Instances filteredTrainingSet;
+	private InterquartileRange outlierDetector; //the outlierDetector object
+	private OutlierEvaluation eval; //the outlierDetector-evaluation object
+	private Instances filteredTrainingSet; //the training set that has already been scanned for outliers
 
 	/**
 	 * Constructor
@@ -34,7 +38,7 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 
 	/* (non-Javadoc)
 	 * @see algorithms.Algorithm#setOptions(java.lang.String)
-	 * Sets the options for the Outlier Detection algorithm.
+	 * Sets the options for the Outlier Detection filter.
 	 */
 	public void setOptions(String algorithmParameters) {
 		String[] tokens = algorithmParameters.split(" ");
@@ -57,7 +61,10 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 		}
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see algorithms.Algorithm#train()
+	 * Runs the Interquartile Range Outlier Detection filter on the training set.
+	 */
 	public void train() {
 		try {
 			filteredTrainingSet = Filter.useFilter(trainingSet, outlierDetector);
@@ -68,7 +75,10 @@ public class OutlierDetector extends OutlierDetectionAlgorithm {
 		}
 	}
 
-	@Override
+	/* (non-Javadoc)
+	 * @see algorithms.Algorithm#evaluate()
+	 * Evaluates the results of the Interquartile Range Outlier Detection filter.
+	 */
 	public OutlierEvaluation evaluate() {
 		double[] classAssignments = new double[filteredTrainingSet.numInstances()]; //1 --> outlier, 0 otherwise
 		int numberOfOutliers = 0;

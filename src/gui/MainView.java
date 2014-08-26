@@ -14,7 +14,7 @@ import javax.swing.border.*;
 import dbtools.DatabaseAccess;
 
 /**
- * Defines a GUI.
+ * Defines a main view frame.
  */
 @SuppressWarnings("serial")
 public class MainView extends JFrame {
@@ -31,8 +31,8 @@ public class MainView extends JFrame {
 	JButton startOverButton, backButton, nextButton; //the buttons of bottomPanel
 	JRadioButton mcfcAnalyticsFullDatasetButton, otherDatasetButton; //radio buttons for selecting a dataset
 	JRadioButton[] otherAvailableDatasetsButtons; //radio buttons for selecting a dataset
-	JComboBox<String> datasetToDeleteCombo;
-	JButton deleteDatasetButton;
+	JComboBox<String> datasetToDeleteCombo; //combo box for choosing a dataset to delete from the database
+	JButton deleteDatasetButton; //the "Delete Dataset" button
 	JRadioButton clusteringButton, classificationButton, outlierDetectionButton; //the radio buttons for selecting a task
 	JRadioButton trainingSetButton, percentageSplitButton, crossValidationButton; //the radio buttons for selecting a testing option for the clusterer
 	JComboBox<String> levelOfAnalysisCombo; //combo box for specifying the desired level of analysis for the MCFC Analytics Full Dataset
@@ -46,9 +46,10 @@ public class MainView extends JFrame {
 	JLabel regularisationLabel, gammaLabel; //labels describing the regularisation and gamma spinners
 	JSpinner outlierFactorSpinner; //spinner for setting the outlierFactor parameter of the outlier detector
 	JTextArea algorithmOutputTextArea; //text area for displaying textual algorithm output
-	JButton visualiseResultsButton;
-	JButton saveResultsButton;
-	JButton plotROCcurveButton;
+	JButton visualiseResultsButton; //the "Visualise Results" button
+	JButton saveResultsButton; //the "Save Results" button
+	JButton plotROCcurveButton; //the "Plot ROC curve" button
+	JMenuItem aboutItem; //the "About" item of the menu
 	
 	/**
 	 * Constructor
@@ -105,7 +106,7 @@ public class MainView extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	JMenuItem aboutItem;
+	
 	/**
 	 * Adds components to the menu.
 	 */
@@ -696,7 +697,8 @@ public class MainView extends JFrame {
 				            0.1); //step
 				gammaSpinner = new JSpinner(gammaSpinnerModel);
 				gammaSpinner.setToolTipText("<html>If gamma is set to a small value, then the SVM classifier would better fit the training set data, but<br>"
-						+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.</html>");
+						+ "if gamma is too small, then the prediction hypothesis would not generalise well to unseen examples.<br>"
+						+ "If set to 0, then gamma will be calculated as 1/number_of_features.</html>");
 				gammaSpinner.setPreferredSize(new Dimension(55, 20));
 				((DefaultEditor) gammaSpinner.getEditor()).getTextField().setEditable(false);
 				middlePanel.add(gammaSpinner, c);
@@ -915,6 +917,10 @@ public class MainView extends JFrame {
 		}
 	}
 	
+	/**
+	 * Updates the text of the "programState" label.
+	 * @param text
+	 */
 	public void setTextOfProgramStateLabel(final String text) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -925,6 +931,10 @@ public class MainView extends JFrame {
 		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Updates the text of the "algorithmOutputTextArea" text area.
+	 * @param text
+	 */
 	public void setTextOfAlgorithmOutputTextArea(final String text) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -936,6 +946,12 @@ public class MainView extends JFrame {
 		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Updates the navigation buttons (whether each one is enabled or disabled).
+	 * @param startOverButtonEnabled
+	 * @param backButtonEnabled
+	 * @param nextButtonEnabled
+	 */
 	public void toggleNavigationButtons(final boolean startOverButtonEnabled, final boolean backButtonEnabled, final boolean nextButtonEnabled) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -948,6 +964,12 @@ public class MainView extends JFrame {
 		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Updates the end buttons (whether each one is enabled or disabled).
+	 * @param visualiseResultsButtonEnabled
+	 * @param plotROCcurveButtonEnabled
+	 * @param saveResultsButtonEnabled
+	 */
 	public void toggleEndButtons(final boolean visualiseResultsButtonEnabled, final boolean plotROCcurveButtonEnabled, final boolean saveResultsButtonEnabled) {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
@@ -968,6 +990,10 @@ public class MainView extends JFrame {
 		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Disables all components of a container (usually the middlePanel).
+	 * @param container
+	 */
 	public void disableAllComponentsOfContainer(Container container) {
 		Component[] components = container.getComponents();
         for (Component component : components) {

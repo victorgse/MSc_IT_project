@@ -15,29 +15,26 @@ import weka.filters.unsupervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 
 /**
- * An abstract superclass which contains members that are common to all classification algorithms
+ * An abstract superclass which contains members that are common to all classification algorithms.
  */
 public abstract class ClassificationAlgorithm extends Algorithm {
 	
 	/**
 	 * instance variables
 	 */
-	protected Classifier classifier;
-	protected Evaluation eval;
-	protected String evaluationOption;
-	protected Instances reducedTrainingSet;
-	protected Instances originalTestSet;
-	protected Instances testSet;
-	protected AbstractOutput objectForPredictionsPrinting;
-	protected StringBuffer buffer;
-	protected double[] actualClassAssignments;
-	protected double[] predictedClassAssignments;
+	protected Classifier classifier; //the classifier object
+	protected Evaluation eval; //the classifier-evaluation object
+	protected String evaluationOption; //the desired method for evaluating a classifier
+	protected Instances reducedTrainingSet; //the reduced training set (if the "70% training/30% test" classifier evaluation option has been selected)
+	protected Instances originalTestSet; //the original test set, whose features have not been scaled and mean-normalised
+	protected Instances testSet; //the test set
+	protected AbstractOutput objectForPredictionsPrinting; //this object is required for storing the predictions made by a classifier
+	protected StringBuffer buffer; //this object is required by the objectForPredictionsPrinting
+	protected double[] actualClassAssignments; //the actual class assignments of the data instances
+	protected double[] predictedClassAssignments; //the predicted class assignments of the data instances
 	
 	/**
 	 * Method for setting the target label.
-	 * It converts the class attribute from numeric to nominal if necessary,
-	 * and it discretises the values of the class attribute if there are more
-	 * than five classes initially.
 	 * @param classIndex
 	 */
 	public void setTargetLabel(int classIndex) {
@@ -45,6 +42,12 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 		nominaliseOrDiscretiseInstances(String.valueOf(classIndex + 1));
 	}
 	
+	/**
+	 * Method that converts the class attribute from numeric to nominal (if necessary),
+	 * and that discretises the values of the class attribute if there are more
+	 * than five classes initially.
+	 * @param attributeIndices
+	 */
 	public void nominaliseOrDiscretiseInstances(String attributeIndices) {
 		if (!trainingSet.classAttribute().isNominal()) {
 			Instances newTrainingSet = null;
@@ -81,6 +84,7 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	}
 	
 	/**
+	 * Method for setting the desired method for evaluating a classifier.
 	 * @param evaluationOption the evaluationOption to set
 	 */
 	public void setEvaluationOption(String evaluationOption) {

@@ -7,8 +7,7 @@ import weka.experiment.InstanceQuery;
 
 /**
  * This class provides an implementation of the SVM Classification
- * algorithm through the use of the Weka Machine Learning library
- * and the LibSVM Support Vector Machine library.
+ * algorithm through the use of the Weka API and the LibSVM library.
  */
 public class SVMClassifier extends ClassificationAlgorithm {
 	
