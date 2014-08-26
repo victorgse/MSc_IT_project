@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -123,6 +124,9 @@ public class Interactive3dScatterPlot extends AbstractAnalysis {
 	         			    	} else {
 	         			    		TextureIO.write(screenshot, new File(filePath + ".png"));
 	         			    	}
+	         			    	JOptionPane.showMessageDialog(null, 
+	        			    			"The screenshot has been saved to the location of your choosing.", 
+	        			    			"Screenshot Saved", JOptionPane.INFORMATION_MESSAGE);
 	         			    }
 						} catch (Exception e) {
 							e.printStackTrace();
