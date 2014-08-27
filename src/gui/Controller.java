@@ -344,10 +344,12 @@ public class Controller implements ActionListener {
 					if (state.equals("clustering_step1") || state.equals("outlierDetection_step1")) {
 						query = query.substring(0, query.length()-1);
 						query += " from " + selectedDataset;
-						if (desiredLevelOfAnalysis == 1) {
-							query += " group by Player_ID";
-						} else if (desiredLevelOfAnalysis == 2) {
-							query += " group by Team";
+						if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+							if (desiredLevelOfAnalysis == 1) {
+								query += " group by Player_ID";
+							} else if (desiredLevelOfAnalysis == 2) {
+								query += " group by Team";
+							}
 						}
 						viewObject.toggleNavigationButtons(false, false, false);
 						viewObject.disableAllComponentsOfContainer(viewObject.middlePanel);
@@ -390,17 +392,22 @@ public class Controller implements ActionListener {
 			case "classification_step2":
 				String targetLabel = viewObject.targetLabelCombo.getSelectedItem().toString();
 				selectedFeatures.add(targetLabel);
-				if (desiredLevelOfAnalysis == 0) {
+				if (selectedDataset.equals("MCFC_ANALYTICS_FULL_DATASET")) {
+					if (desiredLevelOfAnalysis == 0) {
+						query += targetLabel;
+						query += " from " + selectedDataset;
+					} else if (desiredLevelOfAnalysis == 1) {
+						query += "sum(" + targetLabel + ")";
+						query += " from " + selectedDataset;
+						query += " group by Player_ID";
+					} else if (desiredLevelOfAnalysis == 2) {
+						query += "sum(" + targetLabel + ")";
+						query += " from " + selectedDataset;
+						query += " group by Team";
+					}
+				} else {
 					query += targetLabel;
 					query += " from " + selectedDataset;
-				} else if (desiredLevelOfAnalysis == 1) {
-					query += "sum(" + targetLabel + ")";
-					query += " from " + selectedDataset;
-					query += " group by Player_ID";
-				} else if (desiredLevelOfAnalysis == 2) {
-					query += "sum(" + targetLabel + ")";
-					query += " from " + selectedDataset;
-					query += " group by Team";
 				}
 				classifier.setInstanceQuery(query);
 				viewObject.toggleNavigationButtons(false, false, false);
@@ -507,7 +514,7 @@ public class Controller implements ActionListener {
 				viewObject.setTextOfProgramStateLabel("Outlier Detection (Step 3 of 3) - Generating Visualisation...");
 				break;
 		}
-		processActualisePlotButtonClick();
+		processUpdatePlotButtonClick();
 		viewObject.toggleEndButtons(false, plotROCcurveButtonIsEnabled, true);
 		viewObject.toggleNavigationButtons(true, true, false);
 		switch (state) {
@@ -573,9 +580,9 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * Processes clicks on the "Actualise Plot" button.
+	 * Processes clicks on the "Update Plot" button.
 	 */
-	private void processActualisePlotButtonClick() {
+	private void processUpdatePlotButtonClick() {
 		Instances instances = null;
 		String[] axeLabels;
 		double[][] coordinates;
@@ -752,8 +759,8 @@ public class Controller implements ActionListener {
 					processPlotROCcurveButtonClick();
 				} else if (AE.getSource() == viewObject.saveResultsButton) {
 					processSaveResultsButtonClick();
-				} else if (AE.getSource() == visualisationViewObject.actualisePlotButton) {
-					processActualisePlotButtonClick();
+				} else if (AE.getSource() == visualisationViewObject.updatePlotButton) {
+					processUpdatePlotButtonClick();
 				}
 			}
 		}).start();

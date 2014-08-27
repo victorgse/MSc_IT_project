@@ -27,7 +27,7 @@ public class VisualisationView extends JFrame{
 	private JPanel leftPanel, rightPanel; //panels for the left and right areas of the frame
 	private JPanel axeSelectionPanel, controlsPanel, visualisationPanel, legendPanel; //panels for the different areas
 	JComboBox<String> xAxisCombo, yAxisCombo, zAxisCombo; //combo boxes for assigning attributes to axes
-	JButton actualisePlotButton; //button for actualising the plot
+	JButton updatePlotButton; //button for updating the plot
 	
 	/**
 	 * Constructor
@@ -123,11 +123,11 @@ public class VisualisationView extends JFrame{
 		axeSelectionPanel.add(zAxisCombo);
 		axeSelectionPanel.add(Box.createVerticalGlue());
 		
-		actualisePlotButton = new JButton("Actualise Plot");
-		actualisePlotButton.setPreferredSize(new Dimension(40, 40));
-		actualisePlotButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		actualisePlotButton.addActionListener(controllerObject);
-		axeSelectionPanel.add(actualisePlotButton);
+		updatePlotButton = new JButton("Update Plot");
+		updatePlotButton.setPreferredSize(new Dimension(40, 40));
+		updatePlotButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		updatePlotButton.addActionListener(controllerObject);
+		axeSelectionPanel.add(updatePlotButton);
 		
 		leftPanel.add(axeSelectionPanel, BorderLayout.CENTER);
 		

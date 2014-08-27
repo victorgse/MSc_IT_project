@@ -176,7 +176,11 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 				for (int i = 0; i < lines.length; i++) {
 					String[] tokens = lines[i].split("[ ]+");
 					actualClassAssignments[i] = Double.parseDouble(tokens[2].substring(0, 1));
-					predictedClassAssignments[i] = Double.parseDouble(tokens[3].substring(0, 1));
+					try {
+						predictedClassAssignments[i] = Double.parseDouble(tokens[3].substring(0, 1));
+					} catch (Exception e) {
+						predictedClassAssignments[i] = Double.parseDouble(tokens[4].substring(0, 1));
+					}
 				}
 			}
 			//System.out.println(objectForPredictionsPrinting.getBuffer());
