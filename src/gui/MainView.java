@@ -705,9 +705,13 @@ public class MainView extends JFrame {
 				break;
 			case "classification_step4":
 				trainingSetButton = new JRadioButton("Test on training set");
+				trainingSetButton.setToolTipText("Evaluate the classifier on the entire training set.");
 				trainingSetButton.setSelected(true);
 				percentageSplitButton = new JRadioButton("Percentage split: 70% training / 30% test");
+				percentageSplitButton.setToolTipText("<html>Train the classifier on 70% of the data,<br>"
+						+ "and then test it on the remaining 30% of the data.");
 				crossValidationButton = new JRadioButton("Cross-validation");
+				crossValidationButton.setToolTipText("Evaluate the classifier using cross-validation");
 				
 				ButtonGroup testOptionButtonGroup = new ButtonGroup();
 				testOptionButtonGroup.add(trainingSetButton);
