@@ -4,6 +4,10 @@ import algorithms.Algorithm;
 import weka.core.Instance;
 import weka.experiment.InstanceQuery;
 
+/**
+ * Gaussian probability density estimation outlier detection algorithm, taken from:
+ * https://d396qusza40orc.cloudfront.net/ml/docs/slides/Lecture15.pdf
+ */
 public class AlternativeOutlierDetector extends Algorithm {
 	
 	/**
@@ -61,6 +65,11 @@ public class AlternativeOutlierDetector extends Algorithm {
 		return eval;
 	}
 		
+	/**
+	 * Estimates the probability of instance x.
+	 * @param x
+	 * @return p(x)
+	 */
 	private double computeProbability(Instance x) {
 		double attrMean = trainingSet.attributeStats(0).numericStats.mean;
 		double attrStdDev = trainingSet.attributeStats(0).numericStats.stdDev;
