@@ -39,7 +39,9 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 */
 	public void setTargetLabel(int classIndex) {
 		trainingSet.setClassIndex(classIndex);
-		nominaliseOrDiscretiseInstances(String.valueOf(classIndex + 1));
+		if (!trainingSet.classAttribute().isNominal()) {
+			nominaliseOrDiscretiseInstances(String.valueOf(classIndex + 1));
+		}
 	}
 	
 	/**
@@ -49,36 +51,34 @@ public abstract class ClassificationAlgorithm extends Algorithm {
 	 * @param attributeIndices
 	 */
 	public void nominaliseOrDiscretiseInstances(String attributeIndices) {
-		if (!trainingSet.classAttribute().isNominal()) {
-			Instances newTrainingSet = null;
+		Instances newTrainingSet = null;
+		try {
+			NumericToNominal numericToNominalConverter = new NumericToNominal();
+			numericToNominalConverter.setAttributeIndices(attributeIndices);
+			numericToNominalConverter.setInvertSelection(false);
+			numericToNominalConverter.setInputFormat(trainingSet);
+			newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, 
+	    			"Something went wrong while attempting to nominalise attributes.", 
+	    			"Error: Attributes Not Nominalised", JOptionPane.ERROR_MESSAGE);
+		}
+		if (newTrainingSet.classAttribute().numValues() <= 5) {
+			trainingSet = newTrainingSet;
+		} else {
 			try {
-				NumericToNominal numericToNominalConverter = new NumericToNominal();
-				numericToNominalConverter.setAttributeIndices(attributeIndices);
-				numericToNominalConverter.setInvertSelection(false);
-				numericToNominalConverter.setInputFormat(trainingSet);
-				newTrainingSet = Filter.useFilter(trainingSet, numericToNominalConverter);
+				Discretize numericToDiscreteNominalConverter = new Discretize();
+				numericToDiscreteNominalConverter.setAttributeIndices(attributeIndices);
+				numericToDiscreteNominalConverter.setBins(5);
+				numericToDiscreteNominalConverter.setIgnoreClass(true);
+				numericToDiscreteNominalConverter.setInvertSelection(false);
+				numericToDiscreteNominalConverter.setUseEqualFrequency(true);
+				numericToDiscreteNominalConverter.setInputFormat(trainingSet);
+				trainingSet = Filter.useFilter(trainingSet, numericToDiscreteNominalConverter);
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, 
-		    			"Something went wrong while attempting to nominalise attributes.", 
-		    			"Error: Attributes Not Nominalised", JOptionPane.ERROR_MESSAGE);
-			}
-			if (newTrainingSet.classAttribute().numValues() <= 5) {
-				trainingSet = newTrainingSet;
-			} else {
-				try {
-					Discretize numericToDiscreteNominalConverter = new Discretize();
-					numericToDiscreteNominalConverter.setAttributeIndices(attributeIndices);
-					numericToDiscreteNominalConverter.setBins(5);
-					numericToDiscreteNominalConverter.setIgnoreClass(true);
-					numericToDiscreteNominalConverter.setInvertSelection(false);
-					numericToDiscreteNominalConverter.setUseEqualFrequency(true);
-					numericToDiscreteNominalConverter.setInputFormat(trainingSet);
-					trainingSet = Filter.useFilter(trainingSet, numericToDiscreteNominalConverter);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, 
-			    			"Something went wrong while attempting to discretise attributes.", 
-			    			"Error: Attributes Not Discretised", JOptionPane.ERROR_MESSAGE);
-				}
+		    			"Something went wrong while attempting to discretise attributes.", 
+		    			"Error: Attributes Not Discretised", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
