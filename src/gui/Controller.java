@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Desktop;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -700,21 +699,6 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
-	 * Processes clicks on the "User Manual" menu item
-	 */
-	private void processUserManualMenuItemClick() {
-		if (Desktop.isDesktopSupported()) {
-		    try {
-		        Desktop.getDesktop().open(new File(getClass().getResource("/UserManual.pdf").getPath()));
-		    } catch (IOException e) {
-		    	JOptionPane.showMessageDialog(null, 
-		    			"UserManual.pdf could not be loaded. You need to have a PDF reader installed.", 
-		    			"Error: IO Exception", JOptionPane.ERROR_MESSAGE);
-		    }
-		}
-	}
-	
-	/**
 	 * Processes clicks on the "About" menu item
 	 */
 	private void processAboutMenuItemClick() {
@@ -767,8 +751,6 @@ public class Controller implements ActionListener {
 					processNextButtonClick();
 				} else if (AE.getSource() == viewObject.aboutItem) {
 					processAboutMenuItemClick();
-				} else if (AE.getSource() == viewObject.userManualItem) {
-					processUserManualMenuItemClick();
 				} else if (AE.getSource() == viewObject.deleteDatasetButton) {
 					processDeleteDatasetButtonClick();
 				} else if (AE.getSource() == viewObject.visualiseResultsButton) {

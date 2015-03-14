@@ -49,7 +49,7 @@ public class MainView extends JFrame {
 	JButton visualiseResultsButton; //the "Visualise Results" button
 	JButton saveResultsButton; //the "Save Results" button
 	JButton plotROCcurveButton; //the "Plot ROC curve" button
-	JMenuItem userManualItem, aboutItem; //the items of the menu
+	JMenuItem aboutItem; //the items of the menu
 	
 	/**
 	 * Constructor
@@ -119,10 +119,6 @@ public class MainView extends JFrame {
 					
 					JMenu helpMenu = new JMenu("Help");
 					menuBar.add(helpMenu);
-					
-					userManualItem = new JMenuItem("User Manual");
-					userManualItem.addActionListener(controllerObject);
-					helpMenu.add(userManualItem);
 					
 					aboutItem = new JMenuItem("About");
 					aboutItem.addActionListener(controllerObject);
