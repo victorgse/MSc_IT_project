@@ -777,7 +777,6 @@ public class MainView extends JFrame {
 				endButtonsPanel.add(visualiseResultsButton);
 				endButtonsPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 				
-				
 				if (state.equals("classification_step5") && controllerObject.getClassifier().getTrainingSet().numClasses() == 2) {
 					plotROCcurveButton = new JButton("Plot ROC curve");
 					plotROCcurveButton.addActionListener(controllerObject);
@@ -800,6 +799,15 @@ public class MainView extends JFrame {
 				c.gridx = 1; //second column
 				c.gridy = 0; //first row
 				middlePanel.add(endButtonsPanel, c);
+				
+				if (state.equals("classification_step5") 
+						&& controllerObject.getClassifierEvaluationMethod().equals("CV")) {
+					new Thread(new Runnable() {
+						public void run() {
+							toggleEndButtons(false, true, true);
+						}
+					}).start();
+				}
 				break;
 		}
 	}

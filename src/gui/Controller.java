@@ -108,6 +108,13 @@ public class Controller implements ActionListener {
 	}
 	
 	/**
+	 * @return the classifierEvaluationMethod
+	 */
+	public String getClassifierEvaluationMethod() {
+		return classifierEvaluationMethod;
+	}
+
+	/**
 	 * Sets the reference to the aboutFrame object to null when the aboutFrame object has been disposed.
 	 */
 	public void processAboutFrameClosed() {
@@ -461,9 +468,6 @@ public class Controller implements ActionListener {
 				} catch (Exception e) {}
 				viewObject.setTextOfAlgorithmOutputTextArea(algorithmResults);
 				state = "classification_step5";
-				if (classifierEvaluationMethod.equals("CV")) {
-					viewObject.toggleEndButtons(false, true, true);
-				}
 				break;
 			case "outlierDetection_step2":
 				double outlierFactor = (double) viewObject.outlierFactorSpinner.getValue();
